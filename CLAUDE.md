@@ -2,26 +2,24 @@
 
 ## Project Overview
 
-Milwaukee Vehicle Finder is a web app that searches for used vehicles across the Milwaukee area by scraping multiple automotive listing platforms in real-time. It uses a vanilla JS frontend (Alpine.js) and Python serverless functions deployed on Vercel.
+Milwaukee Vehicle Finder is a web app that searches for used vehicles across the Milwaukee area by scraping multiple automotive listing platforms (Craigslist, CarGurus, Cars.com, AutoTrader) in real-time. It uses an Alpine.js frontend and Python serverless functions deployed on Vercel.
 
 ## Architecture
 
-- **Frontend**: Single-page app (`index.html`) using Alpine.js for reactivity, no build step
+- **Frontend**: Single-page app (`index.html`) using Alpine.js v3 for reactivity, no build step
 - **Backend**: Python serverless functions in `api/` deployed on Vercel
 - **No database**: All data is fetched fresh on each search request
 - **No auth**: Public-facing, no user accounts
 
 ```
 ├── index.html                 # Main frontend SPA (Alpine.js)
-├── enhanced_dashboard.html    # Alternative UI variant
-├── backend_api.py             # Legacy Flask API (not deployed)
 ├── api/
 │   ├── search/
-│   │   └── index.py           # Main search endpoint (Vercel serverless)
-│   ├── search.py              # Alternative search implementation
+│   │   └── index.py           # Search endpoint - scrapes 4 platforms concurrently
 │   └── details.py             # Vehicle detail/image extraction endpoint
-├── requirements.txt           # Python dependencies
-└── vercel.json                # Vercel config (minimal, auto-detect)
+├── requirements.txt           # Python dependencies (aiohttp, beautifulsoup4, lxml)
+├── vercel.json                # Vercel config (minimal, auto-detect)
+└── CLAUDE.md                  # This file
 ```
 
 ## Tech Stack
@@ -34,7 +32,7 @@ Milwaukee Vehicle Finder is a web app that searches for used vehicles across the
 ## API Endpoints
 
 ### POST `/api/search`
-Search for vehicles across platforms (Craigslist, CarGurus, Cars.com, AutoTrader).
+Search for vehicles across all 4 platforms concurrently.
 
 Request body:
 ```json
@@ -45,22 +43,25 @@ Request body:
   "max_year": 2024,
   "max_price": 20000,
   "max_mileage": 150000,
-  "location": "milwaukee"
+  "location": "milwaukee",
+  "zip_code": "53202"
 }
 ```
+
+Response includes `vehicles` array, `sources` array (per-platform counts/errors), and `stats`.
 
 ### GET `/api/search`
 Health check. Returns API version and status.
 
 ### GET `/api/details?url=<listing_url>`
-Extract full details and images from a specific vehicle listing URL.
+Extract full details (images, VIN, transmission, fuel, color, description) from a specific vehicle listing URL. Supports Craigslist, CarGurus, Cars.com, and AutoTrader URLs.
 
 ## Development
 
 ### Local Setup
 ```bash
 pip install -r requirements.txt
-python backend_api.py  # runs legacy Flask server locally
+# No local dev server - use `vercel dev` or deploy to Vercel
 ```
 
 ### Deployment
@@ -71,29 +72,34 @@ There is currently no test suite.
 
 ## Key Conventions
 
-### Python
-- Snake_case for functions and variables
-- Class-based scrapers (`VehicleScraper`, `DetailsFetcher`)
-- `BaseHTTPRequestHandler` subclasses for Vercel serverless handlers (not Flask)
-- Heavy use of `asyncio` / `aiohttp` for concurrent scraping with `asyncio.gather()`
-- CORS headers added manually to all responses
-- Try-catch around each scraper; failures are silently skipped so other sources still return results
+### Python (Backend)
+- Module-level helper functions (`_extract_price`, `_extract_mileage`, `_extract_year`, `_year_ok`, `_make_id`)
+- `BaseHTTPRequestHandler` subclass for the Vercel serverless handler
+- All 4 scrapers run concurrently via `asyncio.gather()` with `return_exceptions=True`
+- Each scraper catches its own exceptions so failures in one platform don't block others
+- CORS headers on all responses via `_cors_headers()` helper
+- 12-second timeout per platform request
+- $0-price listings are filtered out server-side
 
 ### Frontend
-- All state lives in Alpine.js `x-data` objects
-- Glassmorphism design (backdrop blur, gradients: `#667eea` → `#764ba2`)
-- Built-in debug console (bottom-right toggle) with logging/copy/download
-- Model dropdown auto-populates based on selected make
-- Default search runs on page load (Honda Civic)
+- Single Alpine.js component `app()` manages all state
+- Clean, light-themed design with indigo accent (`#4f46e5`)
+- Source filtering via clickable chip buttons (All / Craigslist / CarGurus / etc.)
+- Sort by price, mileage, or year (ascending/descending)
+- Modal fetches additional details from `/api/details` when a card is clicked
+- Image gallery in modal with prev/next navigation
+- 27 makes with per-make model dropdowns
+- SVG icons (no emoji in UI), inline CSS (no external stylesheets)
+- Responsive: adapts to mobile with 2-column form and single-column cards
 
 ### Vercel / Deployment
-- Serverless functions live under `api/` — Vercel maps `api/search/index.py` → `/api/search`
+- Serverless functions live under `api/` -- Vercel maps `api/search/index.py` to `/api/search`
 - `vercel.json` should stay minimal; previous issues arose from over-configuring it
 - `requirements.txt` at repo root is picked up automatically by Vercel
 
 ## Important Notes
 
-- **Scrapers are fragile**: They depend on the current HTML structure of target sites and will break when those sites change their markup.
-- **`backend_api.py` is legacy**: The active API lives in `api/search/index.py` and `api/details.py`. The Flask-based `backend_api.py` is kept for local dev reference but is not deployed.
+- **Scrapers are fragile**: They depend on the current HTML structure of target sites and will break when those sites change their markup. CarGurus, Cars.com, and AutoTrader are JS-heavy and may return limited results from server-side scraping.
 - **No environment variables** are required for basic operation.
 - **Rate limiting**: No rate limiting is implemented; each search triggers live HTTP requests to external sites.
+- **No stale files**: Legacy files (`backend_api.py`, `enhanced_dashboard.html`, duplicate `api/search.py`) have been removed.
