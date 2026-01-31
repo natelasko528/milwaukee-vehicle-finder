@@ -1,14 +1,14 @@
 """
-Vercel Serverless Function for Vehicle Search - Fixed for Vercel Runtime
+Vercel Serverless Function - BaseHTTPRequestHandler approach
 """
 
+from http.server import BaseHTTPRequestHandler
 import json
 import asyncio
 import aiohttp
 from bs4 import BeautifulSoup
 from datetime import datetime
 import re
-import os
 
 async def scrape_craigslist(location, make, model, max_price, max_mileage):
     """Scrape Craigslist for vehicles"""
@@ -75,51 +75,39 @@ async def scrape_craigslist(location, make, model, max_price, max_mileage):
                                     'scraped_at': datetime.now().isoformat()
                                 })
                         except Exception as e:
-                            print(f"Error parsing listing: {e}")
                             continue
     except Exception as e:
-        print(f"Craigslist error: {e}")
+        print(f"Scraping error: {e}")
     
     return results
 
-def handler(request):
-    """Main Vercel handler function"""
+class handler(BaseHTTPRequestHandler):
+    def do_OPTIONS(self):
+        self.send_response(200)
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.end_headers()
     
-    # Handle CORS
-    if request.method == 'OPTIONS':
-        return {
-            'statusCode': 200,
-            'headers': {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
-                'Access-Control-Allow-Headers': 'Content-Type'
-            },
-            'body': ''
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header('Content-Type', 'application/json')
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.end_headers()
+        
+        response = {
+            'success': True,
+            'message': 'Vehicle Search API v3.0',
+            'status': 'operational'
         }
+        self.wfile.write(json.dumps(response).encode())
     
-    # Handle GET - API status
-    if request.method == 'GET':
-        return {
-            'statusCode': 200,
-            'headers': {
-                'Access-Control-Allow-Origin': '*',
-                'Content-Type': 'application/json'
-            },
-            'body': json.dumps({
-                'success': True,
-                'message': 'Vehicle Search API v3.0',
-                'status': 'operational'
-            })
-        }
-    
-    # Handle POST - vehicle search
-    if request.method == 'POST':
+    def do_POST(self):
         try:
             # Parse request body
-            body = request.body
-            if isinstance(body, bytes):
-                body = body.decode('utf-8')
-            data = json.loads(body) if body else {}
+            content_length = int(self.headers.get('Content-Length', 0))
+            body = self.rfile.read(content_length).decode('utf-8') if content_length > 0 else '{}'
+            data = json.loads(body)
             
             # Extract parameters
             make = data.get('make', 'Toyota')
@@ -143,51 +131,41 @@ def handler(request):
             total_count = len(vehicles)
             avg_price = sum(v.get('price', 0) for v in vehicles) / total_count if total_count > 0 else 0
             
-            return {
-                'statusCode': 200,
-                'headers': {
-                    'Access-Control-Allow-Origin': '*',
-                    'Content-Type': 'application/json'
+            # Send response
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            
+            response = {
+                'success': True,
+                'count': total_count,
+                'vehicles': vehicles,
+                'stats': {
+                    'total_count': total_count,
+                    'avg_price': round(avg_price, 2)
                 },
-                'body': json.dumps({
-                    'success': True,
-                    'count': total_count,
-                    'vehicles': vehicles,
-                    'stats': {
-                        'total_count': total_count,
-                        'avg_price': round(avg_price, 2)
-                    },
-                    'search_params': {
-                        'make': make,
-                        'model': model,
-                        'max_price': max_price,
-                        'max_mileage': max_mileage,
-                        'location': location
-                    },
-                    'timestamp': datetime.now().isoformat()
-                })
+                'search_params': {
+                    'make': make,
+                    'model': model,
+                    'max_price': max_price,
+                    'max_mileage': max_mileage,
+                    'location': location
+                },
+                'timestamp': datetime.now().isoformat()
             }
             
+            self.wfile.write(json.dumps(response).encode())
+            
         except Exception as e:
-            return {
-                'statusCode': 500,
-                'headers': {
-                    'Access-Control-Allow-Origin': '*',
-                    'Content-Type': 'application/json'
-                },
-                'body': json.dumps({
-                    'success': False,
-                    'error': str(e),
-                    'timestamp': datetime.now().isoformat()
-                })
+            self.send_response(500)
+            self.send_header('Content-Type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            
+            error_response = {
+                'success': False,
+                'error': str(e),
+                'timestamp': datetime.now().isoformat()
             }
-    
-    # Method not allowed
-    return {
-        'statusCode': 405,
-        'headers': {
-            'Access-Control-Allow-Origin': '*',
-            'Content-Type': 'application/json'
-        },
-        'body': json.dumps({'error': 'Method not allowed'})
-    }
+            self.wfile.write(json.dumps(error_response).encode())
