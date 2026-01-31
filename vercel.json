@@ -4,56 +4,17 @@
     {
       "src": "index.html",
       "use": "@vercel/static"
-    },
-    {
-      "src": "api/search.py",
-      "use": "@vercel/python"
-    },
-    {
-      "src": "api/cron_scrape.py",
-      "use": "@vercel/python"
-    },
-    {
-      "src": "api/saved_searches.py",
-      "use": "@vercel/python"
-    },
-    {
-      "src": "api/details.py",
-      "use": "@vercel/python"
     }
   ],
-  "routes": [
+  "headers": [
     {
-      "src": "/api/search",
-      "dest": "api/search.py"
-    },
-    {
-      "src": "/api/cron",
-      "dest": "api/cron_scrape.py"
-    },
-    {
-      "src": "/api/saved",
-      "dest": "api/saved_searches.py"
-    },
-    {
-      "src": "/api/details",
-      "dest": "api/details.py"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
     }
-  ],
-  "crons": [
-    {
-      "path": "/api/cron",
-      "schedule": "*/5 * * * *"
-    }
-  ],
-  "env": {
-    "KV_URL": "@kv_url",
-    "KV_REST_API_TOKEN": "@kv_rest_api_token",
-    "POSTGRES_URL": "@postgres_url",
-    "CRON_SECRET": "@cron_secret"
-  }
+  ]
 }
