@@ -95,11 +95,17 @@ class VehicleScraper:
         if max_year:
             params['max_auto_year'] = max_year
         
+        print(f"[DEBUG] Craigslist URL: {base_url}")
+        print(f"[DEBUG] Craigslist params: {params}")
+        
         try:
             async with session.get(base_url, params=params, headers=self.headers, timeout=15) as response:
+                print(f"[DEBUG] Craigslist response status: {response.status}")
                 if response.status == 200:
                     html = await response.text()
                     soup = BeautifulSoup(html, 'html.parser')
+                    
+                    print(f"[DEBUG] Found {len(soup.find_all('li', class_='cl-static-search-result'))} Craigslist listings")
                     
                     for listing in soup.find_all('li', class_='cl-static-search-result')[:20]:
                         try:
@@ -137,8 +143,11 @@ class VehicleScraper:
                             print(f"Error parsing listing: {e}")
                             continue
         except Exception as e:
-            print(f"Craigslist error: {e}")
+            print(f"[ERROR] Craigslist error: {e}")
+            import traceback
+            traceback.print_exc()
         
+        print(f"[DEBUG] Returning {len(results)} Craigslist results")
         return results
     
     async def scrape_cargurus(self, session, make, model, max_price, max_mileage, zip_code, min_year=None, max_year=None):
@@ -255,6 +264,8 @@ class handler(BaseHTTPRequestHandler):
             body = self.rfile.read(content_length)
             data = json.loads(body) if body else {}
             
+            print(f"[DEBUG] Received POST request with data: {data}")
+            
             # Extract parameters with defaults
             make = data.get('make', 'Toyota')
             model = data.get('model', 'Camry')
@@ -266,10 +277,13 @@ class handler(BaseHTTPRequestHandler):
             max_year = int(data.get('max_year')) if data.get('max_year') else None
             use_cache = data.get('use_cache', True)
             
+            print(f"[DEBUG] Searching: {make} {model}, max ${max_price}, location: {location}")
+            
             # Run async scraping
             scraper = VehicleScraper()
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
+            print(f"[DEBUG] Starting search_all_platforms...")
             vehicles = loop.run_until_complete(
                 scraper.search_all_platforms(
                     make, model, max_price, max_mileage, location, zip_code, 
@@ -277,6 +291,8 @@ class handler(BaseHTTPRequestHandler):
                 )
             )
             loop.close()
+            
+            print(f"[DEBUG] Got {len(vehicles)} total vehicles")
             
             # Sort by price
             vehicles.sort(key=lambda x: x.get('price', 999999))
