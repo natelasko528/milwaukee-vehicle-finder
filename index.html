@@ -1,0 +1,428 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Milwaukee Vehicle Finder - Under $8,000</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2d3748;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #718096;
+            font-size: 1.2em;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #718096;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+
+        .filters {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .filter-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-item label {
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .filter-item input,
+        .filter-item select {
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .filter-item input:focus,
+        .filter-item select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .vehicles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .vehicle-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .vehicle-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        }
+
+        .vehicle-image {
+            width: 100%;
+            height: 220px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3em;
+            position: relative;
+        }
+
+        .vehicle-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .source-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75em;
+            font-weight: 600;
+        }
+
+        .vehicle-info {
+            padding: 20px;
+        }
+
+        .vehicle-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .vehicle-details {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .price {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #48bb78;
+        }
+
+        .mileage {
+            color: #718096;
+            align-self: flex-end;
+        }
+
+        .view-listing-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: opacity 0.3s;
+        }
+
+        .view-listing-btn:hover {
+            opacity: 0.9;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .no-results h2 {
+            color: #2d3748;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .no-results p {
+            color: #718096;
+            font-size: 1.1em;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .vehicles-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚗 Milwaukee Vehicle Finder</h1>
+            <p class="subtitle">Quality vehicles under $8,000 in the Milwaukee area</p>
+        </header>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="total-count">10</div>
+                <div class="stat-label">Total Vehicles</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="avg-price">$5,500</div>
+                <div class="stat-label">Average Price</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">2</div>
+                <div class="stat-label">Craigslist Listings</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">4</div>
+                <div class="stat-label">Platforms Searched</div>
+            </div>
+        </div>
+
+        <div class="filters">
+            <div class="filter-group">
+                <div class="filter-item">
+                    <label for="search">Search</label>
+                    <input type="text" id="search" placeholder="Search by make, model, year...">
+                </div>
+                <div class="filter-item">
+                    <label for="source">Source</label>
+                    <select id="source">
+                        <option value="">All Sources</option>
+                        <option value="Craigslist">Craigslist</option>
+                        <option value="CarGurus">CarGurus</option>
+                        <option value="Cars.com">Cars.com</option>
+                        <option value="Autotrader">Autotrader</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label for="max-price">Max Price</label>
+                    <input type="number" id="max-price" placeholder="Max $" value="8000">
+                </div>
+            </div>
+        </div>
+
+        <div class="vehicles-grid" id="vehicles-grid">
+            <!-- Vehicles will be dynamically inserted here -->
+        </div>
+
+        <div class="no-results" id="no-results" style="display: none;">
+            <h2>No vehicles found</h2>
+            <p>Try adjusting your filters to see more results</p>
+        </div>
+    </div>
+
+    <script>
+        // Vehicle data
+        const vehicles = [{"Title":"$99\/mo - 2010 Toyota Camry LE","Price":"$4,990","Mileage":null,"URL":"https:\/\/milwaukee.craigslist.org\/ctd\/d\/waukesha-99-mo-toyota-camry-le\/7909773169.html","Source":"Craigslist","Image_URL":"https:\/\/images.craigslist.org\/00808_c1YeybD8ODn_0fe0bq_600x450.jpg"},{"Title":"$99\/mo - 2010 Toyota Camry LE","Price":"$4,990","Mileage":null,"URL":"https:\/\/milwaukee.craigslist.org\/ctd\/d\/waukesha-99-mo-toyota-camry-le\/7911196440.html","Source":"Craigslist","Image_URL":"https:\/\/images.craigslist.org\/00808_c1YeybD8ODn_0fe0bq_600x450.jpg"},{"Title":"Used Subaru Forester for Sale Under $10000","Price":"$10000","Mileage":null,"URL":"https:\/\/www.cargurus.ca\/Cars\/s-Used-Subaru-Forester-Under-10000-d374_spt383","Source":"CarGurus","Image_URL":null},{"Title":"Used Subaru for Sale Under $25000 Near Brookfield, WI","Price":"$25000","Mileage":null,"URL":"https:\/\/www.cargurus.com\/Cars\/s-Used-Subaru-Under-25000-Brookfield-m53_spt380_L39536","Source":"CarGurus","Image_URL":null},{"Title":"Used Subaru Cars for Sale Near Milwaukee, WI Under $8000","Price":"$8000","Mileage":null,"URL":"https:\/\/www.cars.com\/shopping\/subaru\/milwaukee-wi\/price-under-8000\/","Source":"Cars.com","Image_URL":null},{"Title":"Used Toyota Cars for Sale Near Milwaukee, WI Under $8000","Price":"$8000","Mileage":null,"URL":"https:\/\/www.cars.com\/shopping\/toyota\/milwaukee-wi\/price-under-8000\/","Source":"Cars.com","Image_URL":null},{"Title":"Used Cars for Sale Under $8,000 Near Me in Milwaukee, WI","Price":"$8,000","Mileage":null,"URL":"https:\/\/www.autotrader.com\/cars-for-sale\/cars-under-8000\/milwaukee-wi","Source":"Autotrader","Image_URL":null},{"Title":"Used Toyota Camry for Sale Under $8000 Near Me","Price":"$8000","Mileage":null,"URL":"https:\/\/www.cars.com\/shopping\/toyota-camry\/price-under-8000\/","Source":"Cars.com","Image_URL":null},{"Title":"Used Cars for Sale Near Milwaukee, WI Under $8000","Price":"$8000","Mileage":null,"URL":"https:\/\/www.cars.com\/shopping\/milwaukee-wi\/price-under-8000\/","Source":"Cars.com","Image_URL":null},{"Title":"Used SUVs for Sale Near Waukesha, WI Under $7,000 | Cars.com","Price":"$7,000","Mileage":null,"URL":"https:\/\/www.cars.com\/shopping\/suv\/waukesha-wi\/price-under-7000\/","Source":"Cars.com","Image_URL":null}];
+
+        // Extract vehicle icons based on make
+        function getVehicleIcon(title) {
+            if (!title) return '🚗';
+            const lowerTitle = title.toLowerCase();
+            if (lowerTitle.includes('toyota') && lowerTitle.includes('camry')) return '🚙';
+            if (lowerTitle.includes('toyota')) return '🚙';
+            if (lowerTitle.includes('subaru')) return '🚘';
+            if (lowerTitle.includes('lexus')) return '✨';
+            if (lowerTitle.includes('honda')) return '🚕';
+            return '🚗';
+        }
+
+        // Format price
+        function formatPrice(price) {
+            if (!price || price === 'N/A' || price === '') return 'Contact for Price';
+            return price;
+        }
+
+        // Format mileage
+        function formatMileage(mileage) {
+            if (!mileage || mileage === 'N/A' || mileage === 'nan') return 'Contact for Mileage';
+            const numMiles = parseInt(mileage.toString().replace(/[^0-9]/g, ''));
+            return numMiles ? `${(numMiles / 1000).toFixed(0)}k mi` : 'Contact for Mileage';
+        }
+
+        // Render vehicles
+        function renderVehicles(filteredVehicles) {
+            const grid = document.getElementById('vehicles-grid');
+            const noResults = document.getElementById('no-results');
+
+            if (filteredVehicles.length === 0) {
+                grid.style.display = 'none';
+                noResults.style.display = 'block';
+                return;
+            }
+
+            grid.style.display = 'grid';
+            noResults.style.display = 'none';
+
+            grid.innerHTML = filteredVehicles.map(vehicle => {
+                const hasImage = vehicle.Image_URL && vehicle.Image_URL !== 'N/A' && vehicle.Image_URL !== '';
+                return `
+                <div class="vehicle-card" onclick="window.open('${vehicle.URL}', '_blank')">
+                    <div class="vehicle-image">
+                        ${hasImage ? 
+                            `<img src="${vehicle.Image_URL}" alt="${vehicle.Title}" onerror="this.style.display='none'; this.parentElement.innerHTML='<span>${getVehicleIcon(vehicle.Title)}</span><span class=\"source-badge\">${vehicle.Source}</span>';">` :
+                            `<span>${getVehicleIcon(vehicle.Title)}</span>`
+                        }
+                        <span class="source-badge">${vehicle.Source}</span>
+                    </div>
+                    <div class="vehicle-info">
+                        <div class="vehicle-title">${vehicle.Title}</div>
+                        <div class="vehicle-details">
+                            <div class="price">${formatPrice(vehicle.Price)}</div>
+                            <div class="mileage">${formatMileage(vehicle.Mileage)}</div>
+                        </div>
+                        <a href="${vehicle.URL}" target="_blank" class="view-listing-btn" onclick="event.stopPropagation()">
+                            View Listing →
+                        </a>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        // Filter vehicles
+        function filterVehicles() {
+            const searchTerm = document.getElementById('search').value.toLowerCase();
+            const sourceFilter = document.getElementById('source').value;
+            const maxPrice = parseInt(document.getElementById('max-price').value) || Infinity;
+
+            const filtered = vehicles.filter(vehicle => {
+                const matchesSearch = vehicle.Title && vehicle.Title.toLowerCase().includes(searchTerm);
+                const matchesSource = !sourceFilter || vehicle.Source === sourceFilter;
+
+                const vehiclePrice = parseInt((vehicle.Price || '').toString().replace(/[^0-9]/g, '')) || 0;
+                const matchesPrice = vehiclePrice <= maxPrice || vehiclePrice === 0;
+
+                return matchesSearch && matchesSource && matchesPrice;
+            });
+
+            // Update stats
+            document.getElementById('total-count').textContent = filtered.length;
+
+            const pricesWithValues = filtered.filter(v => {
+                const price = parseInt((v.Price || '').toString().replace(/[^0-9]/g, ''));
+                return price > 0;
+            });
+
+            if (pricesWithValues.length > 0) {
+                const avgPrice = pricesWithValues.reduce((sum, v) => {
+                    const price = parseInt((v.Price || '').toString().replace(/[^0-9]/g, ''));
+                    return sum + price;
+                }, 0) / pricesWithValues.length;
+                document.getElementById('avg-price').textContent = `$${Math.round(avgPrice).toLocaleString()}`;
+            }
+
+            renderVehicles(filtered);
+        }
+
+        // Event listeners
+        document.getElementById('search').addEventListener('input', filterVehicles);
+        document.getElementById('source').addEventListener('change', filterVehicles);
+        document.getElementById('max-price').addEventListener('input', filterVehicles);
+
+        // Initial render
+        renderVehicles(vehicles);
+
+        // Update initial stats
+        const vehiclesWithPrices = vehicles.filter(v => {
+            const price = parseInt((v.Price || '').toString().replace(/[^0-9]/g, ''));
+            return price > 0;
+        });
+
+        if (vehiclesWithPrices.length > 0) {
+            const totalPrice = vehiclesWithPrices.reduce((sum, v) => {
+                const price = parseInt((v.Price || '').toString().replace(/[^0-9]/g, ''));
+                return sum + price;
+            }, 0);
+            const avgPrice = totalPrice / vehiclesWithPrices.length;
+            document.getElementById('avg-price').textContent = `$${Math.round(avgPrice).toLocaleString()}`;
+        }
+
+        document.getElementById('total-count').textContent = vehicles.length;
+    </script>
+</body>
+</html>
