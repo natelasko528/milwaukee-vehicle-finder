@@ -4,704 +4,718 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Milwaukee Vehicle Finder - Find Your Perfect Car</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-        
         * {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        
-        /* 2026 Design System */
+
         :root {
-            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            --gradient-success: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            --shadow-large: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
         }
-        
+
         body {
-            background: linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #fff;
         }
-        
-        /* Glassmorphism Effects */
-        .glass {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
         }
-        
-        /* Smooth Animations */
-        .animate-slide-up {
-            animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem 0;
         }
-        
-        @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #fff, #e0e7ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        
-        .animate-fade-in {
-            animation: fadeIn 0.4s ease-out;
+
+        .hero p {
+            font-size: 1.25rem;
+            opacity: 0.9;
         }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+
+        /* Glassmorphism Search Panel */
+        .search-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         }
-        
-        /* Card Hover Effects */
-        .vehicle-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            opacity: 0.9;
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+        }
+
+        .form-control option {
+            background: #1e293b;
+            color: #fff;
+        }
+
+        /* Search Button */
+        .btn-search {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            padding: 1rem 3rem;
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #fff;
             cursor: pointer;
-        }
-        
-        .vehicle-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-large);
-        }
-        
-        .vehicle-card img {
-            transition: transform 0.3s ease;
-        }
-        
-        .vehicle-card:hover img {
-            transform: scale(1.05);
-        }
-        
-        /* Premium Gradient Buttons */
-        .btn-gradient {
-            background: var(--gradient-primary);
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
-        }
-        
-        .btn-gradient::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
             width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            transition: left 0.5s;
+            max-width: 300px;
+            margin: 0 auto;
+            display: block;
         }
-        
-        .btn-gradient:hover::before {
-            left: 100%;
+
+        .btn-search:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
-        
-        /* Image Skeleton Loader */
-        .skeleton {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
+
+        .btn-search:active {
+            transform: translateY(0);
         }
-        
-        @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
+
+        .btn-search:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
-        
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
+
+        /* Loading State */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 2rem;
         }
-        
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
         }
-        
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, #667eea, #764ba2);
-            border-radius: 4px;
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
-        
-        /* Filter Chips */
-        .filter-chip {
-            transition: all 0.2s ease;
+
+        /* Results Stats */
+        .results-stats {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
-        
-        .filter-chip:hover {
-            transform: scale(1.05);
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
         }
-        
-        /* Price Badge Animations */
-        .price-badge {
-            background: var(--gradient-success);
-            animation: pulse 2s infinite;
+
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.8;
         }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
         }
-        
-        /* Mobile Optimization */
-        @media (max-width: 768px) {
-            .vehicle-card {
-                margin-bottom: 16px;
-            }
+
+        /* Vehicle Grid */
+        .vehicle-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
         }
-        
-        /* Detail Modal Overlay */
-        .modal-overlay {
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(4px);
-        }
-        
-        /* Photo Gallery */
-        .gallery-thumb {
-            transition: all 0.2s ease;
+
+        /* Vehicle Card */
+        .vehicle-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
             cursor: pointer;
         }
-        
-        .gallery-thumb:hover {
-            transform: scale(1.1);
-            border-color: #667eea;
+
+        .vehicle-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 255, 255, 0.3);
         }
-        
-        .gallery-thumb.active {
-            border-color: #667eea;
-            border-width: 3px;
+
+        .vehicle-image {
+            width: 100%;
+            height: 220px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vehicle-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .vehicle-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.125rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .vehicle-info {
+            padding: 1.5rem;
+        }
+
+        .vehicle-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: #fff;
+        }
+
+        .vehicle-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        .vehicle-source {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-top: 0.75rem;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 2rem;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(51, 65, 85, 0.95) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #fff;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-image {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            border-radius: 24px 24px 0 0;
+        }
+
+        .modal-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .modal-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .modal-price {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #10b981;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .modal-meta-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 12px;
+        }
+
+        .modal-meta-label {
+            font-size: 0.875rem;
+            opacity: 0.7;
+            margin-bottom: 0.25rem;
+        }
+
+        .modal-meta-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .btn-view-listing {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border: none;
+            border-radius: 16px;
+            padding: 1rem 2rem;
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #fff;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .btn-view-listing:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+        }
+
+        /* No Results */
+        .no-results {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+        }
+
+        .no-results-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .no-results-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .no-results-subtext {
+            opacity: 0.7;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .vehicle-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .results-stats {
+                flex-direction: column;
+                align-items: flex-start;
+            }
         }
     </style>
 </head>
-<body class="antialiased">
-    
-    <div x-data="vehicleFinderApp()" x-init="init()" class="min-h-screen">
-        
-        <!-- Hero Header with Gradient -->
-        <header class="relative overflow-hidden">
-            <div class="absolute inset-0 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 opacity-90"></div>
-            <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.05\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
-            
-            <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div class="text-center animate-slide-up">
-                    <h1 class="text-5xl md:text-6xl font-bold text-white mb-4 tracking-tight">
-                        <i class="fas fa-car-side mr-3"></i>
-                        Milwaukee Vehicle Finder
-                    </h1>
-                    <p class="text-xl text-white/90 max-w-2xl mx-auto">
-                        Find your perfect car from thousands of listings across Milwaukee. 
-                        <span class="font-semibold">Fast. Smart. Local.</span>
-                    </p>
+<body>
+    <div class="container" x-data="vehicleSearch()">
+        <!-- Hero Section -->
+        <div class="hero">
+            <h1>🚗 Milwaukee Vehicle Finder</h1>
+            <p>Find your perfect car in Milwaukee - Real-time listings from Craigslist & more</p>
+        </div>
+
+        <!-- Search Panel -->
+        <div class="search-panel">
+            <form @submit.prevent="search()" class="form-grid">
+                <div class="form-group">
+                    <label for="make">Make</label>
+                    <select id="make" x-model="searchParams.make" class="form-control">
+                        <option value="">Any Make</option>
+                        <option value="Honda">Honda</option>
+                        <option value="Toyota">Toyota</option>
+                        <option value="Ford">Ford</option>
+                        <option value="Chevrolet">Chevrolet</option>
+                        <option value="Nissan">Nissan</option>
+                        <option value="Mazda">Mazda</option>
+                        <option value="Hyundai">Hyundai</option>
+                        <option value="Kia">Kia</option>
+                        <option value="Subaru">Subaru</option>
+                        <option value="Volkswagen">Volkswagen</option>
+                        <option value="BMW">BMW</option>
+                        <option value="Mercedes-Benz">Mercedes-Benz</option>
+                        <option value="Audi">Audi</option>
+                        <option value="Jeep">Jeep</option>
+                        <option value="GMC">GMC</option>
+                        <option value="Dodge">Dodge</option>
+                        <option value="Ram">Ram</option>
+                        <option value="Tesla">Tesla</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="model">Model</label>
+                    <input type="text" id="model" x-model="searchParams.model" class="form-control" placeholder="e.g., Civic, Camry">
+                </div>
+
+                <div class="form-group">
+                    <label for="min_year">Min Year</label>
+                    <select id="min_year" x-model="searchParams.min_year" class="form-control">
+                        <option value="">Any Year</option>
+                        <template x-for="year in years" :key="year">
+                            <option :value="year" x-text="year"></option>
+                        </template>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="max_year">Max Year</label>
+                    <select id="max_year" x-model="searchParams.max_year" class="form-control">
+                        <option value="">Any Year</option>
+                        <template x-for="year in years" :key="year">
+                            <option :value="year" x-text="year"></option>
+                        </template>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="max_price">Max Price</label>
+                    <select id="max_price" x-model="searchParams.max_price" class="form-control">
+                        <option value="5000">$5,000</option>
+                        <option value="10000">$10,000</option>
+                        <option value="15000">$15,000</option>
+                        <option value="20000">$20,000</option>
+                        <option value="25000">$25,000</option>
+                        <option value="30000">$30,000</option>
+                        <option value="40000">$40,000</option>
+                        <option value="50000">$50,000+</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="max_mileage">Max Mileage</label>
+                    <select id="max_mileage" x-model="searchParams.max_mileage" class="form-control">
+                        <option value="50000">50,000 mi</option>
+                        <option value="75000">75,000 mi</option>
+                        <option value="100000">100,000 mi</option>
+                        <option value="150000">150,000 mi</option>
+                        <option value="200000">200,000 mi</option>
+                        <option value="300000">300,000+ mi</option>
+                    </select>
+                </div>
+            </form>
+
+            <button 
+                type="button"
+                @click="search()" 
+                :disabled="loading" 
+                class="btn-search"
+            >
+                <span x-show="!loading">🔍 Search Vehicles</span>
+                <span x-show="loading">Searching...</span>
+            </button>
+        </div>
+
+        <!-- Loading State -->
+        <div x-show="loading" class="loading">
+            <div class="spinner"></div>
+            <div>Searching listings...</div>
+        </div>
+
+        <!-- Results Stats -->
+        <div x-show="!loading && results.length > 0" class="results-stats">
+            <div class="stat-item">
+                <div class="stat-label">Total Found</div>
+                <div class="stat-value" x-text="results.length"></div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Avg Price</div>
+                <div class="stat-value" x-text="'$' + avgPrice.toLocaleString()"></div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Best Deal</div>
+                <div class="stat-value" x-text="'$' + (results[0]?.price || 0).toLocaleString()"></div>
+            </div>
+        </div>
+
+        <!-- Vehicle Grid -->
+        <div x-show="!loading && results.length > 0" class="vehicle-grid">
+            <template x-for="vehicle in results" :key="vehicle.id">
+                <div class="vehicle-card" @click="openModal(vehicle)">
+                    <div class="vehicle-image">
+                        <span style="opacity: 0.3;">🚗</span>
+                        <div class="vehicle-badge" x-text="'$' + vehicle.price.toLocaleString()"></div>
+                    </div>
+                    <div class="vehicle-info">
+                        <div class="vehicle-title" x-text="vehicle.title"></div>
+                        <div class="vehicle-meta">
+                            <div class="meta-item" x-show="vehicle.year">
+                                <span>📅</span>
+                                <span x-text="vehicle.year"></span>
+                            </div>
+                            <div class="meta-item" x-show="vehicle.mileage">
+                                <span>🛣️</span>
+                                <span x-text="vehicle.mileage.toLocaleString() + ' mi'"></span>
+                            </div>
+                        </div>
+                        <span class="vehicle-source" x-text="vehicle.source"></span>
+                    </div>
+                </div>
+            </template>
+        </div>
+
+        <!-- No Results -->
+        <div x-show="!loading && searched && results.length === 0" class="no-results">
+            <div class="no-results-icon">🔍</div>
+            <div class="no-results-text">No vehicles found</div>
+            <div class="no-results-subtext">Try adjusting your search criteria</div>
+        </div>
+
+        <!-- Modal -->
+        <div x-show="selectedVehicle" 
+             @click.self="closeModal()" 
+             class="modal-overlay"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0">
+            <div class="modal-content">
+                <div class="modal-close" @click="closeModal()">✕</div>
+                
+                <div class="modal-image">
+                    <span style="opacity: 0.3; font-size: 6rem;">🚗</span>
                 </div>
                 
-                <!-- Search Panel - Glassmorphism -->
-                <div class="glass rounded-3xl shadow-2xl p-6 md:p-8 mt-10 max-w-5xl mx-auto animate-fade-in">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                        
-                        <!-- Make Input -->
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                <i class="fas fa-industry mr-1"></i> Make
-                            </label>
-                            <input 
-                                type="text" 
-                                x-model="filters.make"
-                                placeholder="e.g., Honda, Toyota"
-                                class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 transition-all outline-none"
-                            >
-                        </div>
-                        
-                        <!-- Model Input -->
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                <i class="fas fa-car mr-1"></i> Model
-                            </label>
-                            <input 
-                                type="text" 
-                                x-model="filters.model"
-                                placeholder="e.g., Civic, Camry"
-                                class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 transition-all outline-none"
-                            >
-                        </div>
-                        
-                        <!-- Max Price -->
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                <i class="fas fa-dollar-sign mr-1"></i> Max Price
-                            </label>
-                            <input 
-                                type="number" 
-                                x-model="filters.max_price"
-                                placeholder="e.g., 25000"
-                                class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 transition-all outline-none"
-                            >
-                        </div>
-                        
-                        <!-- Max Mileage -->
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                <i class="fas fa-tachometer-alt mr-1"></i> Max Mileage
-                            </label>
-                            <input 
-                                type="number" 
-                                x-model="filters.max_mileage"
-                                placeholder="e.g., 100000"
-                                class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 transition-all outline-none"
-                            >
-                        </div>
-                        
-                        <!-- Year Range -->
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                <i class="fas fa-calendar mr-1"></i> Min Year
-                            </label>
-                            <input 
-                                type="number" 
-                                x-model="filters.min_year"
-                                placeholder="e.g., 2018"
-                                class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 transition-all outline-none"
-                            >
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                <i class="fas fa-calendar-alt mr-1"></i> Max Year
-                            </label>
-                            <input 
-                                type="number" 
-                                x-model="filters.max_year"
-                                placeholder="e.g., 2024"
-                                class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 transition-all outline-none"
-                            >
-                        </div>
-                        
-                        <!-- Location -->
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                <i class="fas fa-map-marker-alt mr-1"></i> Location
-                            </label>
-                            <input 
-                                type="text" 
-                                x-model="filters.location"
-                                placeholder="Milwaukee"
-                                class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 transition-all outline-none"
-                            >
-                        </div>
-                        
-                        <!-- ZIP Code -->
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                <i class="fas fa-location-dot mr-1"></i> ZIP Code
-                            </label>
-                            <input 
-                                type="text" 
-                                x-model="filters.zip_code"
-                                placeholder="53202"
-                                class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 transition-all outline-none"
-                            >
-                        </div>
-                        
-                    </div>
+                <div class="modal-body">
+                    <h2 class="modal-title" x-text="selectedVehicle?.title"></h2>
+                    <div class="modal-price" x-text="'$' + (selectedVehicle?.price || 0).toLocaleString()"></div>
                     
-                    <!-- Source Platforms -->
-                    <div class="mb-6">
-                        <label class="block text-sm font-semibold text-gray-700 mb-3">
-                            <i class="fas fa-globe mr-1"></i> Search Platforms
-                        </label>
-                        <div class="flex flex-wrap gap-3">
-                            <template x-for="source in availableSources" :key="source">
-                                <button 
-                                    @click="toggleSource(source)"
-                                    :class="filters.sources.includes(source) ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'"
-                                    class="filter-chip px-5 py-2.5 rounded-full font-medium shadow-md border-2 border-gray-200"
-                                >
-                                    <i class="fas fa-check-circle mr-1" x-show="filters.sources.includes(source)"></i>
-                                    <span x-text="source"></span>
-                                </button>
-                            </template>
+                    <div class="modal-meta">
+                        <div class="modal-meta-item" x-show="selectedVehicle?.year">
+                            <div class="modal-meta-label">Year</div>
+                            <div class="modal-meta-value" x-text="selectedVehicle?.year"></div>
+                        </div>
+                        <div class="modal-meta-item" x-show="selectedVehicle?.mileage">
+                            <div class="modal-meta-label">Mileage</div>
+                            <div class="modal-meta-value" x-text="(selectedVehicle?.mileage || 0).toLocaleString() + ' mi'"></div>
+                        </div>
+                        <div class="modal-meta-item">
+                            <div class="modal-meta-label">Source</div>
+                            <div class="modal-meta-value" x-text="selectedVehicle?.source"></div>
+                        </div>
+                        <div class="modal-meta-item">
+                            <div class="modal-meta-label">Location</div>
+                            <div class="modal-meta-value" x-text="selectedVehicle?.location || 'Milwaukee'"></div>
                         </div>
                     </div>
                     
-                    <!-- Search Button -->
-                    <button 
-                        @click="searchVehicles()"
-                        :disabled="loading"
-                        class="btn-gradient w-full py-4 rounded-xl text-white font-bold text-lg shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                    >
-                        <template x-if="!loading">
-                            <span><i class="fas fa-search mr-2"></i> Search Vehicles</span>
-                        </template>
-                        <template x-if="loading">
-                            <span><i class="fas fa-spinner fa-spin mr-2"></i> Searching...</span>
-                        </template>
+                    <button class="btn-view-listing" @click="window.open(selectedVehicle?.url, '_blank')">
+                        View Full Listing →
                     </button>
                 </div>
             </div>
-        </header>
-        
-        <!-- Active Filters & Stats -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" x-show="results.length > 0" x-transition>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div class="bg-white rounded-2xl p-6 shadow-md text-center">
-                    <div class="text-3xl font-bold text-indigo-600" x-text="results.length"></div>
-                    <div class="text-sm text-gray-600 mt-1">Total Vehicles</div>
-                </div>
-                <div class="bg-white rounded-2xl p-6 shadow-md text-center">
-                    <div class="text-3xl font-bold text-green-600" x-text="'$' + avgPrice.toLocaleString()"></div>
-                    <div class="text-sm text-gray-600 mt-1">Avg Price</div>
-                </div>
-                <div class="bg-white rounded-2xl p-6 shadow-md text-center">
-                    <div class="text-3xl font-bold text-blue-600" x-text="avgMileage.toLocaleString()"></div>
-                    <div class="text-sm text-gray-600 mt-1">Avg Mileage</div>
-                </div>
-                <div class="bg-white rounded-2xl p-6 shadow-md text-center">
-                    <div class="text-3xl font-bold text-purple-600" x-text="searchTime"></div>
-                    <div class="text-sm text-gray-600 mt-1">Search Time</div>
-                </div>
-            </div>
-            
-            <!-- Sort Options -->
-            <div class="flex flex-wrap items-center gap-4 bg-white rounded-2xl p-4 shadow-md">
-                <span class="text-sm font-semibold text-gray-700">
-                    <i class="fas fa-sort mr-1"></i> Sort by:
-                </span>
-                <button 
-                    @click="sortBy('price_asc')"
-                    :class="sortOption === 'price_asc' ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-700'"
-                    class="px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-indigo-50"
-                >
-                    Price: Low to High
-                </button>
-                <button 
-                    @click="sortBy('price_desc')"
-                    :class="sortOption === 'price_desc' ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-700'"
-                    class="px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-indigo-50"
-                >
-                    Price: High to Low
-                </button>
-                <button 
-                    @click="sortBy('mileage_asc')"
-                    :class="sortOption === 'mileage_asc' ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-700'"
-                    class="px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-indigo-50"
-                >
-                    Mileage: Low to High
-                </button>
-                <button 
-                    @click="sortBy('year_desc')"
-                    :class="sortOption === 'year_desc' ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-700'"
-                    class="px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-indigo-50"
-                >
-                    Newest First
-                </button>
-            </div>
         </div>
-        
-        <!-- Results Grid -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <template x-for="vehicle in results" :key="vehicle.url">
-                    <div 
-                        @click="openDetailModal(vehicle)"
-                        class="vehicle-card bg-white rounded-2xl shadow-md overflow-hidden"
-                    >
-                        <!-- Image -->
-                        <div class="relative h-56 bg-gray-200 overflow-hidden">
-                            <template x-if="vehicle.image_url">
-                                <img 
-                                    :src="vehicle.image_url" 
-                                    :alt="vehicle.title"
-                                    class="w-full h-full object-cover"
-                                    @error="vehicle.image_url = null"
-                                >
-                            </template>
-                            <template x-if="!vehicle.image_url">
-                                <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
-                                    <i class="fas fa-car text-6xl text-gray-400"></i>
-                                </div>
-                            </template>
-                            
-                            <!-- Price Badge -->
-                            <div class="absolute top-4 right-4 price-badge text-white px-4 py-2 rounded-full font-bold text-lg shadow-lg">
-                                $<span x-text="vehicle.price.toLocaleString()"></span>
-                            </div>
-                            
-                            <!-- Source Badge -->
-                            <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-gray-700">
-                                <span x-text="vehicle.source"></span>
-                            </div>
-                        </div>
-                        
-                        <!-- Content -->
-                        <div class="p-5">
-                            <h3 class="font-bold text-xl text-gray-900 mb-2 line-clamp-2" x-text="vehicle.title"></h3>
-                            
-                            <div class="space-y-2 text-sm text-gray-600">
-                                <div class="flex items-center" x-show="vehicle.mileage">
-                                    <i class="fas fa-tachometer-alt w-5 text-indigo-500"></i>
-                                    <span x-text="vehicle.mileage.toLocaleString() + ' miles'"></span>
-                                </div>
-                                <div class="flex items-center" x-show="vehicle.location">
-                                    <i class="fas fa-map-marker-alt w-5 text-indigo-500"></i>
-                                    <span x-text="vehicle.location"></span>
-                                </div>
-                                <div class="flex items-center" x-show="vehicle.posted_date">
-                                    <i class="fas fa-clock w-5 text-indigo-500"></i>
-                                    <span>Posted: <span x-text="vehicle.posted_date"></span></span>
-                                </div>
-                            </div>
-                            
-                            <!-- Action Button -->
-                            <button class="mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl transition-all">
-                                <i class="fas fa-info-circle mr-2"></i> View Details
-                            </button>
-                        </div>
-                    </div>
-                </template>
-            </div>
-            
-            <!-- Empty State -->
-            <div x-show="!loading && results.length === 0" class="text-center py-16">
-                <i class="fas fa-search text-6xl text-gray-300 mb-4"></i>
-                <h3 class="text-2xl font-bold text-gray-700 mb-2">No results yet</h3>
-                <p class="text-gray-500">Try adjusting your search filters above</p>
-            </div>
-        </div>
-        
-        <!-- Detail Modal -->
-        <div 
-            x-show="detailModal.open"
-            x-transition:enter="transition ease-out duration-300"
-            x-transition:enter-start="opacity-0"
-            x-transition:enter-end="opacity-100"
-            x-transition:leave="transition ease-in duration-200"
-            x-transition:leave-start="opacity-100"
-            x-transition:leave-end="opacity-0"
-            class="fixed inset-0 z-50 overflow-y-auto modal-overlay"
-            @click.self="closeDetailModal()"
-        >
-            <div class="flex items-center justify-center min-h-screen px-4 py-8">
-                <div 
-                    x-show="detailModal.open"
-                    x-transition:enter="transition ease-out duration-300"
-                    x-transition:enter-start="opacity-0 scale-95"
-                    x-transition:enter-end="opacity-100 scale-100"
-                    x-transition:leave="transition ease-in duration-200"
-                    x-transition:leave-start="opacity-100 scale-100"
-                    x-transition:leave-end="opacity-0 scale-95"
-                    class="bg-white rounded-3xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto"
-                >
-                    <template x-if="detailModal.vehicle">
-                        <div>
-                            <!-- Header -->
-                            <div class="relative">
-                                <!-- Main Image -->
-                                <div class="relative h-96 bg-gray-200">
-                                    <template x-if="detailModal.vehicle.image_url">
-                                        <img 
-                                            :src="detailModal.currentImage || detailModal.vehicle.image_url"
-                                            :alt="detailModal.vehicle.title"
-                                            class="w-full h-full object-cover"
-                                        >
-                                    </template>
-                                    <template x-if="!detailModal.vehicle.image_url">
-                                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-300">
-                                            <i class="fas fa-car text-9xl text-gray-400"></i>
-                                        </div>
-                                    </template>
-                                    
-                                    <!-- Close Button -->
-                                    <button 
-                                        @click="closeDetailModal()"
-                                        class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-all"
-                                    >
-                                        <i class="fas fa-times text-xl text-gray-700"></i>
-                                    </button>
-                                    
-                                    <!-- Price Badge -->
-                                    <div class="absolute bottom-4 right-4 bg-gradient-to-r from-green-400 to-blue-500 text-white px-6 py-3 rounded-2xl font-bold text-3xl shadow-xl">
-                                        $<span x-text="detailModal.vehicle.price.toLocaleString()"></span>
-                                    </div>
-                                </div>
-                                
-                                <!-- Image Gallery Thumbnails -->
-                                <template x-if="detailModal.vehicle.images && detailModal.vehicle.images.length > 1">
-                                    <div class="absolute bottom-4 left-4 flex gap-2 overflow-x-auto max-w-md">
-                                        <template x-for="(img, idx) in detailModal.vehicle.images" :key="idx">
-                                            <img 
-                                                :src="img"
-                                                @click="detailModal.currentImage = img"
-                                                :class="detailModal.currentImage === img ? 'active' : ''"
-                                                class="gallery-thumb w-20 h-20 object-cover rounded-lg border-2 border-white shadow-lg"
-                                            >
-                                        </template>
-                                    </div>
-                                </template>
-                            </div>
-                            
-                            <!-- Content -->
-                            <div class="p-8">
-                                <!-- Title & Source -->
-                                <div class="flex items-start justify-between mb-6">
-                                    <div>
-                                        <h2 class="text-3xl font-bold text-gray-900 mb-2" x-text="detailModal.vehicle.title"></h2>
-                                        <div class="flex items-center gap-3">
-                                            <span class="inline-block bg-indigo-100 text-indigo-700 px-4 py-1 rounded-full text-sm font-semibold">
-                                                <i class="fas fa-globe mr-1"></i>
-                                                <span x-text="detailModal.vehicle.source"></span>
-                                            </span>
-                                            <span class="text-gray-500 text-sm" x-show="detailModal.vehicle.posted_date">
-                                                <i class="fas fa-clock mr-1"></i>
-                                                Posted: <span x-text="detailModal.vehicle.posted_date"></span>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Key Stats Grid -->
-                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                                    <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-4 text-center" x-show="detailModal.vehicle.year">
-                                        <div class="text-sm text-blue-600 font-semibold mb-1">Year</div>
-                                        <div class="text-2xl font-bold text-blue-900" x-text="detailModal.vehicle.year"></div>
-                                    </div>
-                                    <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-4 text-center" x-show="detailModal.vehicle.mileage">
-                                        <div class="text-sm text-purple-600 font-semibold mb-1">Mileage</div>
-                                        <div class="text-2xl font-bold text-purple-900" x-text="detailModal.vehicle.mileage.toLocaleString()"></div>
-                                    </div>
-                                    <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-4 text-center" x-show="detailModal.vehicle.make">
-                                        <div class="text-sm text-green-600 font-semibold mb-1">Make</div>
-                                        <div class="text-xl font-bold text-green-900" x-text="detailModal.vehicle.make"></div>
-                                    </div>
-                                    <div class="bg-gradient-to-br from-pink-50 to-pink-100 rounded-2xl p-4 text-center" x-show="detailModal.vehicle.model">
-                                        <div class="text-sm text-pink-600 font-semibold mb-1">Model</div>
-                                        <div class="text-xl font-bold text-pink-900" x-text="detailModal.vehicle.model"></div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Description -->
-                                <div class="mb-8" x-show="detailModal.vehicle.description">
-                                    <h3 class="text-xl font-bold text-gray-900 mb-3">
-                                        <i class="fas fa-file-alt mr-2 text-indigo-600"></i> Description
-                                    </h3>
-                                    <div class="prose max-w-none text-gray-700 leading-relaxed" x-html="detailModal.vehicle.description"></div>
-                                </div>
-                                
-                                <!-- Location -->
-                                <div class="mb-8" x-show="detailModal.vehicle.location">
-                                    <h3 class="text-xl font-bold text-gray-900 mb-3">
-                                        <i class="fas fa-map-marker-alt mr-2 text-indigo-600"></i> Location
-                                    </h3>
-                                    <p class="text-lg text-gray-700" x-text="detailModal.vehicle.location"></p>
-                                </div>
-                                
-                                <!-- Loading Indicator -->
-                                <div x-show="detailModal.loading" class="text-center py-8">
-                                    <i class="fas fa-spinner fa-spin text-4xl text-indigo-600 mb-3"></i>
-                                    <p class="text-gray-600">Loading full details...</p>
-                                </div>
-                                
-                                <!-- Action Buttons -->
-                                <div class="flex gap-4">
-                                    <a 
-                                        :href="detailModal.vehicle.url"
-                                        target="_blank"
-                                        class="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-4 px-6 rounded-xl text-center transition-all shadow-lg hover:shadow-xl"
-                                    >
-                                        <i class="fas fa-external-link-alt mr-2"></i>
-                                        View Original Listing
-                                    </a>
-                                    <button 
-                                        @click="closeDetailModal()"
-                                        class="px-8 py-4 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl transition-all"
-                                    >
-                                        Close
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </template>
-                </div>
-            </div>
-        </div>
-        
     </div>
-    
+
     <script>
-        function vehicleFinderApp() {
+        function vehicleSearch() {
             return {
-                filters: {
-                    make: '',
-                    model: '',
-                    max_price: '',
-                    max_mileage: '',
+                loading: false,
+                searched: false,
+                results: [],
+                selectedVehicle: null,
+                searchParams: {
+                    make: 'Honda',
+                    model: 'Civic',
                     min_year: '',
                     max_year: '',
-                    location: 'milwaukee',
-                    zip_code: '',
-                    sources: ['Craigslist', 'CarGurus', 'Cars.com', 'AutoTrader']
+                    max_price: 20000,
+                    max_mileage: 150000
                 },
-                availableSources: ['Craigslist', 'CarGurus', 'Cars.com', 'AutoTrader', 'Facebook'],
-                results: [],
-                loading: false,
-                sortOption: '',
-                avgPrice: 0,
-                avgMileage: 0,
-                searchTime: '0.0s',
-                detailModal: {
-                    open: false,
-                    vehicle: null,
-                    loading: false,
-                    currentImage: null
-                },
-                
+                years: [],
+
                 init() {
-                    console.log('Milwaukee Vehicle Finder initialized');
-                },
-                
-                toggleSource(source) {
-                    const index = this.filters.sources.indexOf(source);
-                    if (index > -1) {
-                        this.filters.sources.splice(index, 1);
-                    } else {
-                        this.filters.sources.push(source);
+                    // Generate year options (current year down to 1990)
+                    const currentYear = new Date().getFullYear();
+                    for (let year = currentYear; year >= 1990; year--) {
+                        this.years.push(year);
                     }
-                },
-                
-                async searchVehicles() {
-                    this.loading = true;
-                    const startTime = Date.now();
                     
+                    // Automatically search with default values on load
+                    this.search();
+                },
+
+                async search() {
+                    this.loading = true;
+                    this.searched = true;
+                    this.results = [];
+
                     try {
-                        const params = new URLSearchParams();
-                        
-                        Object.keys(this.filters).forEach(key => {
-                            if (this.filters[key] && key !== 'sources') {
-                                params.append(key, this.filters[key]);
-                            }
+                        const response = await fetch('/api/search', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                make: this.searchParams.make || undefined,
+                                model: this.searchParams.model || undefined,
+                                min_year: this.searchParams.min_year ? parseInt(this.searchParams.min_year) : undefined,
+                                max_year: this.searchParams.max_year ? parseInt(this.searchParams.max_year) : undefined,
+                                max_price: parseInt(this.searchParams.max_price),
+                                max_mileage: parseInt(this.searchParams.max_mileage),
+                                location: 'milwaukee'
+                            })
                         });
-                        
-                        if (this.filters.sources.length > 0) {
-                            params.append('sources', this.filters.sources.join(','));
-                        }
-                        
-                        const response = await fetch(`/api/search?${params.toString()}`);
+
                         const data = await response.json();
                         
-                        this.results = data.results || [];
-                        this.searchTime = ((Date.now() - startTime) / 1000).toFixed(2) + 's';
-                        
-                        // Calculate stats
-                        if (this.results.length > 0) {
-                            const totalPrice = this.results.reduce((sum, v) => sum + (v.price || 0), 0);
-                            const totalMileage = this.results.reduce((sum, v) => sum + (v.mileage || 0), 0);
-                            this.avgPrice = Math.round(totalPrice / this.results.length);
-                            this.avgMileage = Math.round(totalMileage / this.results.length);
+                        if (data.success && data.vehicles) {
+                            this.results = data.vehicles;
+                            console.log(`Found ${this.results.length} vehicles`);
+                        } else {
+                            console.error('Search failed:', data);
                         }
-                        
-                        // Scroll to results
-                        setTimeout(() => {
-                            window.scrollTo({ top: 600, behavior: 'smooth' });
-                        }, 100);
-                        
                     } catch (error) {
                         console.error('Search error:', error);
                         alert('Search failed. Please try again.');
@@ -709,60 +723,24 @@
                         this.loading = false;
                     }
                 },
-                
-                sortBy(option) {
-                    this.sortOption = option;
-                    
-                    switch(option) {
-                        case 'price_asc':
-                            this.results.sort((a, b) => (a.price || 999999) - (b.price || 999999));
-                            break;
-                        case 'price_desc':
-                            this.results.sort((a, b) => (b.price || 0) - (a.price || 0));
-                            break;
-                        case 'mileage_asc':
-                            this.results.sort((a, b) => (a.mileage || 999999) - (b.mileage || 999999));
-                            break;
-                        case 'year_desc':
-                            this.results.sort((a, b) => (b.year || 0) - (a.year || 0));
-                            break;
-                    }
+
+                get avgPrice() {
+                    if (this.results.length === 0) return 0;
+                    const sum = this.results.reduce((acc, v) => acc + (v.price || 0), 0);
+                    return Math.round(sum / this.results.length);
                 },
-                
-                async openDetailModal(vehicle) {
-                    this.detailModal.vehicle = vehicle;
-                    this.detailModal.open = true;
-                    this.detailModal.currentImage = vehicle.image_url;
-                    this.detailModal.loading = true;
-                    
-                    // Fetch full details from original listing
-                    try {
-                        const response = await fetch(`/api/details?url=${encodeURIComponent(vehicle.url)}`);
-                        const data = await response.json();
-                        
-                        if (data.success) {
-                            this.detailModal.vehicle = { ...vehicle, ...data.details };
-                            this.detailModal.currentImage = data.details.image_url || vehicle.image_url;
-                        }
-                    } catch (error) {
-                        console.error('Failed to load details:', error);
-                    } finally {
-                        this.detailModal.loading = false;
-                    }
-                    
-                    // Prevent body scroll
+
+                openModal(vehicle) {
+                    this.selectedVehicle = vehicle;
                     document.body.style.overflow = 'hidden';
                 },
-                
-                closeDetailModal() {
-                    this.detailModal.open = false;
-                    this.detailModal.vehicle = null;
-                    this.detailModal.currentImage = null;
+
+                closeModal() {
+                    this.selectedVehicle = null;
                     document.body.style.overflow = 'auto';
                 }
             }
         }
     </script>
-    
 </body>
 </html>
