@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "backend_api.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "enhanced_dashboard.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "backend_api.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "enhanced_dashboard.html"
+    }
+  ]
+}
