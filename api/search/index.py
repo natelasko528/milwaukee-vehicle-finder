@@ -67,6 +67,57 @@ def _year_ok(year, min_year, max_year):
 # Scrapers
 # ---------------------------------------------------------------------------
 
+async def _fetch_cl_listing_image(session, url, semaphore):
+    """Fetch a single Craigslist listing page and extract the first image URL."""
+    async with semaphore:
+        try:
+            async with session.get(url, headers=HEADERS, timeout=TIMEOUT) as resp:
+                if resp.status != 200:
+                    return None
+                html = await resp.text()
+                soup = BeautifulSoup(html, "html.parser")
+
+                # Method 1: gallery div with data-ids attribute
+                for el in soup.find_all(attrs={"data-ids": True}):
+                    data_ids = el.get("data-ids", "")
+                    if data_ids:
+                        first_id = data_ids.split(",")[0].strip()
+                        img_id = first_id.split(":")[-1].strip()
+                        if img_id:
+                            return f"https://images.craigslist.org/{img_id}_600x450.jpg"
+
+                # Method 2: swipe container images
+                swipe = soup.find("div", class_="swipe")
+                if swipe:
+                    img = swipe.find("img")
+                    if img:
+                        src = img.get("src")
+                        if src:
+                            return src
+
+                # Method 3: gallery images
+                gallery = soup.find("div", class_="gallery")
+                if gallery:
+                    img = gallery.find("img")
+                    if img:
+                        src = img.get("src")
+                        if src:
+                            return re.sub(r'_\d+x\d+', '_600x450', src)
+
+                # Method 4: thumbs
+                thumbs = soup.find("div", id="thumbs")
+                if thumbs:
+                    link = thumbs.find("a")
+                    if link:
+                        href = link.get("href")
+                        if href:
+                            return href
+
+                return None
+        except Exception:
+            return None
+
+
 async def scrape_craigslist(session, location, make, model, max_price, max_mileage, min_year, max_year):
     results = []
     query = f"{make} {model}".strip()
@@ -109,31 +160,6 @@ async def scrape_craigslist(session, location, make, model, max_price, max_milea
                     if not _year_ok(year, min_year, max_year):
                         continue
 
-                    # Extract thumbnail image from multiple sources
-                    image_url = None
-
-                    # Method 1: data-ids on gallery div (most common)
-                    gallery_el = li.find("div", class_="gallery") or li.find("a", class_="gallery")
-                    if not gallery_el:
-                        gallery_el = link_el  # the <a> itself may have data-ids
-                    data_ids = None
-                    if gallery_el:
-                        data_ids = gallery_el.get("data-ids")
-                    if data_ids:
-                        first_id = data_ids.split(",")[0].strip()
-                        # IDs are in format "3:XXXXX" or just "XXXXX"
-                        img_id = first_id.split(":")[-1].strip()
-                        if img_id:
-                            image_url = f"https://images.craigslist.org/{img_id}_600x450.jpg"
-
-                    # Method 2: direct img tag
-                    if not image_url:
-                        img_el = li.find("img")
-                        if img_el:
-                            image_url = img_el.get("src") or img_el.get("data-src")
-                            if image_url and "_300x300" in image_url:
-                                image_url = image_url.replace("_300x300", "_600x450")
-
                     results.append({
                         "id": _make_id("cl", url),
                         "title": title,
@@ -143,11 +169,24 @@ async def scrape_craigslist(session, location, make, model, max_price, max_milea
                         "location": location,
                         "mileage": mileage,
                         "year": year,
-                        "image_url": image_url,
+                        "image_url": None,
                         "scraped_at": datetime.now().isoformat(),
                     })
                 except Exception:
                     continue
+
+        # Fetch images from individual listing pages concurrently
+        if results:
+            semaphore = asyncio.Semaphore(5)
+            image_tasks = [
+                _fetch_cl_listing_image(session, r["url"], semaphore)
+                for r in results
+            ]
+            images = await asyncio.gather(*image_tasks, return_exceptions=True)
+            for i, img in enumerate(images):
+                if isinstance(img, str) and img:
+                    results[i]["image_url"] = img
+
     except Exception as e:
         print(f"[craigslist] error: {e}")
 
