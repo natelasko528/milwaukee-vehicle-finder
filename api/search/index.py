@@ -109,6 +109,21 @@ async def scrape_craigslist(session, location, make, model, max_price, max_milea
                     if not _year_ok(year, min_year, max_year):
                         continue
 
+                    # Extract thumbnail image
+                    image_url = None
+                    img_el = li.find("img")
+                    if img_el:
+                        image_url = img_el.get("src") or img_el.get("data-src")
+                    if not image_url:
+                        gallery_el = li.find("div", class_="gallery")
+                        if gallery_el:
+                            img_el = gallery_el.find("img")
+                            if img_el:
+                                image_url = img_el.get("src") or img_el.get("data-src")
+                    # Convert CL thumbnail to larger size
+                    if image_url and "_300x300" in image_url:
+                        image_url = image_url.replace("_300x300", "_600x450")
+
                     results.append({
                         "id": _make_id("cl", url),
                         "title": title,
@@ -118,7 +133,7 @@ async def scrape_craigslist(session, location, make, model, max_price, max_milea
                         "location": location,
                         "mileage": mileage,
                         "year": year,
-                        "image_url": None,
+                        "image_url": image_url,
                         "scraped_at": datetime.now().isoformat(),
                     })
                 except Exception:
