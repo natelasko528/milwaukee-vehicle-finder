@@ -109,20 +109,30 @@ async def scrape_craigslist(session, location, make, model, max_price, max_milea
                     if not _year_ok(year, min_year, max_year):
                         continue
 
-                    # Extract thumbnail image
+                    # Extract thumbnail image from multiple sources
                     image_url = None
-                    img_el = li.find("img")
-                    if img_el:
-                        image_url = img_el.get("src") or img_el.get("data-src")
+
+                    # Method 1: data-ids on gallery div (most common)
+                    gallery_el = li.find("div", class_="gallery") or li.find("a", class_="gallery")
+                    if not gallery_el:
+                        gallery_el = link_el  # the <a> itself may have data-ids
+                    data_ids = None
+                    if gallery_el:
+                        data_ids = gallery_el.get("data-ids")
+                    if data_ids:
+                        first_id = data_ids.split(",")[0].strip()
+                        # IDs are in format "3:XXXXX" or just "XXXXX"
+                        img_id = first_id.split(":")[-1].strip()
+                        if img_id:
+                            image_url = f"https://images.craigslist.org/{img_id}_600x450.jpg"
+
+                    # Method 2: direct img tag
                     if not image_url:
-                        gallery_el = li.find("div", class_="gallery")
-                        if gallery_el:
-                            img_el = gallery_el.find("img")
-                            if img_el:
-                                image_url = img_el.get("src") or img_el.get("data-src")
-                    # Convert CL thumbnail to larger size
-                    if image_url and "_300x300" in image_url:
-                        image_url = image_url.replace("_300x300", "_600x450")
+                        img_el = li.find("img")
+                        if img_el:
+                            image_url = img_el.get("src") or img_el.get("data-src")
+                            if image_url and "_300x300" in image_url:
+                                image_url = image_url.replace("_300x300", "_600x450")
 
                     results.append({
                         "id": _make_id("cl", url),

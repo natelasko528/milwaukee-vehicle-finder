@@ -471,14 +471,14 @@
         .modal-desc {
             font-size: 0.8rem;
             color: var(--muted-foreground);
-            line-height: 1.7;
+            line-height: 1.8;
             margin-bottom: 1rem;
-            max-height: 160px;
-            overflow-y: auto;
             white-space: pre-line;
             border: 1px solid var(--border);
             padding: 0.75rem;
             background: var(--background);
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
         .btn-listing {
             display: block;
@@ -932,16 +932,68 @@
                 if (!text) return '';
                 // Escape HTML entities for safety
                 let s = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
                 // Break up run-on text at sentence boundaries
                 s = s.replace(/([.!?])(\s*)([A-Z])/g, '$1\n\n$3');
+
                 // Break before common keywords
-                s = s.replace(/(ADDRESS\s*:|LOCATION\s*:|CALL\s|CONTACT\s|TEXT\s|PHONE\s*:)/gi, '\n\n$1');
+                s = s.replace(/(ADDRESS\s*:|LOCATION\s*:|CALL\s|CONTACT\s|TEXT\s|PHONE\s*:|PRICE\s*:)/gi, '\n\n$1');
+
                 // Break before URLs
-                s = s.replace(/(https?:\/\/|www\.)/gi, '\n\n$1');
-                // Break long comma-separated feature lists into bullets
-                s = s.replace(/,\s*([A-Z]{2,})/g, '\n- $1');
+                s = s.replace(/(https?:\/\/|www\.)/gi, '\n$1');
+
+                // Break comma-separated ALL-CAPS feature lists
+                s = s.replace(/,\s*([A-Z]{2,})/g, '\n$1');
+
                 // Collapse excessive blank lines
                 s = s.replace(/\n{3,}/g, '\n\n');
+
+                // Add emojis for common vehicle terms
+                const emojiMap = [
+                    [/\b(AWD|4WD|ALL WHEEL DRIVE|ALL-WHEEL DRIVE)\b/gi, '🔄 $1'],
+                    [/\b(FWD|FRONT WHEEL DRIVE)\b/gi, '➡️ $1'],
+                    [/\b(RWD|REAR WHEEL DRIVE)\b/gi, '⬅️ $1'],
+                    [/\b(V6|V8|V4|I4|I6)\b/gi, '⚡ $1'],
+                    [/\b(LOW MILES|LOW MILEAGE)\b/gi, '✅ $1'],
+                    [/\b(CLEAN TITLE|CLEAR TITLE|CLEAN AND CLEAR TITLE)\b/gi, '📋✅ $1'],
+                    [/\b(LOADED)\b/gi, '🔥 $1'],
+                    [/\b(SUNROOF|MOONROOF)\b/gi, '☀️ $1'],
+                    [/\b(LEATHER)\b/gi, '💺 $1'],
+                    [/\b(HEATED SEATS)\b/gi, '🔥💺 $1'],
+                    [/\b(NAVIGATION|NAV)\b/gi, '🧭 $1'],
+                    [/\b(BLUETOOTH)\b/gi, '📶 $1'],
+                    [/\b(BACKUP CAMERA|REAR CAMERA|REARVIEW CAMERA)\b/gi, '📷 $1'],
+                    [/\b(CRUISE CONTROL)\b/gi, '🚗 $1'],
+                    [/\b(POWER WINDOWS)\b/gi, '🪟 $1'],
+                    [/\b(POWER DOOR LOCKS)\b/gi, '🔒 $1'],
+                    [/\b(FOG LIGHTS)\b/gi, '🔦 $1'],
+                    [/\b(PREMIUM SOUND|PREMIUM AUDIO|SOUND SYSTEM)\b/gi, '🔊 $1'],
+                    [/\b(CD RADIO|AM FM|RADIO)\b/gi, '📻 $1'],
+                    [/\b(AIR CONDITIONING|A\/C|AC)\b/gi, '❄️ $1'],
+                    [/\b(WARRANTY)\b/gi, '🛡️ $1'],
+                    [/\b(DUAL POWER SEATS|POWER SEATS)\b/gi, '🪑 $1'],
+                    [/\b(KEYLESS|KEY FOB|PUSH START)\b/gi, '🔑 $1'],
+                    [/\b(AUTOMATIC|AUTO TRANS)\b/gi, '🅰️ $1'],
+                    [/\b(MANUAL|STICK SHIFT|6 SPEED|5 SPEED)\b/gi, '🕹️ $1'],
+                    [/\b(TURBO|TURBOCHARGED)\b/gi, '💨 $1'],
+                    [/\b(HYBRID|ELECTRIC)\b/gi, '🔋 $1'],
+                    [/\b(MILES)\b/gi, '🛣️ $1'],
+                    [/\b(TOW|TOWING)\b/gi, '🪝 $1'],
+                ];
+
+                for (const [pattern, replacement] of emojiMap) {
+                    s = s.replace(pattern, replacement);
+                }
+
+                // Add phone emoji before phone numbers
+                s = s.replace(/(\d{3}[-.\s]?\d{3}[-.\s]?\d{4})/g, '📞 $1');
+
+                // Add link emoji before URLs
+                s = s.replace(/(https?:\/\/\S+|www\.\S+)/gi, '🔗 $1');
+
+                // Add address emoji
+                s = s.replace(/(ADDRESS\s*:)/gi, '📍 $1');
+
                 return s.trim();
             },
 
