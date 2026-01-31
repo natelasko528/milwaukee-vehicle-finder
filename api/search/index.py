@@ -1,8 +1,7 @@
 """
-Last updated: 1769856004
-"""
-Vercel Serverless Function - Multi-platform vehicle scraper
-Searches: Craigslist, CarGurus, Cars.com, AutoTrader
+Milwaukee Vehicle Finder - Search API
+Scrapes Craigslist, CarGurus, Cars.com, and AutoTrader concurrently.
+Deployed as a Vercel serverless function.
 """
 
 from http.server import BaseHTTPRequestHandler
@@ -11,363 +10,426 @@ import asyncio
 import aiohttp
 from bs4 import BeautifulSoup
 from datetime import datetime
+from urllib.parse import quote_plus
 import re
-from urllib.parse import quote
+import hashlib
 
-# Alphabetized makes and models
-VEHICLE_DATA = {
-    "Acura": ["ILX", "Integra", "MDX", "RDX", "TLX"],
-    "BMW": ["2 Series", "3 Series", "4 Series", "5 Series", "7 Series", "X1", "X3", "X5", "X7"],
-    "Chevrolet": ["Blazer", "Camaro", "Colorado", "Corvette", "Cruze", "Equinox", "Impala", "Malibu", "Silverado", "Suburban", "Tahoe", "Traverse"],
-    "Dodge": ["Challenger", "Charger", "Durango", "Grand Caravan", "Journey", "Ram 1500"],
-    "Ford": ["Bronco", "Edge", "Escape", "Expedition", "Explorer", "F-150", "Fusion", "Mustang", "Ranger"],
-    "GMC": ["Acadia", "Canyon", "Sierra", "Terrain", "Yukon"],
-    "Honda": ["Accord", "Civic", "CR-V", "Fit", "HR-V", "Insight", "Odyssey", "Passport", "Pilot", "Ridgeline"],
-    "Hyundai": ["Accent", "Elantra", "Kona", "Palisade", "Santa Fe", "Sonata", "Tucson", "Veloster"],
-    "Jeep": ["Cherokee", "Compass", "Gladiator", "Grand Cherokee", "Renegade", "Wrangler"],
-    "Kia": ["Forte", "K5", "Optima", "Rio", "Seltos", "Sorento", "Soul", "Sportage", "Stinger", "Telluride"],
-    "Lexus": ["ES", "GX", "IS", "LS", "LX", "NX", "RC", "RX", "UX"],
-    "Mazda": ["CX-3", "CX-30", "CX-5", "CX-9", "Mazda3", "Mazda6", "MX-5 Miata"],
-    "Mercedes-Benz": ["A-Class", "C-Class", "CLA", "E-Class", "G-Class", "GLA", "GLB", "GLC", "GLE", "GLS", "S-Class"],
-    "Nissan": ["Altima", "Armada", "Frontier", "Kicks", "Maxima", "Murano", "Pathfinder", "Rogue", "Sentra", "Titan", "Versa"],
-    "Ram": ["1500", "2500", "3500", "ProMaster"],
-    "Subaru": ["Ascent", "BRZ", "Crosstrek", "Forester", "Impreza", "Legacy", "Outback", "WRX"],
-    "Tesla": ["Model 3", "Model S", "Model X", "Model Y"],
-    "Toyota": ["4Runner", "Avalon", "Camry", "Corolla", "Highlander", "Prius", "RAV4", "Sequoia", "Sienna", "Tacoma", "Tundra"],
-    "Volkswagen": ["Atlas", "Golf", "ID.4", "Jetta", "Passat", "Tiguan"]
-}
 
-async def scrape_craigslist(location, make, model, max_price, max_mileage):
-    """Scrape Craigslist for vehicles"""
+USER_AGENT = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/120.0.0.0 Safari/537.36"
+)
+HEADERS = {"User-Agent": USER_AGENT}
+TIMEOUT = aiohttp.ClientTimeout(total=12)
+
+
+def _extract_price(text):
+    if not text:
+        return 0
+    m = re.search(r"\$?\s?([\d,]+)", text)
+    return int(m.group(1).replace(",", "")) if m else 0
+
+
+def _extract_mileage(text):
+    if not text:
+        return None
+    m = re.search(r"([\d,]+)\s*(?:mi|miles|k\b)", text, re.IGNORECASE)
+    if m:
+        val = int(m.group(1).replace(",", ""))
+        return val if val < 900000 else None
+    return None
+
+
+def _extract_year(text):
+    if not text:
+        return None
+    m = re.search(r"\b(19[89]\d|20[0-2]\d)\b", text)
+    return int(m.group(0)) if m else None
+
+
+def _make_id(source, url):
+    h = hashlib.md5(url.encode()).hexdigest()[:10]
+    return f"{source}_{h}"
+
+
+def _year_ok(year, min_year, max_year):
+    if year is None:
+        return True
+    if min_year and year < min_year:
+        return False
+    if max_year and year > max_year:
+        return False
+    return True
+
+
+# ---------------------------------------------------------------------------
+# Scrapers
+# ---------------------------------------------------------------------------
+
+async def scrape_craigslist(session, location, make, model, max_price, max_mileage, min_year, max_year):
     results = []
+    query = f"{make} {model}".strip()
     base_url = f"https://{location}.craigslist.org/search/cta"
-    
     params = {
-        'query': f"{make} {model}",
-        'max_price': max_price,
-        'auto_miles': f'1-{max_mileage}',
-        'sort': 'date'
+        "query": query,
+        "max_price": max_price,
+        "max_auto_miles": max_mileage,
+        "auto_title_status": 1,
     }
-    
+    if min_year:
+        params["min_auto_year"] = min_year
+    if max_year:
+        params["max_auto_year"] = max_year
+
     try:
-        async with aiohttp.ClientSession() as session:
-            url = f"{base_url}?{'&'.join([f'{k}={v}' for k,v in params.items()])}"
-            async with session.get(url, timeout=aiohttp.ClientTimeout(total=10)) as response:
-                if response.status == 200:
-                    html = await response.text()
-                    soup = BeautifulSoup(html, 'html.parser')
-                    listings = soup.find_all('li', class_='cl-static-search-result')
-                    
-                    for listing in listings[:20]:
-                        try:
-                            title_elem = listing.find('div', class_='title')
-                            price_elem = listing.find('div', class_='price')
-                            link_elem = listing.find('a')
-                            
-                            if title_elem and price_elem and link_elem:
-                                title = title_elem.text.strip()
-                                price_text = price_elem.text.strip()
-                                price = int(re.sub(r'[^\d]', '', price_text)) if price_text else 0
-                                url = link_elem['href'] if link_elem.get('href', '').startswith('http') else f"https://{location}.craigslist.org{link_elem['href']}"
-                                
-                                results.append({
-                                    'title': title,
-                                    'price': price,
-                                    'mileage': 'N/A',
-                                    'url': url,
-                                    'source': 'Craigslist',
-                                    'location': location.title()
-                                })
-                        except Exception as e:
-                            continue
+        async with session.get(base_url, params=params, headers=HEADERS, timeout=TIMEOUT) as resp:
+            if resp.status != 200:
+                return results
+            html = await resp.text()
+            soup = BeautifulSoup(html, "html.parser")
+
+            for li in soup.find_all("li", class_="cl-static-search-result")[:20]:
+                try:
+                    title_el = li.find("div", class_="title")
+                    price_el = li.find("div", class_="price")
+                    link_el = li.find("a")
+                    if not (title_el and link_el):
+                        continue
+
+                    url = link_el.get("href", "")
+                    if not url.startswith("http"):
+                        url = f"https://{location}.craigslist.org{url}"
+
+                    title = title_el.text.strip()
+                    price = _extract_price(price_el.text if price_el else "")
+                    mileage = _extract_mileage(title)
+                    year = _extract_year(title)
+
+                    if not _year_ok(year, min_year, max_year):
+                        continue
+
+                    results.append({
+                        "id": _make_id("cl", url),
+                        "title": title,
+                        "price": price,
+                        "url": url,
+                        "source": "Craigslist",
+                        "location": location,
+                        "mileage": mileage,
+                        "year": year,
+                        "image_url": None,
+                        "scraped_at": datetime.now().isoformat(),
+                    })
+                except Exception:
+                    continue
     except Exception as e:
-        print(f"Craigslist error: {e}")
-    
+        print(f"[craigslist] error: {e}")
+
     return results
 
-async def scrape_cargurus(location, make, model, max_price, max_mileage):
-    """Scrape CarGurus for vehicles"""
+
+async def scrape_cargurus(session, make, model, max_price, max_mileage, min_year, max_year, zip_code):
     results = []
-    
-    # Map location to zip code (Milwaukee area)
-    location_map = {
-        'milwaukee': '53202',
-        'madison': '53703',
-        'chicago': '60601'
-    }
-    zip_code = location_map.get(location.lower(), '53202')
-    
-    base_url = "https://www.cargurus.com/Cars/inventorylisting/viewDetailsFilterViewInventoryListing.action"
-    
+    search_term = f"{make}-{model}".replace(" ", "-")
+    url = f"https://www.cargurus.com/Cars/l-Used-{search_term}-t{zip_code}"
     params = {
-        'zip': zip_code,
-        'maxPrice': max_price,
-        'maxMileage': max_mileage,
-        'distance': 50,
-        'entitySelectingHelper.selectedEntity': f"{make}_{model}".replace(' ', '_')
+        "maxPrice": max_price,
+        "maxMileage": max_mileage,
+        "searchRadius": 50,
     }
-    
+    if min_year:
+        params["minYear"] = min_year
+    if max_year:
+        params["maxYear"] = max_year
+
     try:
-        async with aiohttp.ClientSession() as session:
-            headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-            }
-            url = base_url + '?' + '&'.join([f'{k}={v}' for k, v in params.items()])
-            
-            async with session.get(url, headers=headers, timeout=aiohttp.ClientTimeout(total=10)) as response:
-                if response.status == 200:
-                    html = await response.text()
-                    soup = BeautifulSoup(html, 'html.parser')
-                    
-                    # CarGurus uses various class names, try multiple selectors
-                    listings = soup.find_all(['div', 'article'], class_=re.compile('listing|result|car-blade'))
-                    
-                    for listing in listings[:15]:
-                        try:
-                            title = listing.find(['h4', 'h3', 'a'], class_=re.compile('title|name'))
-                            price = listing.find(['span', 'div'], class_=re.compile('price'))
-                            mileage = listing.find(['span', 'div'], class_=re.compile('mileage'))
-                            link = listing.find('a', href=True)
-                            
-                            if title and price:
-                                price_val = int(re.sub(r'[^\d]', '', price.text)) if price.text else 0
-                                mileage_val = mileage.text.strip() if mileage else 'N/A'
-                                url = f"https://www.cargurus.com{link['href']}" if link and not link['href'].startswith('http') else (link['href'] if link else '#')
-                                
-                                results.append({
-                                    'title': title.text.strip(),
-                                    'price': price_val,
-                                    'mileage': mileage_val,
-                                    'url': url,
-                                    'source': 'CarGurus',
-                                    'location': location.title()
-                                })
-                        except Exception as e:
-                            continue
+        async with session.get(url, params=params, headers=HEADERS, timeout=TIMEOUT) as resp:
+            if resp.status != 200:
+                return results
+            html = await resp.text()
+            soup = BeautifulSoup(html, "html.parser")
+
+            for card in soup.select('[data-cg-ft="car-blade"]')[:15]:
+                try:
+                    title_el = card.find("h4") or card.find("a", class_=re.compile(r"title", re.I))
+                    price_el = card.find("span", class_=re.compile(r"price", re.I))
+                    link_el = card.find("a", href=True)
+                    img_el = card.find("img")
+
+                    if not (title_el and link_el):
+                        continue
+
+                    title = title_el.get_text(strip=True)
+                    href = link_el["href"]
+                    if not href.startswith("http"):
+                        href = f"https://www.cargurus.com{href}"
+
+                    price = _extract_price(price_el.get_text() if price_el else "")
+                    year = _extract_year(title)
+                    mileage = _extract_mileage(card.get_text())
+                    image_url = img_el.get("src") or img_el.get("data-src") if img_el else None
+
+                    if not _year_ok(year, min_year, max_year):
+                        continue
+
+                    results.append({
+                        "id": _make_id("cg", href),
+                        "title": title,
+                        "price": price,
+                        "url": href,
+                        "source": "CarGurus",
+                        "location": "Milwaukee",
+                        "mileage": mileage,
+                        "year": year,
+                        "image_url": image_url,
+                        "scraped_at": datetime.now().isoformat(),
+                    })
+                except Exception:
+                    continue
     except Exception as e:
-        print(f"CarGurus error: {e}")
-    
+        print(f"[cargurus] error: {e}")
+
     return results
 
-async def scrape_cars_com(location, make, model, max_price, max_mileage):
-    """Scrape Cars.com for vehicles"""
+
+async def scrape_cars_com(session, make, model, max_price, max_mileage, min_year, max_year, zip_code):
     results = []
-    
-    location_map = {
-        'milwaukee': '53202',
-        'madison': '53703',
-        'chicago': '60601'
-    }
-    zip_code = location_map.get(location.lower(), '53202')
-    
-    make_slug = make.lower().replace(' ', '-')
-    model_slug = model.lower().replace(' ', '-')
-    
-    base_url = f"https://www.cars.com/shopping/results/"
+    base_url = "https://www.cars.com/shopping/results/"
     params = {
-        'stock_type': 'used',
-        'makes[]': make.lower(),
-        'models[]': f"{make.lower()}-{model_slug}",
-        'maximum_distance': 50,
-        'zip': zip_code,
-        'price_max': max_price,
-        'maximum_miles': max_mileage
+        "makes[]": make.lower(),
+        "models[]": f"{make.lower()}-{model.lower().replace(' ', '_')}",
+        "maximum_distance": 50,
+        "zip": zip_code,
+        "price_max": max_price,
+        "maximum_mileage": max_mileage,
+        "stock_type": "used",
     }
-    
+    if min_year:
+        params["year_min"] = min_year
+    if max_year:
+        params["year_max"] = max_year
+
     try:
-        async with aiohttp.ClientSession() as session:
-            headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-            }
-            url = base_url + '?' + '&'.join([f'{k}={v}' for k, v in params.items()])
-            
-            async with session.get(url, headers=headers, timeout=aiohttp.ClientTimeout(total=10)) as response:
-                if response.status == 200:
-                    html = await response.text()
-                    soup = BeautifulSoup(html, 'html.parser')
-                    
-                    listings = soup.find_all('div', class_=re.compile('vehicle-card'))
-                    
-                    for listing in listings[:15]:
-                        try:
-                            title = listing.find(['h2', 'h3'], class_=re.compile('title'))
-                            price = listing.find('span', class_=re.compile('primary-price'))
-                            mileage = listing.find('div', class_=re.compile('mileage'))
-                            link = listing.find('a', href=True)
-                            
-                            if title and price:
-                                price_val = int(re.sub(r'[^\d]', '', price.text)) if price.text else 0
-                                mileage_val = mileage.text.strip() if mileage else 'N/A'
-                                url = f"https://www.cars.com{link['href']}" if link and not link['href'].startswith('http') else (link['href'] if link else '#')
-                                
-                                results.append({
-                                    'title': title.text.strip(),
-                                    'price': price_val,
-                                    'mileage': mileage_val,
-                                    'url': url,
-                                    'source': 'Cars.com',
-                                    'location': location.title()
-                                })
-                        except Exception as e:
-                            continue
+        async with session.get(base_url, params=params, headers=HEADERS, timeout=TIMEOUT) as resp:
+            if resp.status != 200:
+                return results
+            html = await resp.text()
+            soup = BeautifulSoup(html, "html.parser")
+
+            for card in soup.find_all("div", class_="vehicle-card")[:15]:
+                try:
+                    title_el = card.find("h2", class_="title") or card.find("h2")
+                    price_el = card.find("span", class_="primary-price")
+                    link_el = card.find("a", class_="vehicle-card-link") or card.find("a", href=True)
+                    img_el = card.find("img", class_="vehicle-image") or card.find("img")
+                    mileage_el = card.find("div", class_="mileage")
+
+                    if not (title_el and link_el):
+                        continue
+
+                    title = title_el.get_text(strip=True)
+                    href = link_el.get("href", "")
+                    if not href.startswith("http"):
+                        href = f"https://www.cars.com{href}"
+
+                    price = _extract_price(price_el.get_text() if price_el else "")
+                    year = _extract_year(title)
+                    mileage = _extract_mileage(mileage_el.get_text() if mileage_el else "")
+                    image_url = img_el.get("src") or img_el.get("data-src") if img_el else None
+
+                    if not _year_ok(year, min_year, max_year):
+                        continue
+
+                    results.append({
+                        "id": _make_id("cc", href),
+                        "title": title,
+                        "price": price,
+                        "url": href,
+                        "source": "Cars.com",
+                        "location": "Milwaukee",
+                        "mileage": mileage,
+                        "year": year,
+                        "image_url": image_url,
+                        "scraped_at": datetime.now().isoformat(),
+                    })
+                except Exception:
+                    continue
     except Exception as e:
-        print(f"Cars.com error: {e}")
-    
+        print(f"[cars.com] error: {e}")
+
     return results
 
-async def scrape_autotrader(location, make, model, max_price, max_mileage):
-    """Scrape AutoTrader for vehicles"""
+
+async def scrape_autotrader(session, make, model, max_price, max_mileage, min_year, max_year, zip_code):
     results = []
-    
-    location_map = {
-        'milwaukee': '53202',
-        'madison': '53703',
-        'chicago': '60601'
-    }
-    zip_code = location_map.get(location.lower(), '53202')
-    
     base_url = "https://www.autotrader.com/cars-for-sale/all-cars"
-    
     params = {
-        'zip': zip_code,
-        'searchRadius': 50,
-        'priceRange': f'0-{max_price}',
-        'maxMileage': max_mileage,
-        'makeCodeList': make.upper(),
-        'modelCodeList': model.upper().replace(' ', '')
+        "makeCodeList": make.upper(),
+        "modelCodeList": model.upper().replace(" ", ""),
+        "zip": zip_code,
+        "maxPrice": max_price,
+        "maxMileage": max_mileage,
+        "searchRadius": 50,
     }
-    
+    if min_year:
+        params["startYear"] = min_year
+    if max_year:
+        params["endYear"] = max_year
+
     try:
-        async with aiohttp.ClientSession() as session:
-            headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-            }
-            url = base_url + '?' + '&'.join([f'{k}={v}' for k, v in params.items()])
-            
-            async with session.get(url, headers=headers, timeout=aiohttp.ClientTimeout(total=10)) as response:
-                if response.status == 200:
-                    html = await response.text()
-                    soup = BeautifulSoup(html, 'html.parser')
-                    
-                    listings = soup.find_all('div', {'data-cmp': 'inventoryListing'})
-                    
-                    for listing in listings[:15]:
-                        try:
-                            title = listing.find('h2', class_=re.compile('heading'))
-                            price = listing.find('span', class_=re.compile('first-price'))
-                            mileage = listing.find('div', class_=re.compile('mileage'))
-                            link = listing.find('a', {'data-cmp': 'subheading'})
-                            
-                            if title and price:
-                                price_val = int(re.sub(r'[^\d]', '', price.text)) if price.text else 0
-                                mileage_val = mileage.text.strip() if mileage else 'N/A'
-                                url = f"https://www.autotrader.com{link['href']}" if link and link.get('href') and not link['href'].startswith('http') else (link['href'] if link and link.get('href') else '#')
-                                
-                                results.append({
-                                    'title': title.text.strip(),
-                                    'price': price_val,
-                                    'mileage': mileage_val,
-                                    'url': url,
-                                    'source': 'AutoTrader',
-                                    'location': location.title()
-                                })
-                        except Exception as e:
-                            continue
+        async with session.get(base_url, params=params, headers=HEADERS, timeout=TIMEOUT) as resp:
+            if resp.status != 200:
+                return results
+            html = await resp.text()
+            soup = BeautifulSoup(html, "html.parser")
+
+            for card in soup.find_all("div", attrs={"data-cmp": "inventoryListing"})[:15]:
+                try:
+                    title_el = card.find("h3") or card.find("h2")
+                    price_el = card.find("span", attrs={"data-cmp": "price"}) or card.find("div", class_=re.compile(r"price", re.I))
+                    link_el = card.find("a", attrs={"data-cmp": "listingTitle"}) or card.find("a", href=True)
+                    img_el = card.find("img")
+
+                    if not (title_el and link_el):
+                        continue
+
+                    title = title_el.get_text(strip=True)
+                    href = link_el.get("href", "")
+                    if not href.startswith("http"):
+                        href = f"https://www.autotrader.com{href}"
+
+                    price = _extract_price(price_el.get_text() if price_el else "")
+                    year = _extract_year(title)
+                    mileage = _extract_mileage(card.get_text())
+                    image_url = img_el.get("src") or img_el.get("data-src") if img_el else None
+
+                    if not _year_ok(year, min_year, max_year):
+                        continue
+
+                    results.append({
+                        "id": _make_id("at", href),
+                        "title": title,
+                        "price": price,
+                        "url": href,
+                        "source": "AutoTrader",
+                        "location": "Milwaukee",
+                        "mileage": mileage,
+                        "year": year,
+                        "image_url": image_url,
+                        "scraped_at": datetime.now().isoformat(),
+                    })
+                except Exception:
+                    continue
     except Exception as e:
-        print(f"AutoTrader error: {e}")
-    
+        print(f"[autotrader] error: {e}")
+
     return results
 
-async def search_all_platforms(location, make, model, max_price, max_mileage):
-    """Search all platforms in parallel"""
-    tasks = [
-        scrape_craigslist(location, make, model, max_price, max_mileage),
-        scrape_cargurus(location, make, model, max_price, max_mileage),
-        scrape_cars_com(location, make, model, max_price, max_mileage),
-        scrape_autotrader(location, make, model, max_price, max_mileage)
-    ]
-    
-    results = await asyncio.gather(*tasks, return_exceptions=True)
-    
-    # Flatten results
-    all_results = []
-    for result in results:
+
+async def search_all(params):
+    make = params.get("make", "").strip()
+    model = params.get("model", "").strip()
+    max_price = int(params.get("max_price", 30000))
+    max_mileage = int(params.get("max_mileage", 200000))
+    min_year = int(params["min_year"]) if params.get("min_year") else None
+    max_year = int(params["max_year"]) if params.get("max_year") else None
+    location = params.get("location", "milwaukee")
+    zip_code = params.get("zip_code", "53202")
+
+    async with aiohttp.ClientSession() as session:
+        tasks = [
+            scrape_craigslist(session, location, make, model, max_price, max_mileage, min_year, max_year),
+            scrape_cargurus(session, make, model, max_price, max_mileage, min_year, max_year, zip_code),
+            scrape_cars_com(session, make, model, max_price, max_mileage, min_year, max_year, zip_code),
+            scrape_autotrader(session, make, model, max_price, max_mileage, min_year, max_year, zip_code),
+        ]
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+
+    vehicles = []
+    sources_searched = []
+    source_names = ["Craigslist", "CarGurus", "Cars.com", "AutoTrader"]
+    for name, result in zip(source_names, results):
         if isinstance(result, list):
-            all_results.extend(result)
-    
-    # Sort by price
-    all_results.sort(key=lambda x: x.get('price', 999999))
-    
-    return all_results
+            vehicles.extend(result)
+            sources_searched.append({"name": name, "count": len(result)})
+        else:
+            sources_searched.append({"name": name, "count": 0, "error": str(result)})
+
+    # Filter out $0 price listings
+    vehicles = [v for v in vehicles if v.get("price", 0) > 0]
+
+    # Sort by price ascending
+    vehicles.sort(key=lambda v: v.get("price", 999999))
+
+    return vehicles, sources_searched
+
+
+# ---------------------------------------------------------------------------
+# HTTP handler
+# ---------------------------------------------------------------------------
 
 class handler(BaseHTTPRequestHandler):
+    def _cors_headers(self):
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+
+    def _json_response(self, status, data):
+        self.send_response(status)
+        self.send_header("Content-Type", "application/json")
+        self._cors_headers()
+        self.end_headers()
+        self.wfile.write(json.dumps(data).encode())
+
+    def do_OPTIONS(self):
+        self.send_response(200)
+        self._cors_headers()
+        self.end_headers()
+
+    def do_GET(self):
+        self._json_response(200, {
+            "success": True,
+            "message": "Milwaukee Vehicle Finder API v4.0",
+            "status": "operational",
+            "endpoints": {
+                "POST /api/search": "Search vehicles across multiple platforms",
+                "GET /api/details?url=": "Get details for a specific listing",
+            },
+        })
+
     def do_POST(self):
         try:
-            content_length = int(self.headers['Content-Length'])
-            post_data = self.rfile.read(content_length)
-            data = json.loads(post_data.decode('utf-8'))
-            
-            make = data.get('make', 'Honda')
-            model = data.get('model', 'Civic')
-            max_price = int(data.get('max_price', 15000))
-            max_mileage = int(data.get('max_mileage', 150000))
-            location = data.get('location', 'milwaukee')
-            
-            # Run async search
+            length = int(self.headers.get("Content-Length", 0))
+            body = self.rfile.read(length).decode("utf-8") if length > 0 else "{}"
+            data = json.loads(body)
+
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
-            results = loop.run_until_complete(
-                search_all_platforms(location, make, model, max_price, max_mileage)
-            )
+            vehicles, sources = loop.run_until_complete(search_all(data))
             loop.close()
-            
-            response_data = {
-                'success': True,
-                'count': len(results),
-                'results': results,
-                'search_params': {
-                    'make': make,
-                    'model': model,
-                    'max_price': max_price,
-                    'max_mileage': max_mileage,
-                    'location': location
+
+            total = len(vehicles)
+            avg_price = round(sum(v["price"] for v in vehicles) / total, 2) if total else 0
+            prices = [v["price"] for v in vehicles]
+
+            self._json_response(200, {
+                "success": True,
+                "count": total,
+                "vehicles": vehicles,
+                "sources": sources,
+                "stats": {
+                    "total_count": total,
+                    "avg_price": avg_price,
+                    "min_price": min(prices) if prices else 0,
+                    "max_price": max(prices) if prices else 0,
                 },
-                'platforms': ['Craigslist', 'CarGurus', 'Cars.com', 'AutoTrader']
-            }
-            
-            self.send_response(200)
-            self.send_header('Content-Type', 'application/json')
-            self.send_header('Access-Control-Allow-Origin', '*')
-            self.end_headers()
-            self.wfile.write(json.dumps(response_data).encode('utf-8'))
-            
+                "search_params": data,
+                "timestamp": datetime.now().isoformat(),
+            })
         except Exception as e:
-            error_response = {
-                'success': False,
-                'error': str(e),
-                'message': 'Search failed'
-            }
-            self.send_response(500)
-            self.send_header('Content-Type', 'application/json')
-            self.send_header('Access-Control-Allow-Origin', '*')
-            self.end_headers()
-            self.wfile.write(json.dumps(error_response).encode('utf-8'))
-    
-    def do_GET(self):
-        """Return available makes and models"""
-        try:
-            response_data = {
-                'success': True,
-                'vehicle_data': VEHICLE_DATA,
-                'platforms': ['Craigslist', 'CarGurus', 'Cars.com', 'AutoTrader']
-            }
-            
-            self.send_response(200)
-            self.send_header('Content-Type', 'application/json')
-            self.send_header('Access-Control-Allow-Origin', '*')
-            self.end_headers()
-            self.wfile.write(json.dumps(response_data).encode('utf-8'))
-            
-        except Exception as e:
-            self.send_response(500)
-            self.end_headers()
+            self._json_response(500, {
+                "success": False,
+                "error": str(e),
+                "timestamp": datetime.now().isoformat(),
+            })

@@ -3,975 +3,983 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Milwaukee Vehicle Finder - Find Your Perfect Car</title>
+    <title>Milwaukee Vehicle Finder</title>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
-            --primary: #2563eb;
-            --primary-dark: #1e40af;
-            --secondary: #8b5cf6;
-            --success: #10b981;
-            --danger: #ef4444;
-            --dark: #1e293b;
-            --light: #f8fafc;
-            --glass-bg: rgba(255, 255, 255, 0.1);
-            --glass-border: rgba(255, 255, 255, 0.2);
+            --accent: #4f46e5;
+            --accent-light: #6366f1;
+            --accent-bg: #eef2ff;
+            --green: #16a34a;
+            --red: #dc2626;
+            --orange: #ea580c;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --radius: 12px;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-800);
+            line-height: 1.5;
+        }
+
+        /* ---- Header ---- */
+        .header {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
             color: #fff;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        /* Hero Section */
-        .hero {
+            padding: 2rem 1.5rem;
             text-align: center;
-            margin-bottom: 3rem;
-            padding: 2rem 0;
         }
+        .header h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.25rem; }
+        .header p { opacity: 0.85; font-size: 0.95rem; }
 
-        .hero h1 {
-            font-size: 3rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
-            background: linear-gradient(to right, #fff, #e0e7ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
+        /* ---- Layout ---- */
+        .container { max-width: 1280px; margin: 0 auto; padding: 0 1rem; }
 
-        .hero p {
-            font-size: 1.25rem;
-            opacity: 0.9;
-        }
-
-        /* Glassmorphism Search Panel */
+        /* ---- Search Panel ---- */
         .search-panel {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 2rem;
-            margin-bottom: 3rem;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            background: #fff;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            margin: -1.5rem auto 1.5rem;
+            padding: 1.5rem;
+            position: relative;
+            z-index: 10;
         }
-
-        .form-grid {
+        .search-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.35rem;
+        }
+        .form-group select, .form-group input {
+            width: 100%;
+            padding: 0.55rem 0.75rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            color: var(--gray-800);
+            background: #fff;
+            transition: border-color 0.15s;
+        }
+        .form-group select:focus, .form-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(79,70,229,0.12);
+        }
+        .btn-search {
+            width: 100%;
+            padding: 0.7rem 1.5rem;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .btn-search:hover { background: var(--accent-light); }
+        .btn-search:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* ---- Source Indicators ---- */
+        .sources-bar {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        .source-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.3rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid var(--gray-200);
+            background: #fff;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.15s;
+        }
+        .source-chip.active { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); }
+        .source-chip .dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .dot-craigslist { background: #7c3aed; }
+        .dot-cargurus { background: #2563eb; }
+        .dot-carscom { background: #dc2626; }
+        .dot-autotrader { background: #ea580c; }
+
+        /* ---- Stats Row ---- */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+        .stat-card {
+            background: #fff;
+            border-radius: var(--radius);
+            padding: 1rem;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+        .stat-card .value { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+        .stat-card .label { font-size: 0.75rem; color: var(--gray-500); margin-top: 0.15rem; }
+
+        /* ---- Toolbar ---- */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        .toolbar .count { font-size: 0.875rem; color: var(--gray-500); }
+        .toolbar select {
+            padding: 0.4rem 0.75rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 8px;
+            font-size: 0.8rem;
+            background: #fff;
+            color: var(--gray-700);
         }
 
-        .form-group {
+        /* ---- Vehicle Grid ---- */
+        .vehicle-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .vehicle-card {
+            background: #fff;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: box-shadow 0.2s, transform 0.2s;
             display: flex;
             flex-direction: column;
         }
-
-        .form-group label {
-            font-size: 0.875rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            opacity: 0.9;
-        }
-
-        .form-control {
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            padding: 0.75rem 1rem;
-            color: #fff;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-control:focus {
-            outline: none;
-            background: rgba(255, 255, 255, 0.2);
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        .form-control option {
-            background: #1e293b;
-            color: #fff;
-        }
-
-        .form-control::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        /* Search Button */
-        .btn-search {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            padding: 1rem 2rem;
-            font-size: 1.125rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn-search:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .btn-search:active {
-            transform: translateY(0);
-        }
-
-        .btn-search:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* Loading Spinner */
-        .loading {
-            text-align: center;
-            padding: 4rem 2rem;
-        }
-
-        .spinner {
-            width: 60px;
-            height: 60px;
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top-color: #fff;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Results Stats */
-        .results-stats {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .stat-item {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 1.5rem;
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .stat-label {
-            font-size: 0.875rem;
-            opacity: 0.8;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-        }
-
-        /* Vehicle Grid */
-        .vehicle-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-        }
-
-        .vehicle-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
         .vehicle-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
-            border-color: var(--primary);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
         }
-
-        .vehicle-image {
-            height: 180px;
-            background: rgba(0, 0, 0, 0.2);
+        .card-image {
+            width: 100%;
+            height: 190px;
+            background: var(--gray-100);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 4rem;
+            overflow: hidden;
             position: relative;
         }
-
-        .vehicle-badge {
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .card-image .placeholder-icon {
+            color: var(--gray-300);
+            font-size: 3rem;
+        }
+        .card-source {
             position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: var(--success);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
+            top: 0.5rem;
+            left: 0.5rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.65rem;
             font-weight: 700;
-            font-size: 1.125rem;
+            text-transform: uppercase;
+            color: #fff;
         }
+        .badge-craigslist { background: #7c3aed; }
+        .badge-cargurus { background: #2563eb; }
+        .badge-carscom { background: #dc2626; }
+        .badge-autotrader { background: #ea580c; }
 
-        .vehicle-info {
-            padding: 1.5rem;
-        }
-
-        .vehicle-title {
-            font-size: 1.125rem;
+        .card-body { padding: 1rem; flex: 1; display: flex; flex-direction: column; }
+        .card-title {
+            font-size: 0.95rem;
             font-weight: 600;
-            margin-bottom: 0.75rem;
+            color: var(--gray-800);
+            margin-bottom: 0.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
-
-        .vehicle-meta {
+        .card-price { font-size: 1.35rem; font-weight: 700; color: var(--green); margin-bottom: 0.5rem; }
+        .card-meta {
             display: flex;
             gap: 1rem;
-            margin-bottom: 0.75rem;
-            font-size: 0.875rem;
-            opacity: 0.8;
+            font-size: 0.8rem;
+            color: var(--gray-500);
+            margin-top: auto;
         }
+        .card-meta span { display: flex; align-items: center; gap: 0.25rem; }
 
-        .meta-item {
+        /* ---- Loading ---- */
+        .loading-state { text-align: center; padding: 4rem 1rem; }
+        .loading-spinner {
+            width: 40px; height: 40px;
+            border: 3px solid var(--gray-200);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-state p { color: var(--gray-500); font-size: 0.9rem; }
+        .loading-sources {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .loading-source {
             display: flex;
             align-items: center;
-            gap: 0.25rem;
+            gap: 0.4rem;
+            font-size: 0.8rem;
+            color: var(--gray-400);
+        }
+        .loading-source .mini-spinner {
+            width: 14px; height: 14px;
+            border: 2px solid var(--gray-200);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
         }
 
-        .vehicle-source {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 0.25rem 0.75rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            text-transform: uppercase;
+        /* ---- Empty / Error ---- */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 1rem;
+            background: #fff;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
         }
+        .empty-state .icon { font-size: 3rem; margin-bottom: 0.75rem; opacity: 0.4; }
+        .empty-state h3 { font-size: 1.1rem; color: var(--gray-700); margin-bottom: 0.25rem; }
+        .empty-state p { font-size: 0.875rem; color: var(--gray-500); }
 
-        /* Modal */
-        .modal-overlay {
+        /* ---- Modal ---- */
+        .modal-backdrop {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0,0,0,0.6);
+            z-index: 100;
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
-            padding: 2rem;
+            padding: 1rem;
         }
-
-        .modal-content {
-            background: var(--glass-bg);
-            backdrop-filter: blur(40px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            max-width: 600px;
+        .modal {
+            background: #fff;
+            border-radius: var(--radius);
+            max-width: 560px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
             position: relative;
+            color: var(--gray-800);
         }
-
         .modal-close {
             position: absolute;
-            top: 1.5rem;
-            right: 1.5rem;
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
+            top: 0.75rem;
+            right: 0.75rem;
+            width: 32px;
+            height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            border: none;
             cursor: pointer;
-            font-size: 1.5rem;
-            transition: all 0.3s ease;
-            z-index: 10;
+            font-size: 1.1rem;
+            color: var(--gray-600);
+            z-index: 5;
+            box-shadow: var(--shadow);
         }
-
-        .modal-close:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: rotate(90deg);
-        }
-
         .modal-image {
-            height: 300px;
-            background: rgba(0, 0, 0, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-body {
-            padding: 2rem;
-        }
-
-        .modal-title {
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-
-        .modal-price {
-            font-size: 2rem;
-            font-weight: 800;
-            color: var(--success);
-            margin-bottom: 2rem;
-        }
-
-        .modal-meta {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .modal-meta-item {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 1rem;
-            border-radius: 12px;
-        }
-
-        .modal-meta-label {
-            font-size: 0.875rem;
-            opacity: 0.7;
-            margin-bottom: 0.5rem;
-        }
-
-        .modal-meta-value {
-            font-size: 1.125rem;
-            font-weight: 600;
-        }
-
-        .btn-view-listing {
             width: 100%;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            padding: 1rem 2rem;
-            font-size: 1.125rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .btn-view-listing:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        /* No Results */
-        .no-results {
-            text-align: center;
-            padding: 4rem 2rem;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-        }
-
-        .no-results-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-        }
-
-        .no-results-text {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .no-results-subtext {
-            opacity: 0.7;
-        }
-
-        /* Debug Console */
-        .debug-toggle {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
-            border-radius: 50%;
+            height: 280px;
+            background: var(--gray-100);
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        .modal-image img { width: 100%; height: 100%; object-fit: cover; }
+        .modal-image .placeholder-icon { color: var(--gray-300); font-size: 4rem; }
+        .modal-image .img-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px; height: 32px;
+            background: rgba(255,255,255,0.85);
+            border: none;
+            border-radius: 50%;
             cursor: pointer;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            font-size: 1.5rem;
-            z-index: 999;
-            transition: all 0.3s ease;
-        }
-
-        .debug-toggle:hover {
-            transform: scale(1.1);
-        }
-
-        .debug-panel {
-            position: fixed;
-            bottom: 100px;
-            right: 2rem;
-            width: 400px;
-            max-height: 600px;
-            background: rgba(30, 41, 59, 0.98);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            z-index: 998;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .debug-header {
-            padding: 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 1rem;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
+            box-shadow: var(--shadow);
         }
-
-        .debug-title {
-            font-weight: 700;
-            font-size: 1rem;
-        }
-
-        .debug-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .debug-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            padding: 0.5rem 0.75rem;
-            border-radius: 6px;
-            color: white;
-            cursor: pointer;
-            font-size: 0.875rem;
-            transition: all 0.2s ease;
-        }
-
-        .debug-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .debug-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 1rem;
-            font-family: 'Courier New', monospace;
-            font-size: 0.75rem;
-        }
-
-        .debug-log {
-            margin-bottom: 0.5rem;
-            padding: 0.5rem;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 6px;
-            border-left: 3px solid #10b981;
-        }
-
-        .debug-log.error {
-            border-left-color: #ef4444;
-        }
-
-        .debug-log.warning {
-            border-left-color: #f59e0b;
-        }
-
-        .debug-log-time {
-            color: #94a3b8;
+        .modal-image .img-nav.prev { left: 0.5rem; }
+        .modal-image .img-nav.next { right: 0.5rem; }
+        .modal-image .img-counter {
+            position: absolute;
+            bottom: 0.5rem;
+            right: 0.5rem;
+            background: rgba(0,0,0,0.6);
+            color: #fff;
             font-size: 0.7rem;
-            margin-bottom: 0.25rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+        }
+        .modal-body { padding: 1.5rem; }
+        .modal-body .source-tag {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+        .modal-body h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .modal-body .price { font-size: 1.75rem; font-weight: 800; color: var(--green); margin-bottom: 1rem; }
+        .modal-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+        .detail-item {
+            background: var(--gray-50);
+            padding: 0.75rem;
+            border-radius: 8px;
+        }
+        .detail-item .dl { font-size: 0.7rem; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.05em; }
+        .detail-item .dv { font-size: 0.95rem; font-weight: 600; margin-top: 0.15rem; }
+        .modal-desc {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            line-height: 1.6;
+            margin-bottom: 1.25rem;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+        .btn-listing {
+            display: block;
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: background 0.15s;
+        }
+        .btn-listing:hover { background: var(--accent-light); }
+
+        .detail-loading {
+            text-align: center;
+            padding: 0.75rem;
+            font-size: 0.8rem;
+            color: var(--gray-400);
         }
 
-        .debug-log-message {
-            color: #e2e8f0;
-            word-wrap: break-word;
+        /* ---- Footer ---- */
+        .footer {
+            text-align: center;
+            padding: 2rem 1rem;
+            font-size: 0.8rem;
+            color: var(--gray-400);
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2rem;
-            }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .vehicle-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .results-stats {
-                flex-direction: column;
-            }
-
-            .debug-panel {
-                width: calc(100% - 4rem);
-                right: 2rem;
-            }
+        /* ---- Responsive ---- */
+        @media (max-width: 640px) {
+            .header h1 { font-size: 1.35rem; }
+            .search-grid { grid-template-columns: 1fr 1fr; }
+            .vehicle-grid { grid-template-columns: 1fr; }
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+            .modal-details { grid-template-columns: 1fr; }
         }
     </style>
 </head>
-<body>
-    <div class="container" x-data="vehicleSearch()">
-        <!-- Hero Section -->
-        <div class="hero">
-            <h1>🚗 Milwaukee Vehicle Finder</h1>
-            <p>Find your perfect car in Milwaukee - Real-time listings from Craigslist & more</p>
-        </div>
+<body x-data="app()">
+
+    <!-- Header -->
+    <div class="header">
+        <h1>Milwaukee Vehicle Finder</h1>
+        <p>Search used cars across Craigslist, CarGurus, Cars.com & AutoTrader</p>
+    </div>
+
+    <div class="container">
 
         <!-- Search Panel -->
         <div class="search-panel">
-            <form @submit.prevent="search()" class="form-grid">
+            <div class="search-grid">
                 <div class="form-group">
-                    <label for="make">Make</label>
-                    <select id="make" x-model="searchParams.make" @change="onMakeChange()" class="form-control">
+                    <label>Make</label>
+                    <select x-model="params.make" @change="onMakeChange()">
                         <option value="">Any Make</option>
-                        <option value="Honda">Honda</option>
-                        <option value="Toyota">Toyota</option>
-                        <option value="Ford">Ford</option>
-                        <option value="Chevrolet">Chevrolet</option>
-                        <option value="Nissan">Nissan</option>
-                        <option value="Mazda">Mazda</option>
-                        <option value="Hyundai">Hyundai</option>
-                        <option value="Kia">Kia</option>
-                        <option value="Subaru">Subaru</option>
-                        <option value="Volkswagen">Volkswagen</option>
-                        <option value="BMW">BMW</option>
-                        <option value="Mercedes-Benz">Mercedes-Benz</option>
-                        <option value="Audi">Audi</option>
-                        <option value="Jeep">Jeep</option>
-                        <option value="GMC">GMC</option>
-                        <option value="Dodge">Dodge</option>
-                        <option value="Ram">Ram</option>
-                        <option value="Tesla">Tesla</option>
+                        <template x-for="m in makes" :key="m">
+                            <option :value="m" x-text="m"></option>
+                        </template>
                     </select>
                 </div>
-
                 <div class="form-group">
-                    <label for="model">Model</label>
-                    <select id="model" x-model="searchParams.model" class="form-control">
+                    <label>Model</label>
+                    <select x-model="params.model">
                         <option value="">Any Model</option>
-                        <template x-for="model in availableModels" :key="model">
-                            <option :value="model" x-text="model"></option>
+                        <template x-for="m in availableModels" :key="m">
+                            <option :value="m" x-text="m"></option>
                         </template>
                     </select>
                 </div>
-
                 <div class="form-group">
-                    <label for="min_year">Min Year</label>
-                    <select id="min_year" x-model="searchParams.min_year" class="form-control">
-                        <option value="">Any Year</option>
-                        <template x-for="year in years" :key="year">
-                            <option :value="year" x-text="year"></option>
+                    <label>Min Year</label>
+                    <select x-model="params.min_year">
+                        <option value="">Any</option>
+                        <template x-for="y in years" :key="'min'+y">
+                            <option :value="y" x-text="y"></option>
                         </template>
                     </select>
                 </div>
-
                 <div class="form-group">
-                    <label for="max_year">Max Year</label>
-                    <select id="max_year" x-model="searchParams.max_year" class="form-control">
-                        <option value="">Any Year</option>
-                        <template x-for="year in years" :key="year">
-                            <option :value="year" x-text="year"></option>
+                    <label>Max Year</label>
+                    <select x-model="params.max_year">
+                        <option value="">Any</option>
+                        <template x-for="y in years" :key="'max'+y">
+                            <option :value="y" x-text="y"></option>
                         </template>
                     </select>
                 </div>
-
                 <div class="form-group">
-                    <label for="max_price">Max Price</label>
-                    <select id="max_price" x-model="searchParams.max_price" class="form-control">
+                    <label>Max Price</label>
+                    <select x-model="params.max_price">
                         <option value="5000">$5,000</option>
                         <option value="10000">$10,000</option>
                         <option value="15000">$15,000</option>
-                        <option value="20000">$20,000</option>
+                        <option value="20000" selected>$20,000</option>
                         <option value="25000">$25,000</option>
                         <option value="30000">$30,000</option>
                         <option value="40000">$40,000</option>
                         <option value="50000">$50,000</option>
-                        <option value="100000">$100,000+</option>
+                        <option value="100000">$100,000</option>
                     </select>
                 </div>
-
                 <div class="form-group">
-                    <label for="max_mileage">Max Mileage</label>
-                    <select id="max_mileage" x-model="searchParams.max_mileage" class="form-control">
+                    <label>Max Mileage</label>
+                    <select x-model="params.max_mileage">
+                        <option value="25000">25,000 mi</option>
                         <option value="50000">50,000 mi</option>
                         <option value="75000">75,000 mi</option>
                         <option value="100000">100,000 mi</option>
-                        <option value="150000">150,000 mi</option>
+                        <option value="150000" selected>150,000 mi</option>
                         <option value="200000">200,000 mi</option>
                         <option value="999999">Any</option>
                     </select>
                 </div>
-            </form>
-
-            <button @click="search()" :disabled="loading" class="btn-search">
-                <span x-show="!loading">🔍 Search Vehicles</span>
+                <div class="form-group">
+                    <label>ZIP Code</label>
+                    <input type="text" x-model="params.zip_code" maxlength="5" placeholder="53202">
+                </div>
+            </div>
+            <button class="btn-search" @click="search()" :disabled="loading">
+                <span x-show="!loading">Search Vehicles</span>
                 <span x-show="loading">Searching...</span>
             </button>
         </div>
 
-        <!-- Loading State -->
-        <div x-show="loading" class="loading">
-            <div class="spinner"></div>
-            <p>Searching for vehicles...</p>
-        </div>
-
-        <!-- Results Stats -->
-        <div x-show="!loading && results.length > 0" class="results-stats">
-            <div class="stat-item">
-                <div class="stat-label">Total Found</div>
-                <div class="stat-value" x-text="results.length"></div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-label">Avg Price</div>
-                <div class="stat-value" x-text="'$' + avgPrice.toLocaleString()"></div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-label">Best Deal</div>
-                <div class="stat-value" x-text="'$' + (results[0]?.price || 0).toLocaleString()"></div>
+        <!-- Loading -->
+        <div x-show="loading" class="loading-state">
+            <div class="loading-spinner"></div>
+            <p>Searching multiple platforms...</p>
+            <div class="loading-sources">
+                <div class="loading-source"><div class="mini-spinner"></div> Craigslist</div>
+                <div class="loading-source"><div class="mini-spinner"></div> CarGurus</div>
+                <div class="loading-source"><div class="mini-spinner"></div> Cars.com</div>
+                <div class="loading-source"><div class="mini-spinner"></div> AutoTrader</div>
             </div>
         </div>
 
-        <!-- Vehicle Grid -->
-        <div x-show="!loading && results.length > 0" class="vehicle-grid">
-            <template x-for="vehicle in results" :key="vehicle.id">
-                <div class="vehicle-card" @click="openModal(vehicle)">
-                    <div class="vehicle-image">
-                        <span style="opacity: 0.3;">🚗</span>
-                        <div class="vehicle-badge" x-text="'$' + vehicle.price.toLocaleString()"></div>
+        <!-- Results -->
+        <div x-show="!loading && searched">
+
+            <!-- Stats -->
+            <div class="stats-row" x-show="allResults.length > 0">
+                <div class="stat-card">
+                    <div class="value" x-text="filtered.length"></div>
+                    <div class="label">Vehicles Found</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" x-text="'$' + avgPrice.toLocaleString()"></div>
+                    <div class="label">Avg Price</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" x-text="bestDeal ? ('$' + bestDeal.toLocaleString()) : '-'"></div>
+                    <div class="label">Lowest Price</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" x-text="sourcesWithResults + '/' + sourcesTotal"></div>
+                    <div class="label">Sources</div>
+                </div>
+            </div>
+
+            <!-- Source Chips + Sort -->
+            <div class="toolbar" x-show="allResults.length > 0">
+                <div class="sources-bar">
+                    <div class="source-chip" :class="{ active: activeSource === 'all' }" @click="activeSource = 'all'">
+                        All
+                        <span style="opacity:0.6" x-text="'(' + allResults.length + ')'"></span>
                     </div>
-                    <div class="vehicle-info">
-                        <div class="vehicle-title" x-text="vehicle.title"></div>
-                        <div class="vehicle-meta">
-                            <div class="meta-item" x-show="vehicle.year">
-                                <span>📅</span>
-                                <span x-text="vehicle.year"></span>
+                    <template x-for="s in sourceInfo" :key="s.name">
+                        <div class="source-chip"
+                             :class="{ active: activeSource === s.name }"
+                             @click="activeSource = s.name">
+                            <span class="dot" :class="'dot-' + s.key"></span>
+                            <span x-text="s.name"></span>
+                            <span style="opacity:0.6" x-text="'(' + s.count + ')'"></span>
+                        </div>
+                    </template>
+                </div>
+                <div>
+                    <select x-model="sortBy" @change="applySort()">
+                        <option value="price-asc">Price: Low to High</option>
+                        <option value="price-desc">Price: High to Low</option>
+                        <option value="mileage-asc">Mileage: Low to High</option>
+                        <option value="mileage-desc">Mileage: High to Low</option>
+                        <option value="year-desc">Year: Newest First</option>
+                        <option value="year-asc">Year: Oldest First</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Grid -->
+            <div class="vehicle-grid" x-show="filtered.length > 0">
+                <template x-for="v in filtered" :key="v.id">
+                    <div class="vehicle-card" @click="openModal(v)">
+                        <div class="card-image">
+                            <template x-if="v.image_url">
+                                <img :src="v.image_url" :alt="v.title" loading="lazy"
+                                     @error="$event.target.style.display='none'; $event.target.nextElementSibling.style.display='flex'">
+                            </template>
+                            <div class="placeholder-icon" :style="v.image_url ? 'display:none' : ''">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M7 17a2 2 0 1 0 4 0 2 2 0 0 0-4 0Zm10 0a2 2 0 1 0-4 0 2 2 0 0 0 4 0Z"/>
+                                    <path d="M5 17H3v-5l2-5h9l4 5h3v5h-2"/>
+                                    <path d="M5 12h14"/>
+                                </svg>
                             </div>
-                            <div class="meta-item" x-show="vehicle.mileage">
-                                <span>🛣️</span>
-                                <span x-text="vehicle.mileage.toLocaleString() + ' mi'"></span>
+                            <span class="card-source" :class="'badge-' + sourceKey(v.source)" x-text="v.source"></span>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-title" x-text="v.title"></div>
+                            <div class="card-price" x-text="'$' + v.price.toLocaleString()"></div>
+                            <div class="card-meta">
+                                <span x-show="v.year">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                    <span x-text="v.year"></span>
+                                </span>
+                                <span x-show="v.mileage">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                    <span x-text="v.mileage ? v.mileage.toLocaleString() + ' mi' : ''"></span>
+                                </span>
+                                <span x-show="v.location">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                                    <span x-text="v.location"></span>
+                                </span>
                             </div>
                         </div>
-                        <span class="vehicle-source" x-text="vehicle.source"></span>
-                    </div>
-                </div>
-            </template>
-        </div>
-
-        <!-- No Results -->
-        <div x-show="!loading && searched && results.length === 0" class="no-results">
-            <div class="no-results-icon">🔍</div>
-            <div class="no-results-text">No vehicles found</div>
-            <div class="no-results-subtext">Try adjusting your search criteria</div>
-        </div>
-
-        <!-- Modal -->
-        <div x-show="selectedVehicle" 
-             @click.self="closeModal()" 
-             class="modal-overlay"
-             x-transition:enter="transition ease-out duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="transition ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0">
-            <div class="modal-content">
-                <div class="modal-close" @click="closeModal()">✕</div>
-                
-                <div class="modal-image">
-                    <span style="opacity: 0.3; font-size: 6rem;">🚗</span>
-                </div>
-                
-                <div class="modal-body">
-                    <h2 class="modal-title" x-text="selectedVehicle?.title"></h2>
-                    <div class="modal-price" x-text="'$' + (selectedVehicle?.price || 0).toLocaleString()"></div>
-                    
-                    <div class="modal-meta">
-                        <div class="modal-meta-item" x-show="selectedVehicle?.year">
-                            <div class="modal-meta-label">Year</div>
-                            <div class="modal-meta-value" x-text="selectedVehicle?.year"></div>
-                        </div>
-                        <div class="modal-meta-item" x-show="selectedVehicle?.mileage">
-                            <div class="modal-meta-label">Mileage</div>
-                            <div class="modal-meta-value" x-text="(selectedVehicle?.mileage || 0).toLocaleString() + ' mi'"></div>
-                        </div>
-                        <div class="modal-meta-item">
-                            <div class="modal-meta-label">Source</div>
-                            <div class="modal-meta-value" x-text="selectedVehicle?.source"></div>
-                        </div>
-                        <div class="modal-meta-item">
-                            <div class="modal-meta-label">Location</div>
-                            <div class="modal-meta-value" x-text="selectedVehicle?.location || 'Milwaukee'"></div>
-                        </div>
-                    </div>
-                    
-                    <button class="btn-view-listing" @click="window.open(selectedVehicle?.url, '_blank')">
-                        View Full Listing →
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Debug Console Toggle -->
-        <div class="debug-toggle" @click="debugOpen = !debugOpen">
-            🐛
-        </div>
-
-        <!-- Debug Panel -->
-        <div x-show="debugOpen" class="debug-panel" x-transition>
-            <div class="debug-header">
-                <div class="debug-title">Debug Console</div>
-                <div class="debug-actions">
-                    <button class="debug-btn" @click="copyDebugLogs()">📋 Copy</button>
-                    <button class="debug-btn" @click="downloadDebugLogs()">⬇️ Download</button>
-                    <button class="debug-btn" @click="clearDebugLogs()">🗑️ Clear</button>
-                </div>
-            </div>
-            <div class="debug-content">
-                <template x-for="(log, index) in debugLogs" :key="index">
-                    <div class="debug-log" :class="log.type">
-                        <div class="debug-log-time" x-text="log.time"></div>
-                        <div class="debug-log-message" x-text="log.message"></div>
                     </div>
                 </template>
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" x-show="allResults.length === 0">
+                <div class="icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                </div>
+                <h3>No vehicles found</h3>
+                <p>Try broadening your search criteria - increase max price, mileage, or year range.</p>
+            </div>
+
+            <!-- Filtered to 0 -->
+            <div class="empty-state" x-show="allResults.length > 0 && filtered.length === 0">
+                <div class="icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+                    </svg>
+                </div>
+                <h3>No results for this filter</h3>
+                <p>Try selecting a different source.</p>
+            </div>
+
+            <!-- Error -->
+            <div class="empty-state" x-show="error" style="border-left: 3px solid var(--red);">
+                <h3 style="color: var(--red);">Search Error</h3>
+                <p x-text="error"></p>
             </div>
         </div>
     </div>
 
+    <div class="footer">Milwaukee Vehicle Finder &middot; Results scraped in real-time from public listings</div>
+
+    <!-- Modal -->
+    <template x-if="selected">
+        <div class="modal-backdrop" @click.self="closeModal()" @keydown.escape.window="closeModal()">
+            <div class="modal" @click.stop>
+                <button class="modal-close" @click="closeModal()">&times;</button>
+
+                <div class="modal-image">
+                    <template x-if="modalImages.length > 0">
+                        <img :src="modalImages[modalImgIdx]" :alt="selected.title"
+                             @error="$event.target.style.display='none'">
+                    </template>
+                    <div class="placeholder-icon" x-show="modalImages.length === 0">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M7 17a2 2 0 1 0 4 0 2 2 0 0 0-4 0Zm10 0a2 2 0 1 0-4 0 2 2 0 0 0 4 0Z"/>
+                            <path d="M5 17H3v-5l2-5h9l4 5h3v5h-2"/><path d="M5 12h14"/>
+                        </svg>
+                    </div>
+                    <template x-if="modalImages.length > 1">
+                        <button class="img-nav prev" @click="modalImgIdx = (modalImgIdx - 1 + modalImages.length) % modalImages.length">&lsaquo;</button>
+                    </template>
+                    <template x-if="modalImages.length > 1">
+                        <button class="img-nav next" @click="modalImgIdx = (modalImgIdx + 1) % modalImages.length">&rsaquo;</button>
+                    </template>
+                    <template x-if="modalImages.length > 1">
+                        <div class="img-counter" x-text="(modalImgIdx + 1) + ' / ' + modalImages.length"></div>
+                    </template>
+                </div>
+
+                <div class="modal-body">
+                    <span class="source-tag" :class="'badge-' + sourceKey(selected.source)" x-text="selected.source"></span>
+                    <h2 x-text="selected.title"></h2>
+                    <div class="price" x-text="'$' + selected.price.toLocaleString()"></div>
+
+                    <div class="modal-details">
+                        <div class="detail-item" x-show="selected.year">
+                            <div class="dl">Year</div>
+                            <div class="dv" x-text="selected.year"></div>
+                        </div>
+                        <div class="detail-item" x-show="selected.mileage">
+                            <div class="dl">Mileage</div>
+                            <div class="dv" x-text="selected.mileage ? selected.mileage.toLocaleString() + ' mi' : '-'"></div>
+                        </div>
+                        <div class="detail-item" x-show="selected.location">
+                            <div class="dl">Location</div>
+                            <div class="dv" x-text="selected.location"></div>
+                        </div>
+                        <div class="detail-item" x-show="selected.source">
+                            <div class="dl">Source</div>
+                            <div class="dv" x-text="selected.source"></div>
+                        </div>
+                        <!-- Extra details from /api/details -->
+                        <template x-for="(val, key) in extraDetails" :key="key">
+                            <div class="detail-item" x-show="val">
+                                <div class="dl" x-text="key"></div>
+                                <div class="dv" x-text="val"></div>
+                            </div>
+                        </template>
+                    </div>
+
+                    <div class="detail-loading" x-show="detailLoading">Loading additional details...</div>
+
+                    <div class="modal-desc" x-show="extraDetails.description" x-text="extraDetails.description"></div>
+
+                    <a class="btn-listing" :href="selected.url" target="_blank" rel="noopener">
+                        View Full Listing &rarr;
+                    </a>
+                </div>
+            </div>
+        </div>
+    </template>
+
     <script>
-        function vehicleSearch() {
-            return {
-                loading: false,
-                searched: false,
-                results: [],
-                selectedVehicle: null,
-                debugOpen: false,
-                debugLogs: [],
-                searchParams: {
-                    make: 'Honda',
-                    model: 'Civic',
-                    min_year: '',
-                    max_year: '',
-                    max_price: 20000,
-                    max_mileage: 150000
-                },
-                years: [],
-                availableModels: [],
-                
-                // Popular models by make
-                modelsByMake: {
-                    'Honda': ['Civic', 'Accord', 'CR-V', 'Pilot', 'Fit', 'Odyssey', 'HR-V', 'Ridgeline'],
-                    'Toyota': ['Camry', 'Corolla', 'RAV4', 'Highlander', 'Tacoma', 'Tundra', '4Runner', 'Prius', 'Sienna'],
-                    'Ford': ['F-150', 'Escape', 'Explorer', 'Edge', 'Mustang', 'Fusion', 'Focus', 'Ranger', 'Expedition'],
-                    'Chevrolet': ['Silverado', 'Equinox', 'Malibu', 'Tahoe', 'Traverse', 'Colorado', 'Camaro', 'Suburban'],
-                    'Nissan': ['Altima', 'Rogue', 'Sentra', 'Pathfinder', 'Frontier', 'Maxima', 'Murano', 'Versa'],
-                    'Mazda': ['CX-5', 'Mazda3', 'CX-9', 'Mazda6', 'CX-30', 'MX-5 Miata'],
-                    'Hyundai': ['Elantra', 'Sonata', 'Tucson', 'Santa Fe', 'Kona', 'Palisade', 'Accent'],
-                    'Kia': ['Forte', 'Optima', 'Sorento', 'Soul', 'Sportage', 'Telluride', 'Rio'],
-                    'Subaru': ['Outback', 'Forester', 'Crosstrek', 'Impreza', 'Legacy', 'Ascent', 'WRX'],
-                    'Volkswagen': ['Jetta', 'Tiguan', 'Passat', 'Golf', 'Atlas', 'Beetle'],
-                    'BMW': ['3 Series', '5 Series', 'X3', 'X5', '7 Series', 'X1', '4 Series'],
-                    'Mercedes-Benz': ['C-Class', 'E-Class', 'GLC', 'GLE', 'S-Class', 'A-Class'],
-                    'Audi': ['A4', 'Q5', 'A6', 'Q7', 'A3', 'Q3'],
-                    'Jeep': ['Wrangler', 'Grand Cherokee', 'Cherokee', 'Compass', 'Renegade', 'Gladiator'],
-                    'GMC': ['Sierra', 'Terrain', 'Acadia', 'Yukon', 'Canyon'],
-                    'Dodge': ['Charger', 'Challenger', 'Durango', 'Grand Caravan'],
-                    'Ram': ['1500', '2500', '3500', 'ProMaster'],
-                    'Tesla': ['Model 3', 'Model Y', 'Model S', 'Model X']
-                },
+    function app() {
+        return {
+            loading: false,
+            searched: false,
+            error: null,
+            allResults: [],
+            filtered: [],
+            activeSource: 'all',
+            sortBy: 'price-asc',
+            selected: null,
+            modalImages: [],
+            modalImgIdx: 0,
+            detailLoading: false,
+            extraDetails: {},
+            sourceInfo: [],
 
-                init() {
-                    this.log('info', 'Initializing Milwaukee Vehicle Finder');
-                    
-                    // Generate year options (current year down to 1990)
-                    const currentYear = new Date().getFullYear();
-                    for (let year = currentYear; year >= 1990; year--) {
-                        this.years.push(year);
-                    }
-                    this.log('info', `Generated ${this.years.length} year options`);
-                    
-                    // Set initial models for Honda
-                    this.onMakeChange();
-                    
-                    // Automatically search with default values on load
-                    this.log('info', 'Starting automatic search with defaults: Honda Civic, $20k max, 150k miles max');
-                    this.search();
-                },
+            params: {
+                make: '',
+                model: '',
+                min_year: '',
+                max_year: '',
+                max_price: '20000',
+                max_mileage: '150000',
+                zip_code: '53202',
+            },
 
-                onMakeChange() {
-                    const make = this.searchParams.make;
-                    this.log('info', `Make changed to: ${make || 'Any'}`);
-                    
-                    if (make && this.modelsByMake[make]) {
-                        this.availableModels = this.modelsByMake[make];
-                        this.log('info', `Loaded ${this.availableModels.length} models for ${make}`);
-                        
-                        // Reset model if current model is not available for new make
-                        if (this.searchParams.model && !this.availableModels.includes(this.searchParams.model)) {
-                            this.searchParams.model = '';
-                            this.log('info', 'Reset model selection (not available for this make)');
-                        }
-                    } else {
-                        this.availableModels = [];
-                        this.searchParams.model = '';
-                        this.log('info', 'Cleared model selection (Any Make selected)');
-                    }
-                },
+            years: [],
+            availableModels: [],
 
-                async search() {
-                    this.loading = true;
-                    this.searched = true;
-                    this.results = [];
-                    
-                    const searchData = {
-                        make: this.searchParams.make || undefined,
-                        model: this.searchParams.model || undefined,
-                        min_year: this.searchParams.min_year ? parseInt(this.searchParams.min_year) : undefined,
-                        max_year: this.searchParams.max_year ? parseInt(this.searchParams.max_year) : undefined,
-                        max_price: parseInt(this.searchParams.max_price),
-                        max_mileage: parseInt(this.searchParams.max_mileage),
-                        location: 'milwaukee'
-                    };
+            makes: [
+                'Acura','Audi','BMW','Buick','Cadillac','Chevrolet','Chrysler','Dodge',
+                'Ford','GMC','Honda','Hyundai','Infiniti','Jeep','Kia','Lexus',
+                'Lincoln','Mazda','Mercedes-Benz','Mitsubishi','Nissan','Ram','Subaru',
+                'Tesla','Toyota','Volkswagen','Volvo'
+            ],
 
-                    this.log('info', `Starting search with params: ${JSON.stringify(searchData)}`);
+            modelsByMake: {
+                'Acura': ['ILX','TLX','RDX','MDX','Integra'],
+                'Audi': ['A3','A4','A6','Q3','Q5','Q7','e-tron'],
+                'BMW': ['3 Series','5 Series','7 Series','X1','X3','X5','X7'],
+                'Buick': ['Encore','Envision','Enclave'],
+                'Cadillac': ['CT4','CT5','XT4','XT5','XT6','Escalade'],
+                'Chevrolet': ['Malibu','Camaro','Corvette','Equinox','Blazer','Traverse','Tahoe','Suburban','Silverado','Colorado'],
+                'Chrysler': ['300','Pacifica','Voyager'],
+                'Dodge': ['Charger','Challenger','Durango','Grand Caravan','Hornet'],
+                'Ford': ['Fusion','Mustang','Escape','Edge','Explorer','Expedition','F-150','Ranger','Bronco','Maverick'],
+                'GMC': ['Terrain','Acadia','Yukon','Sierra','Canyon'],
+                'Honda': ['Civic','Accord','HR-V','CR-V','Pilot','Passport','Ridgeline','Odyssey','Fit'],
+                'Hyundai': ['Accent','Elantra','Sonata','Kona','Tucson','Santa Fe','Palisade','Ioniq 5'],
+                'Infiniti': ['Q50','Q60','QX50','QX60','QX80'],
+                'Jeep': ['Renegade','Compass','Cherokee','Grand Cherokee','Wrangler','Gladiator'],
+                'Kia': ['Forte','K5','Stinger','Soul','Seltos','Sportage','Sorento','Telluride','EV6'],
+                'Lexus': ['IS','ES','NX','RX','GX','LX'],
+                'Lincoln': ['Corsair','Nautilus','Aviator','Navigator'],
+                'Mazda': ['Mazda3','Mazda6','CX-30','CX-5','CX-9','CX-50','MX-5 Miata'],
+                'Mercedes-Benz': ['A-Class','C-Class','E-Class','S-Class','GLA','GLC','GLE','GLS'],
+                'Mitsubishi': ['Mirage','Outlander','Eclipse Cross'],
+                'Nissan': ['Versa','Sentra','Altima','Maxima','Kicks','Rogue','Murano','Pathfinder','Frontier','Titan'],
+                'Ram': ['1500','2500','3500','ProMaster'],
+                'Subaru': ['Impreza','Legacy','WRX','Crosstrek','Forester','Outback','Ascent'],
+                'Tesla': ['Model 3','Model Y','Model S','Model X'],
+                'Toyota': ['Corolla','Camry','Avalon','GR86','Supra','C-HR','RAV4','Highlander','4Runner','Sequoia','Tacoma','Tundra','Prius','Sienna'],
+                'Volkswagen': ['Jetta','Passat','Golf','GTI','Tiguan','Atlas','ID.4','Taos'],
+                'Volvo': ['S60','S90','XC40','XC60','XC90'],
+            },
 
-                    try {
-                        this.log('info', 'Sending POST request to /api/search');
-                        
-                        const response = await fetch('/api/search', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(searchData)
-                        });
+            init() {
+                const cur = new Date().getFullYear() + 1;
+                for (let y = cur; y >= 1990; y--) this.years.push(y);
+                this.$watch('activeSource', () => this.applySort());
+            },
 
-                        this.log('info', `Response status: ${response.status} ${response.statusText}`);
-                        
-                        const data = await response.json();
-                        this.log('info', `Response data received: ${JSON.stringify(data).substring(0, 200)}...`);
-                        
-                        if (data.success && data.vehicles) {
-                            this.results = data.vehicles;
-                            this.log('success', `✓ Search successful! Found ${this.results.length} vehicles`);
-                            
-                            if (this.results.length > 0) {
-                                const avgPrice = this.avgPrice;
-                                const minPrice = Math.min(...this.results.map(v => v.price));
-                                const maxPrice = Math.max(...this.results.map(v => v.price));
-                                this.log('info', `Price range: $${minPrice.toLocaleString()} - $${maxPrice.toLocaleString()} (avg: $${avgPrice.toLocaleString()})`);
-                            }
-                        } else {
-                            this.log('error', `Search failed: ${data.error || 'Unknown error'}`);
-                        }
-                    } catch (error) {
-                        this.log('error', `Search error: ${error.message}`);
-                        console.error('Search error:', error);
-                        alert('Search failed. Please try again.');
-                    } finally {
-                        this.loading = false;
-                        this.log('info', 'Search completed');
-                    }
-                },
+            onMakeChange() {
+                const make = this.params.make;
+                this.availableModels = make && this.modelsByMake[make] ? this.modelsByMake[make] : [];
+                if (!this.availableModels.includes(this.params.model)) this.params.model = '';
+            },
 
-                log(type, message) {
-                    const now = new Date();
-                    const time = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
-                    
-                    this.debugLogs.push({
-                        type: type,
-                        time: time,
-                        message: message,
-                        timestamp: now.getTime()
-                    });
+            sourceKey(name) {
+                return {
+                    'Craigslist': 'craigslist',
+                    'CarGurus': 'cargurus',
+                    'Cars.com': 'carscom',
+                    'AutoTrader': 'autotrader',
+                }[name] || 'craigslist';
+            },
 
-                    // Keep only last 100 logs
-                    if (this.debugLogs.length > 100) {
-                        this.debugLogs.shift();
-                    }
+            get avgPrice() {
+                if (this.filtered.length === 0) return 0;
+                return Math.round(this.filtered.reduce((s, v) => s + v.price, 0) / this.filtered.length);
+            },
 
-                    // Also log to browser console
-                    console.log(`[${time}] ${type.toUpperCase()}: ${message}`);
-                },
+            get bestDeal() {
+                if (this.filtered.length === 0) return null;
+                return Math.min(...this.filtered.map(v => v.price));
+            },
 
-                copyDebugLogs() {
-                    const text = this.debugLogs.map(log => `[${log.time}] ${log.type.toUpperCase()}: ${log.message}`).join('\n');
-                    navigator.clipboard.writeText(text).then(() => {
-                        this.log('info', 'Debug logs copied to clipboard');
-                        alert('Debug logs copied to clipboard!');
-                    });
-                },
+            get sourcesWithResults() {
+                return this.sourceInfo.filter(s => s.count > 0).length;
+            },
 
-                downloadDebugLogs() {
-                    const text = this.debugLogs.map(log => `[${log.time}] ${log.type.toUpperCase()}: ${log.message}`).join('\n');
-                    const blob = new Blob([text], { type: 'text/plain' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `debug-log-${Date.now()}.txt`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                    this.log('info', 'Debug logs downloaded');
-                },
+            get sourcesTotal() {
+                return this.sourceInfo.length;
+            },
 
-                clearDebugLogs() {
-                    this.debugLogs = [];
-                    this.log('info', 'Debug logs cleared');
-                },
-
-                get avgPrice() {
-                    if (this.results.length === 0) return 0;
-                    const sum = this.results.reduce((acc, v) => acc + (v.price || 0), 0);
-                    return Math.round(sum / this.results.length);
-                },
-
-                openModal(vehicle) {
-                    this.selectedVehicle = vehicle;
-                    document.body.style.overflow = 'hidden';
-                    this.log('info', `Opened modal for: ${vehicle.title}`);
-                },
-
-                closeModal() {
-                    this.selectedVehicle = null;
-                    document.body.style.overflow = 'auto';
-                    this.log('info', 'Closed modal');
+            applyFilter() {
+                let list = this.allResults;
+                if (this.activeSource !== 'all') {
+                    list = list.filter(v => v.source === this.activeSource);
                 }
-            }
-        }
+                this.filtered = list;
+                this.applySort();
+            },
+
+            applySort() {
+                this.applyFilter_internal();
+                const [field, dir] = this.sortBy.split('-');
+                const asc = dir === 'asc';
+                this.filtered.sort((a, b) => {
+                    let va, vb;
+                    if (field === 'price') { va = a.price || 0; vb = b.price || 0; }
+                    else if (field === 'mileage') { va = a.mileage || 999999; vb = b.mileage || 999999; }
+                    else if (field === 'year') { va = a.year || 0; vb = b.year || 0; }
+                    return asc ? va - vb : vb - va;
+                });
+            },
+
+            applyFilter_internal() {
+                let list = this.allResults;
+                if (this.activeSource !== 'all') {
+                    list = list.filter(v => v.source === this.activeSource);
+                }
+                this.filtered = [...list];
+            },
+
+            async search() {
+                this.loading = true;
+                this.searched = true;
+                this.error = null;
+                this.allResults = [];
+                this.filtered = [];
+                this.sourceInfo = [];
+                this.activeSource = 'all';
+
+                const body = {
+                    make: this.params.make,
+                    model: this.params.model,
+                    min_year: this.params.min_year || undefined,
+                    max_year: this.params.max_year || undefined,
+                    max_price: parseInt(this.params.max_price),
+                    max_mileage: parseInt(this.params.max_mileage),
+                    location: 'milwaukee',
+                    zip_code: this.params.zip_code || '53202',
+                };
+
+                try {
+                    const resp = await fetch('/api/search', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(body),
+                    });
+                    const data = await resp.json();
+
+                    if (data.success) {
+                        this.allResults = data.vehicles || [];
+                        this.sourceInfo = (data.sources || []).map(s => ({
+                            ...s,
+                            key: this.sourceKey(s.name),
+                        }));
+                        this.applySort();
+                    } else {
+                        this.error = data.error || 'Search failed. Please try again.';
+                    }
+                } catch (e) {
+                    this.error = 'Could not connect to the search API. Please try again.';
+                    console.error(e);
+                } finally {
+                    this.loading = false;
+                }
+            },
+
+            async openModal(vehicle) {
+                this.selected = vehicle;
+                this.modalImgIdx = 0;
+                this.extraDetails = {};
+                this.detailLoading = true;
+                document.body.style.overflow = 'hidden';
+
+                // Start with the image from search results
+                this.modalImages = vehicle.image_url ? [vehicle.image_url] : [];
+
+                // Fetch additional details
+                try {
+                    const resp = await fetch('/api/details?url=' + encodeURIComponent(vehicle.url));
+                    const data = await resp.json();
+                    if (data.success && data.details) {
+                        const d = data.details;
+                        // Merge images
+                        if (d.images && d.images.length > 0) {
+                            this.modalImages = d.images;
+                            this.modalImgIdx = 0;
+                        } else if (d.image_url && this.modalImages.length === 0) {
+                            this.modalImages = [d.image_url];
+                        }
+                        // Set extra details
+                        const extras = {};
+                        if (d.condition) extras['Condition'] = d.condition;
+                        if (d.transmission) extras['Transmission'] = d.transmission;
+                        if (d.fuel) extras['Fuel'] = d.fuel;
+                        if (d.drive) extras['Drivetrain'] = d.drive;
+                        if (d.color) extras['Color'] = d.color;
+                        if (d.interior_color) extras['Interior'] = d.interior_color;
+                        if (d.vin) extras['VIN'] = d.vin;
+                        if (d.mpg) extras['MPG'] = d.mpg;
+                        if (d.cylinders) extras['Cylinders'] = d.cylinders;
+                        if (d.type) extras['Body Type'] = d.type;
+                        if (d.title_status) extras['Title'] = d.title_status;
+                        if (d.description) extras['description'] = d.description;
+                        this.extraDetails = extras;
+                    }
+                } catch (e) {
+                    console.error('Details fetch failed:', e);
+                } finally {
+                    this.detailLoading = false;
+                }
+            },
+
+            closeModal() {
+                this.selected = null;
+                this.modalImages = [];
+                this.extraDetails = {};
+                document.body.style.overflow = '';
+            },
+        };
+    }
     </script>
 </body>
 </html>
