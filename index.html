@@ -4,139 +4,197 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Milwaukee Vehicle Finder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;600;700;800&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
-            --accent: #4f46e5;
-            --accent-light: #6366f1;
-            --accent-bg: #eef2ff;
-            --green: #16a34a;
-            --red: #dc2626;
-            --orange: #ea580c;
-            --gray-50: #f9fafb;
-            --gray-100: #f3f4f6;
-            --gray-200: #e5e7eb;
-            --gray-300: #d1d5db;
-            --gray-400: #9ca3af;
-            --gray-500: #6b7280;
-            --gray-600: #4b5563;
-            --gray-700: #374151;
-            --gray-800: #1f2937;
-            --gray-900: #111827;
-            --radius: 12px;
-            --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
-            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+            --background: oklch(0.8452 0 0);
+            --foreground: oklch(0.2393 0 0);
+            --card: oklch(0.7572 0 0);
+            --card-foreground: oklch(0.2393 0 0);
+            --primary: oklch(0.5016 0.1887 27.4816);
+            --primary-foreground: oklch(1.0000 0 0);
+            --secondary: oklch(0.4955 0.0896 126.1858);
+            --secondary-foreground: oklch(1.0000 0 0);
+            --muted: oklch(0.7826 0 0);
+            --muted-foreground: oklch(0.4091 0 0);
+            --accent: oklch(0.5880 0.0993 245.7394);
+            --accent-foreground: oklch(1.0000 0 0);
+            --destructive: oklch(0.7076 0.1975 46.4558);
+            --border: oklch(0.4313 0 0);
+            --input: oklch(0.4313 0 0);
+            --ring: oklch(0.5016 0.1887 27.4816);
+            --radius: 0px;
+            --shadow-sm: 0px 2px 4px 0px hsl(0 0% 0% / 0.40), 0px 1px 2px -1px hsl(0 0% 0% / 0.40);
+            --shadow: 0px 2px 4px 0px hsl(0 0% 0% / 0.40), 0px 1px 2px -1px hsl(0 0% 0% / 0.40);
+            --shadow-md: 0px 2px 4px 0px hsl(0 0% 0% / 0.40), 0px 2px 4px -1px hsl(0 0% 0% / 0.40);
+            --shadow-lg: 0px 2px 4px 0px hsl(0 0% 0% / 0.40), 0px 4px 6px -1px hsl(0 0% 0% / 0.40);
+            --shadow-xl: 0px 2px 4px 0px hsl(0 0% 0% / 0.40), 0px 8px 10px -1px hsl(0 0% 0% / 0.40);
+        }
+
+        .dark {
+            --background: oklch(0.2178 0 0);
+            --foreground: oklch(0.9067 0 0);
+            --card: oklch(0.2850 0 0);
+            --card-foreground: oklch(0.9067 0 0);
+            --primary: oklch(0.6083 0.2090 27.0276);
+            --primary-foreground: oklch(1.0000 0 0);
+            --secondary: oklch(0.6423 0.1467 133.0145);
+            --secondary-foreground: oklch(0 0 0);
+            --muted: oklch(0.2645 0 0);
+            --muted-foreground: oklch(0.7058 0 0);
+            --accent: oklch(0.7482 0.1235 244.7492);
+            --accent-foreground: oklch(0 0 0);
+            --destructive: oklch(0.7839 0.1719 68.0943);
+            --border: oklch(0.4091 0 0);
+            --input: oklch(0.4091 0 0);
+            --ring: oklch(0.6083 0.2090 27.0276);
+            --shadow-sm: 0px 2px 5px 0px hsl(0 0% 0% / 0.60), 0px 1px 2px -1px hsl(0 0% 0% / 0.60);
+            --shadow: 0px 2px 5px 0px hsl(0 0% 0% / 0.60), 0px 1px 2px -1px hsl(0 0% 0% / 0.60);
+            --shadow-md: 0px 2px 5px 0px hsl(0 0% 0% / 0.60), 0px 2px 4px -1px hsl(0 0% 0% / 0.60);
+            --shadow-lg: 0px 2px 5px 0px hsl(0 0% 0% / 0.60), 0px 4px 6px -1px hsl(0 0% 0% / 0.60);
+            --shadow-xl: 0px 2px 5px 0px hsl(0 0% 0% / 0.60), 0px 8px 10px -1px hsl(0 0% 0% / 0.60);
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--gray-50);
-            color: var(--gray-800);
+            font-family: "Oxanium", sans-serif;
+            background: var(--background);
+            color: var(--foreground);
             line-height: 1.5;
         }
 
         /* ---- Header ---- */
         .header {
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-            color: #fff;
+            background: var(--primary);
+            color: var(--primary-foreground);
             padding: 2rem 1.5rem;
             text-align: center;
+            border-bottom: 3px solid var(--border);
         }
-        .header h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.25rem; }
-        .header p { opacity: 0.85; font-size: 0.95rem; }
+        .header-inner {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header-text { text-align: left; }
+        .header h1 {
+            font-size: 1.75rem;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+        .header p { opacity: 0.8; font-size: 0.85rem; font-weight: 400; }
+        .theme-toggle {
+            background: none;
+            border: 2px solid var(--primary-foreground);
+            color: var(--primary-foreground);
+            width: 40px; height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            transition: opacity 0.15s;
+        }
+        .theme-toggle:hover { opacity: 0.7; }
 
         /* ---- Layout ---- */
         .container { max-width: 1280px; margin: 0 auto; padding: 0 1rem; }
 
         /* ---- Search Panel ---- */
         .search-panel {
-            background: #fff;
-            border-radius: var(--radius);
+            background: var(--card);
+            color: var(--card-foreground);
+            border: 1px solid var(--border);
             box-shadow: var(--shadow-lg);
-            margin: -1.5rem auto 1.5rem;
+            margin: -1rem auto 1.5rem;
             padding: 1.5rem;
             position: relative;
             z-index: 10;
         }
         .search-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
             gap: 0.75rem;
             margin-bottom: 1rem;
         }
         .form-group label {
             display: block;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--gray-500);
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--muted-foreground);
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 0.35rem;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.3rem;
         }
         .form-group select, .form-group input {
             width: 100%;
-            padding: 0.55rem 0.75rem;
-            border: 1px solid var(--gray-300);
-            border-radius: 8px;
-            font-size: 0.875rem;
-            color: var(--gray-800);
-            background: #fff;
+            padding: 0.5rem 0.6rem;
+            border: 1px solid var(--border);
+            font-family: "Oxanium", sans-serif;
+            font-size: 0.85rem;
+            color: var(--foreground);
+            background: var(--background);
             transition: border-color 0.15s;
         }
         .form-group select:focus, .form-group input:focus {
             outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(79,70,229,0.12);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px var(--ring);
         }
         .btn-search {
             width: 100%;
             padding: 0.7rem 1.5rem;
-            background: var(--accent);
-            color: #fff;
+            background: var(--primary);
+            color: var(--primary-foreground);
             border: none;
-            border-radius: 8px;
+            font-family: "Oxanium", sans-serif;
             font-size: 0.95rem;
-            font-weight: 600;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
             cursor: pointer;
-            transition: background 0.15s;
+            transition: opacity 0.15s;
         }
-        .btn-search:hover { background: var(--accent-light); }
-        .btn-search:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-search:hover { opacity: 0.85; }
+        .btn-search:disabled { opacity: 0.4; cursor: not-allowed; }
 
-        /* ---- Source Indicators ---- */
-        .sources-bar {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            margin-bottom: 1rem;
-        }
+        /* ---- Source Chips ---- */
+        .sources-bar { display: flex; gap: 0.4rem; flex-wrap: wrap; }
         .source-chip {
             display: inline-flex;
             align-items: center;
-            gap: 0.35rem;
-            padding: 0.3rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            border: 1px solid var(--gray-200);
-            background: #fff;
+            gap: 0.3rem;
+            padding: 0.3rem 0.7rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            font-family: "Oxanium", sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            border: 1px solid var(--border);
+            background: var(--muted);
+            color: var(--muted-foreground);
             cursor: pointer;
             user-select: none;
             transition: all 0.15s;
         }
-        .source-chip.active { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); }
-        .source-chip .dot {
-            width: 8px; height: 8px;
-            border-radius: 50%;
-            flex-shrink: 0;
+        .source-chip.active {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: var(--primary-foreground);
         }
-        .dot-craigslist { background: #7c3aed; }
-        .dot-cargurus { background: #2563eb; }
-        .dot-carscom { background: #dc2626; }
-        .dot-autotrader { background: #ea580c; }
+        .source-chip .dot { width: 7px; height: 7px; flex-shrink: 0; }
+        .dot-craigslist { background: oklch(0.55 0.15 300); }
+        .dot-cargurus { background: oklch(0.55 0.15 245); }
+        .dot-carscom { background: oklch(0.55 0.2 27); }
+        .dot-autotrader { background: oklch(0.65 0.18 60); }
 
         /* ---- Stats Row ---- */
         .stats-row {
@@ -146,14 +204,21 @@
             margin-bottom: 1.25rem;
         }
         .stat-card {
-            background: #fff;
-            border-radius: var(--radius);
+            background: var(--card);
+            color: var(--card-foreground);
+            border: 1px solid var(--border);
             padding: 1rem;
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow-sm);
             text-align: center;
         }
-        .stat-card .value { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
-        .stat-card .label { font-size: 0.75rem; color: var(--gray-500); margin-top: 0.15rem; }
+        .stat-card .value { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
+        .stat-card .label {
+            font-size: 0.65rem;
+            color: var(--muted-foreground);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-top: 0.15rem;
+        }
 
         /* ---- Toolbar ---- */
         .toolbar {
@@ -164,14 +229,13 @@
             gap: 0.75rem;
             margin-bottom: 1rem;
         }
-        .toolbar .count { font-size: 0.875rem; color: var(--gray-500); }
         .toolbar select {
-            padding: 0.4rem 0.75rem;
-            border: 1px solid var(--gray-300);
-            border-radius: 8px;
-            font-size: 0.8rem;
-            background: #fff;
-            color: var(--gray-700);
+            padding: 0.35rem 0.6rem;
+            border: 1px solid var(--border);
+            font-family: "Oxanium", sans-serif;
+            font-size: 0.75rem;
+            background: var(--card);
+            color: var(--card-foreground);
         }
 
         /* ---- Vehicle Grid ---- */
@@ -182,126 +246,125 @@
             margin-bottom: 2rem;
         }
         .vehicle-card {
-            background: #fff;
-            border-radius: var(--radius);
+            background: var(--card);
+            color: var(--card-foreground);
+            border: 1px solid var(--border);
             overflow: hidden;
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow-sm);
             cursor: pointer;
             transition: box-shadow 0.2s, transform 0.2s;
             display: flex;
             flex-direction: column;
         }
         .vehicle-card:hover {
-            box-shadow: var(--shadow-lg);
+            box-shadow: var(--shadow-xl);
             transform: translateY(-2px);
         }
         .card-image {
             width: 100%;
             height: 190px;
-            background: var(--gray-100);
+            background: var(--muted);
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
             position: relative;
         }
-        .card-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .card-image .placeholder-icon {
-            color: var(--gray-300);
-            font-size: 3rem;
-        }
+        .card-image img { width: 100%; height: 100%; object-fit: cover; }
+        .card-image .placeholder-icon { color: var(--muted-foreground); opacity: 0.4; }
         .card-source {
             position: absolute;
             top: 0.5rem;
             left: 0.5rem;
-            padding: 0.2rem 0.6rem;
-            border-radius: 6px;
-            font-size: 0.65rem;
+            padding: 0.2rem 0.55rem;
+            font-family: "Oxanium", sans-serif;
+            font-size: 0.6rem;
             font-weight: 700;
             text-transform: uppercase;
-            color: #fff;
+            letter-spacing: 0.05em;
+            color: var(--primary-foreground);
         }
-        .badge-craigslist { background: #7c3aed; }
-        .badge-cargurus { background: #2563eb; }
-        .badge-carscom { background: #dc2626; }
-        .badge-autotrader { background: #ea580c; }
+        .badge-craigslist { background: oklch(0.45 0.14 300); }
+        .badge-cargurus { background: oklch(0.45 0.14 245); }
+        .badge-carscom { background: oklch(0.45 0.18 27); }
+        .badge-autotrader { background: oklch(0.55 0.16 60); }
 
-        .card-body { padding: 1rem; flex: 1; display: flex; flex-direction: column; }
+        .card-body { padding: 0.9rem; flex: 1; display: flex; flex-direction: column; }
         .card-title {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: 600;
-            color: var(--gray-800);
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
-        .card-price { font-size: 1.35rem; font-weight: 700; color: var(--green); margin-bottom: 0.5rem; }
+        .card-price {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
         .card-meta {
             display: flex;
-            gap: 1rem;
-            font-size: 0.8rem;
-            color: var(--gray-500);
+            gap: 0.8rem;
+            font-size: 0.75rem;
+            color: var(--muted-foreground);
             margin-top: auto;
         }
-        .card-meta span { display: flex; align-items: center; gap: 0.25rem; }
+        .card-meta span { display: flex; align-items: center; gap: 0.2rem; }
 
         /* ---- Loading ---- */
         .loading-state { text-align: center; padding: 4rem 1rem; }
         .loading-spinner {
-            width: 40px; height: 40px;
-            border: 3px solid var(--gray-200);
-            border-top-color: var(--accent);
+            width: 36px; height: 36px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
             border-radius: 50%;
-            animation: spin 0.7s linear infinite;
+            animation: spin 0.6s linear infinite;
             margin: 0 auto 1rem;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .loading-state p { color: var(--gray-500); font-size: 0.9rem; }
+        .loading-state p { color: var(--muted-foreground); font-size: 0.85rem; }
         .loading-sources {
             display: flex;
             justify-content: center;
             gap: 1.5rem;
-            margin-top: 1.5rem;
+            margin-top: 1.25rem;
             flex-wrap: wrap;
         }
         .loading-source {
             display: flex;
             align-items: center;
             gap: 0.4rem;
-            font-size: 0.8rem;
-            color: var(--gray-400);
+            font-size: 0.75rem;
+            color: var(--muted-foreground);
         }
         .loading-source .mini-spinner {
-            width: 14px; height: 14px;
-            border: 2px solid var(--gray-200);
-            border-top-color: var(--accent);
+            width: 12px; height: 12px;
+            border: 2px solid var(--border);
+            border-top-color: var(--primary);
             border-radius: 50%;
-            animation: spin 0.7s linear infinite;
+            animation: spin 0.6s linear infinite;
         }
 
         /* ---- Empty / Error ---- */
         .empty-state {
             text-align: center;
             padding: 4rem 1rem;
-            background: #fff;
-            border-radius: var(--radius);
+            background: var(--card);
+            border: 1px solid var(--border);
             box-shadow: var(--shadow);
         }
-        .empty-state .icon { font-size: 3rem; margin-bottom: 0.75rem; opacity: 0.4; }
-        .empty-state h3 { font-size: 1.1rem; color: var(--gray-700); margin-bottom: 0.25rem; }
-        .empty-state p { font-size: 0.875rem; color: var(--gray-500); }
+        .empty-state .icon { color: var(--muted-foreground); opacity: 0.35; margin-bottom: 0.75rem; }
+        .empty-state h3 { font-size: 1rem; margin-bottom: 0.25rem; }
+        .empty-state p { font-size: 0.8rem; color: var(--muted-foreground); }
 
         /* ---- Modal ---- */
         .modal-backdrop {
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0,0,0,0.7);
             z-index: 100;
             display: flex;
             align-items: center;
@@ -309,38 +372,35 @@
             padding: 1rem;
         }
         .modal {
-            background: #fff;
-            border-radius: var(--radius);
-            max-width: 560px;
+            background: var(--card);
+            color: var(--card-foreground);
+            border: 1px solid var(--border);
+            max-width: 580px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            box-shadow: var(--shadow-xl);
             position: relative;
-            color: var(--gray-800);
         }
         .modal-close {
             position: absolute;
-            top: 0.75rem;
-            right: 0.75rem;
-            width: 32px;
-            height: 32px;
+            top: 0.6rem;
+            right: 0.6rem;
+            width: 30px; height: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(255,255,255,0.9);
-            border-radius: 50%;
-            border: none;
+            background: var(--card);
+            border: 1px solid var(--border);
             cursor: pointer;
-            font-size: 1.1rem;
-            color: var(--gray-600);
+            font-size: 1rem;
+            color: var(--card-foreground);
             z-index: 5;
-            box-shadow: var(--shadow);
         }
         .modal-image {
             width: 100%;
-            height: 280px;
-            background: var(--gray-100);
+            height: 300px;
+            background: var(--muted);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -348,21 +408,20 @@
             position: relative;
         }
         .modal-image img { width: 100%; height: 100%; object-fit: cover; }
-        .modal-image .placeholder-icon { color: var(--gray-300); font-size: 4rem; }
+        .modal-image .placeholder-icon { color: var(--muted-foreground); opacity: 0.3; }
         .modal-image .img-nav {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            width: 32px; height: 32px;
-            background: rgba(255,255,255,0.85);
-            border: none;
-            border-radius: 50%;
+            width: 30px; height: 30px;
+            background: var(--card);
+            border: 1px solid var(--border);
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 0.9rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: var(--shadow);
+            color: var(--card-foreground);
         }
         .modal-image .img-nav.prev { left: 0.5rem; }
         .modal-image .img-nav.next { right: 0.5rem; }
@@ -370,80 +429,97 @@
             position: absolute;
             bottom: 0.5rem;
             right: 0.5rem;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0,0,0,0.65);
             color: #fff;
-            font-size: 0.7rem;
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
+            font-family: "Source Code Pro", monospace;
+            font-size: 0.65rem;
+            padding: 0.15rem 0.5rem;
         }
-        .modal-body { padding: 1.5rem; }
+        .modal-body { padding: 1.25rem; }
         .modal-body .source-tag {
             display: inline-block;
-            padding: 0.2rem 0.6rem;
-            border-radius: 6px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: #fff;
-            margin-bottom: 0.5rem;
+            padding: 0.15rem 0.5rem;
+            font-size: 0.6rem;
+            font-weight: 700;
+            font-family: "Oxanium", sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--primary-foreground);
+            margin-bottom: 0.4rem;
         }
-        .modal-body h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; }
-        .modal-body .price { font-size: 1.75rem; font-weight: 800; color: var(--green); margin-bottom: 1rem; }
+        .modal-body h2 { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.4rem; }
+        .modal-body .price { font-size: 1.6rem; font-weight: 800; color: var(--secondary); margin-bottom: 0.75rem; }
         .modal-details {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
-            margin-bottom: 1.25rem;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
         }
         .detail-item {
-            background: var(--gray-50);
-            padding: 0.75rem;
-            border-radius: 8px;
+            background: var(--background);
+            border: 1px solid var(--border);
+            padding: 0.6rem;
         }
-        .detail-item .dl { font-size: 0.7rem; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.05em; }
-        .detail-item .dv { font-size: 0.95rem; font-weight: 600; margin-top: 0.15rem; }
+        .detail-item .dl {
+            font-size: 0.6rem;
+            color: var(--muted-foreground);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-weight: 600;
+        }
+        .detail-item .dv { font-size: 0.9rem; font-weight: 600; margin-top: 0.1rem; }
         .modal-desc {
-            font-size: 0.85rem;
-            color: var(--gray-600);
-            line-height: 1.6;
-            margin-bottom: 1.25rem;
-            max-height: 120px;
-            overflow-y: auto;
+            font-size: 0.8rem;
+            color: var(--muted-foreground);
+            line-height: 1.8;
+            margin-bottom: 1rem;
+            white-space: pre-line;
+            border: 1px solid var(--border);
+            padding: 0.75rem;
+            background: var(--background);
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
         .btn-listing {
             display: block;
             width: 100%;
-            padding: 0.75rem;
-            background: var(--accent);
-            color: #fff;
+            padding: 0.7rem;
+            background: var(--primary);
+            color: var(--primary-foreground);
             border: none;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            font-weight: 600;
+            font-family: "Oxanium", sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
             cursor: pointer;
             text-align: center;
             text-decoration: none;
-            transition: background 0.15s;
+            transition: opacity 0.15s;
         }
-        .btn-listing:hover { background: var(--accent-light); }
+        .btn-listing:hover { opacity: 0.85; }
 
         .detail-loading {
             text-align: center;
-            padding: 0.75rem;
-            font-size: 0.8rem;
-            color: var(--gray-400);
+            padding: 0.6rem;
+            font-size: 0.75rem;
+            color: var(--muted-foreground);
         }
 
         /* ---- Footer ---- */
         .footer {
             text-align: center;
             padding: 2rem 1rem;
-            font-size: 0.8rem;
-            color: var(--gray-400);
+            font-size: 0.7rem;
+            color: var(--muted-foreground);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
         }
 
         /* ---- Responsive ---- */
         @media (max-width: 640px) {
-            .header h1 { font-size: 1.35rem; }
+            .header h1 { font-size: 1.25rem; }
+            .header-inner { flex-direction: row; }
             .search-grid { grid-template-columns: 1fr 1fr; }
             .vehicle-grid { grid-template-columns: 1fr; }
             .stats-row { grid-template-columns: repeat(2, 1fr); }
@@ -451,12 +527,20 @@
         }
     </style>
 </head>
-<body x-data="app()">
+<body x-data="app()" :class="{ dark: darkMode }">
 
     <!-- Header -->
     <div class="header">
-        <h1>Milwaukee Vehicle Finder</h1>
-        <p>Search used cars across Craigslist, CarGurus, Cars.com & AutoTrader</p>
+        <div class="header-inner">
+            <div class="header-text">
+                <h1>Milwaukee Vehicle Finder</h1>
+                <p>Search used cars across Craigslist, CarGurus, Cars.com &amp; AutoTrader</p>
+            </div>
+            <button class="theme-toggle" @click="toggleDark()" :title="darkMode ? 'Light mode' : 'Dark mode'">
+                <svg x-show="!darkMode" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                <svg x-show="darkMode" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            </button>
+        </div>
     </div>
 
     <div class="container">
@@ -577,7 +661,7 @@
                 <div class="sources-bar">
                     <div class="source-chip" :class="{ active: activeSource === 'all' }" @click="activeSource = 'all'">
                         All
-                        <span style="opacity:0.6" x-text="'(' + allResults.length + ')'"></span>
+                        <span style="opacity:0.7" x-text="'(' + allResults.length + ')'"></span>
                     </div>
                     <template x-for="s in sourceInfo" :key="s.name">
                         <div class="source-chip"
@@ -585,7 +669,7 @@
                              @click="activeSource = s.name">
                             <span class="dot" :class="'dot-' + s.key"></span>
                             <span x-text="s.name"></span>
-                            <span style="opacity:0.6" x-text="'(' + s.count + ')'"></span>
+                            <span style="opacity:0.7" x-text="'(' + s.count + ')'"></span>
                         </div>
                     </template>
                 </div>
@@ -613,8 +697,7 @@
                             <div class="placeholder-icon" :style="v.image_url ? 'display:none' : ''">
                                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                                     <path d="M7 17a2 2 0 1 0 4 0 2 2 0 0 0-4 0Zm10 0a2 2 0 1 0-4 0 2 2 0 0 0 4 0Z"/>
-                                    <path d="M5 17H3v-5l2-5h9l4 5h3v5h-2"/>
-                                    <path d="M5 12h14"/>
+                                    <path d="M5 17H3v-5l2-5h9l4 5h3v5h-2"/><path d="M5 12h14"/>
                                 </svg>
                             </div>
                             <span class="card-source" :class="'badge-' + sourceKey(v.source)" x-text="v.source"></span>
@@ -624,15 +707,15 @@
                             <div class="card-price" x-text="'$' + v.price.toLocaleString()"></div>
                             <div class="card-meta">
                                 <span x-show="v.year">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                                     <span x-text="v.year"></span>
                                 </span>
                                 <span x-show="v.mileage">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                                     <span x-text="v.mileage ? v.mileage.toLocaleString() + ' mi' : ''"></span>
                                 </span>
                                 <span x-show="v.location">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                                     <span x-text="v.location"></span>
                                 </span>
                             </div>
@@ -642,14 +725,14 @@
             </div>
 
             <!-- Empty State -->
-            <div class="empty-state" x-show="allResults.length === 0">
+            <div class="empty-state" x-show="allResults.length === 0 && !error">
                 <div class="icon">
                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                         <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
                     </svg>
                 </div>
                 <h3>No vehicles found</h3>
-                <p>Try broadening your search criteria - increase max price, mileage, or year range.</p>
+                <p>Try broadening your search criteria &mdash; increase max price, mileage, or year range.</p>
             </div>
 
             <!-- Filtered to 0 -->
@@ -664,8 +747,8 @@
             </div>
 
             <!-- Error -->
-            <div class="empty-state" x-show="error" style="border-left: 3px solid var(--red);">
-                <h3 style="color: var(--red);">Search Error</h3>
+            <div class="empty-state" x-show="error" style="border-left: 3px solid var(--destructive);">
+                <h3 style="color: var(--destructive);">Search Error</h3>
                 <p x-text="error"></p>
             </div>
         </div>
@@ -684,17 +767,18 @@
                         <img :src="modalImages[modalImgIdx]" :alt="selected.title"
                              @error="$event.target.style.display='none'">
                     </template>
-                    <div class="placeholder-icon" x-show="modalImages.length === 0">
+                    <div class="placeholder-icon" x-show="modalImages.length === 0 && !detailLoading">
                         <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                             <path d="M7 17a2 2 0 1 0 4 0 2 2 0 0 0-4 0Zm10 0a2 2 0 1 0-4 0 2 2 0 0 0 4 0Z"/>
                             <path d="M5 17H3v-5l2-5h9l4 5h3v5h-2"/><path d="M5 12h14"/>
                         </svg>
                     </div>
+                    <div class="loading-spinner" x-show="modalImages.length === 0 && detailLoading" style="position:absolute;"></div>
                     <template x-if="modalImages.length > 1">
-                        <button class="img-nav prev" @click="modalImgIdx = (modalImgIdx - 1 + modalImages.length) % modalImages.length">&lsaquo;</button>
+                        <button class="img-nav prev" @click.stop="modalImgIdx = (modalImgIdx - 1 + modalImages.length) % modalImages.length">&lsaquo;</button>
                     </template>
                     <template x-if="modalImages.length > 1">
-                        <button class="img-nav next" @click="modalImgIdx = (modalImgIdx + 1) % modalImages.length">&rsaquo;</button>
+                        <button class="img-nav next" @click.stop="modalImgIdx = (modalImgIdx + 1) % modalImages.length">&rsaquo;</button>
                     </template>
                     <template x-if="modalImages.length > 1">
                         <div class="img-counter" x-text="(modalImgIdx + 1) + ' / ' + modalImages.length"></div>
@@ -723,9 +807,9 @@
                             <div class="dl">Source</div>
                             <div class="dv" x-text="selected.source"></div>
                         </div>
-                        <!-- Extra details from /api/details -->
+                        <!-- Extra details from /api/details (excluding description) -->
                         <template x-for="(val, key) in extraDetails" :key="key">
-                            <div class="detail-item" x-show="val">
+                            <div class="detail-item" x-show="val && key !== 'description'">
                                 <div class="dl" x-text="key"></div>
                                 <div class="dv" x-text="val"></div>
                             </div>
@@ -734,7 +818,7 @@
 
                     <div class="detail-loading" x-show="detailLoading">Loading additional details...</div>
 
-                    <div class="modal-desc" x-show="extraDetails.description" x-text="extraDetails.description"></div>
+                    <div class="modal-desc" x-show="extraDetails.description" x-html="formatDescription(extraDetails.description)"></div>
 
                     <a class="btn-listing" :href="selected.url" target="_blank" rel="noopener">
                         View Full Listing &rarr;
@@ -760,6 +844,7 @@
             detailLoading: false,
             extraDetails: {},
             sourceInfo: [],
+            darkMode: false,
 
             params: {
                 make: '',
@@ -815,6 +900,17 @@
                 const cur = new Date().getFullYear() + 1;
                 for (let y = cur; y >= 1990; y--) this.years.push(y);
                 this.$watch('activeSource', () => this.applySort());
+
+                // Persist dark mode
+                if (localStorage.getItem('mvf-dark') === '1' ||
+                    (!localStorage.getItem('mvf-dark') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    this.darkMode = true;
+                }
+            },
+
+            toggleDark() {
+                this.darkMode = !this.darkMode;
+                localStorage.setItem('mvf-dark', this.darkMode ? '1' : '0');
             },
 
             onMakeChange() {
@@ -830,6 +926,75 @@
                     'Cars.com': 'carscom',
                     'AutoTrader': 'autotrader',
                 }[name] || 'craigslist';
+            },
+
+            formatDescription(text) {
+                if (!text) return '';
+                // Escape HTML entities for safety
+                let s = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+                // Break up run-on text at sentence boundaries
+                s = s.replace(/([.!?])(\s*)([A-Z])/g, '$1\n\n$3');
+
+                // Break before common keywords
+                s = s.replace(/(ADDRESS\s*:|LOCATION\s*:|CALL\s|CONTACT\s|TEXT\s|PHONE\s*:|PRICE\s*:)/gi, '\n\n$1');
+
+                // Break before URLs
+                s = s.replace(/(https?:\/\/|www\.)/gi, '\n$1');
+
+                // Break comma-separated ALL-CAPS feature lists
+                s = s.replace(/,\s*([A-Z]{2,})/g, '\n$1');
+
+                // Collapse excessive blank lines
+                s = s.replace(/\n{3,}/g, '\n\n');
+
+                // Add emojis for common vehicle terms
+                const emojiMap = [
+                    [/\b(AWD|4WD|ALL WHEEL DRIVE|ALL-WHEEL DRIVE)\b/gi, '🔄 $1'],
+                    [/\b(FWD|FRONT WHEEL DRIVE)\b/gi, '➡️ $1'],
+                    [/\b(RWD|REAR WHEEL DRIVE)\b/gi, '⬅️ $1'],
+                    [/\b(V6|V8|V4|I4|I6)\b/gi, '⚡ $1'],
+                    [/\b(LOW MILES|LOW MILEAGE)\b/gi, '✅ $1'],
+                    [/\b(CLEAN TITLE|CLEAR TITLE|CLEAN AND CLEAR TITLE)\b/gi, '📋✅ $1'],
+                    [/\b(LOADED)\b/gi, '🔥 $1'],
+                    [/\b(SUNROOF|MOONROOF)\b/gi, '☀️ $1'],
+                    [/\b(LEATHER)\b/gi, '💺 $1'],
+                    [/\b(HEATED SEATS)\b/gi, '🔥💺 $1'],
+                    [/\b(NAVIGATION|NAV)\b/gi, '🧭 $1'],
+                    [/\b(BLUETOOTH)\b/gi, '📶 $1'],
+                    [/\b(BACKUP CAMERA|REAR CAMERA|REARVIEW CAMERA)\b/gi, '📷 $1'],
+                    [/\b(CRUISE CONTROL)\b/gi, '🚗 $1'],
+                    [/\b(POWER WINDOWS)\b/gi, '🪟 $1'],
+                    [/\b(POWER DOOR LOCKS)\b/gi, '🔒 $1'],
+                    [/\b(FOG LIGHTS)\b/gi, '🔦 $1'],
+                    [/\b(PREMIUM SOUND|PREMIUM AUDIO|SOUND SYSTEM)\b/gi, '🔊 $1'],
+                    [/\b(CD RADIO|AM FM|RADIO)\b/gi, '📻 $1'],
+                    [/\b(AIR CONDITIONING|A\/C|AC)\b/gi, '❄️ $1'],
+                    [/\b(WARRANTY)\b/gi, '🛡️ $1'],
+                    [/\b(DUAL POWER SEATS|POWER SEATS)\b/gi, '🪑 $1'],
+                    [/\b(KEYLESS|KEY FOB|PUSH START)\b/gi, '🔑 $1'],
+                    [/\b(AUTOMATIC|AUTO TRANS)\b/gi, '🅰️ $1'],
+                    [/\b(MANUAL|STICK SHIFT|6 SPEED|5 SPEED)\b/gi, '🕹️ $1'],
+                    [/\b(TURBO|TURBOCHARGED)\b/gi, '💨 $1'],
+                    [/\b(HYBRID|ELECTRIC)\b/gi, '🔋 $1'],
+                    [/\b(MILES)\b/gi, '🛣️ $1'],
+                    [/\b(TOW|TOWING)\b/gi, '🪝 $1'],
+                ];
+
+                for (const [pattern, replacement] of emojiMap) {
+                    s = s.replace(pattern, replacement);
+                }
+
+                // Add phone emoji before phone numbers
+                s = s.replace(/(\d{3}[-.\s]?\d{3}[-.\s]?\d{4})/g, '📞 $1');
+
+                // Add link emoji before URLs
+                s = s.replace(/(https?:\/\/\S+|www\.\S+)/gi, '🔗 $1');
+
+                // Add address emoji
+                s = s.replace(/(ADDRESS\s*:)/gi, '📍 $1');
+
+                return s.trim();
             },
 
             get avgPrice() {
@@ -850,17 +1015,12 @@
                 return this.sourceInfo.length;
             },
 
-            applyFilter() {
+            applySort() {
                 let list = this.allResults;
                 if (this.activeSource !== 'all') {
                     list = list.filter(v => v.source === this.activeSource);
                 }
-                this.filtered = list;
-                this.applySort();
-            },
-
-            applySort() {
-                this.applyFilter_internal();
+                this.filtered = [...list];
                 const [field, dir] = this.sortBy.split('-');
                 const asc = dir === 'asc';
                 this.filtered.sort((a, b) => {
@@ -870,14 +1030,6 @@
                     else if (field === 'year') { va = a.year || 0; vb = b.year || 0; }
                     return asc ? va - vb : vb - va;
                 });
-            },
-
-            applyFilter_internal() {
-                let list = this.allResults;
-                if (this.activeSource !== 'all') {
-                    list = list.filter(v => v.source === this.activeSource);
-                }
-                this.filtered = [...list];
             },
 
             async search() {
@@ -933,23 +1085,19 @@
                 this.detailLoading = true;
                 document.body.style.overflow = 'hidden';
 
-                // Start with the image from search results
                 this.modalImages = vehicle.image_url ? [vehicle.image_url] : [];
 
-                // Fetch additional details
                 try {
                     const resp = await fetch('/api/details?url=' + encodeURIComponent(vehicle.url));
                     const data = await resp.json();
                     if (data.success && data.details) {
                         const d = data.details;
-                        // Merge images
                         if (d.images && d.images.length > 0) {
                             this.modalImages = d.images;
                             this.modalImgIdx = 0;
                         } else if (d.image_url && this.modalImages.length === 0) {
                             this.modalImages = [d.image_url];
                         }
-                        // Set extra details
                         const extras = {};
                         if (d.condition) extras['Condition'] = d.condition;
                         if (d.transmission) extras['Transmission'] = d.transmission;
