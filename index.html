@@ -65,7 +65,153 @@
             background: var(--background);
             color: var(--foreground);
             line-height: 1.5;
+            padding-bottom: 80px;
         }
+
+        /* ---- DOOM ANIMATIONS ---- */
+        @keyframes screenShake {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            10% { transform: translate(-8px, 6px) rotate(-1deg); }
+            20% { transform: translate(10px, -8px) rotate(1deg); }
+            30% { transform: translate(-12px, 10px) rotate(-1.5deg); }
+            40% { transform: translate(8px, -6px) rotate(1deg); }
+            50% { transform: translate(-10px, 8px) rotate(-1deg); }
+            60% { transform: translate(12px, -10px) rotate(1.5deg); }
+            70% { transform: translate(-6px, 8px) rotate(-0.5deg); }
+            80% { transform: translate(8px, -4px) rotate(0.5deg); }
+            90% { transform: translate(-4px, 6px) rotate(-0.5deg); }
+        }
+        body.shaking {
+            animation: screenShake 500ms cubic-bezier(0.36, 0.07, 0.19, 0.97);
+            overflow-x: hidden;
+        }
+
+        @keyframes slamDown {
+            0% { transform: translateY(-200%) scale(1.2) rotateX(-15deg); opacity: 0; filter: blur(4px); }
+            60% { transform: translateY(8%) scale(0.95) rotateX(2deg); opacity: 1; filter: blur(0); }
+            80% { transform: translateY(-4%) scale(1.02) rotateX(-1deg); }
+            100% { transform: translateY(0) scale(1) rotateX(0deg); opacity: 1; filter: blur(0); }
+        }
+        .slam-enter {
+            animation: slamDown 600ms cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+            animation-delay: calc(var(--i, 0) * 50ms);
+        }
+
+        @keyframes glitchClip {
+            0% { clip-path: inset(40% 0 61% 0); }
+            20% { clip-path: inset(92% 0 1% 0); }
+            40% { clip-path: inset(43% 0 1% 0); }
+            60% { clip-path: inset(25% 0 58% 0); }
+            80% { clip-path: inset(54% 0 7% 0); }
+            100% { clip-path: inset(58% 0 43% 0); }
+        }
+        .glitch-text { position: relative; }
+        .glitch-text::before,
+        .glitch-text::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            opacity: 0.8;
+        }
+        .glitch-text::before {
+            color: oklch(0.65 0.25 0);
+            animation: glitchClip 650ms infinite;
+            text-shadow: -3px 0 oklch(0.65 0.25 0);
+            z-index: -1;
+        }
+        .glitch-text::after {
+            color: oklch(0.7 0.2 240);
+            animation: glitchClip 375ms infinite reverse;
+            text-shadow: 3px 0 oklch(0.7 0.2 240);
+            z-index: -2;
+        }
+
+        @keyframes fireBorder {
+            0%, 100% { box-shadow: 0 0 20px oklch(0.6 0.25 30), 0 0 40px oklch(0.65 0.24 40), inset 0 0 20px oklch(0.5 0.2 30 / 0.3); }
+            25% { box-shadow: 0 0 30px oklch(0.7 0.25 20), 0 0 60px oklch(0.65 0.24 40), inset 0 0 30px oklch(0.6 0.22 20 / 0.4); }
+            50% { box-shadow: 0 0 25px oklch(0.75 0.26 50), 0 0 50px oklch(0.7 0.25 35), inset 0 0 25px oklch(0.65 0.2 50 / 0.35); }
+            75% { box-shadow: 0 0 35px oklch(0.65 0.24 15), 0 0 70px oklch(0.6 0.23 45), inset 0 0 35px oklch(0.55 0.21 25 / 0.45); }
+        }
+
+        @keyframes redFlash {
+            0%, 100% { opacity: 0; }
+            10% { opacity: 0.8; }
+            20% { opacity: 0.3; }
+            30% { opacity: 0.9; }
+            40% { opacity: 0; }
+        }
+
+        @keyframes pixelateIn {
+            0% { transform: scale(0.5); filter: blur(8px) brightness(0.5); opacity: 0; }
+            50% { filter: blur(4px) brightness(0.8); opacity: 0.7; }
+            100% { transform: scale(1); filter: blur(0) brightness(1); opacity: 1; }
+        }
+
+        @keyframes countPop {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.3) translateY(-4px); color: oklch(0.75 0.2 60); text-shadow: 0 0 10px oklch(0.75 0.2 60 / 0.6); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+        .stat-pop { animation: countPop 500ms cubic-bezier(0.68, -0.55, 0.27, 1.55); display: inline-block; }
+
+        @keyframes scanlineFlicker {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.6; }
+        }
+        @keyframes scanlineMove {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        @keyframes doomBarFill {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        @keyframes doomPulseText {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes platformBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.2; }
+        }
+
+        /* ---- CRT Scanlines Overlay ---- */
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: repeating-linear-gradient(0deg, transparent 0px, transparent 2px, oklch(0 0 0 / 0.08) 2px, oklch(0 0 0 / 0.08) 4px);
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.4;
+            animation: scanlineFlicker 8s ease-in-out infinite;
+        }
+        .scanlines::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(180deg, transparent 0%, oklch(0 0 0 / 0.03) 50%, transparent 100%);
+            animation: scanlineMove 12s linear infinite;
+        }
+
+        /* ---- Red Flash Overlay ---- */
+        .red-flash-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: oklch(0.5 0.26 20);
+            pointer-events: none;
+            z-index: 10000;
+            opacity: 0;
+            mix-blend-mode: screen;
+        }
+        .red-flash-overlay.active { animation: redFlash 400ms cubic-bezier(0.4, 0, 0.2, 1); }
 
         /* ---- Header ---- */
         .header {
@@ -90,7 +236,8 @@
             text-transform: uppercase;
         }
         .header p { opacity: 0.8; font-size: 0.85rem; font-weight: 400; }
-        .theme-toggle {
+        .header-buttons { display: flex; gap: 0.5rem; flex-shrink: 0; }
+        .theme-toggle, .sound-toggle {
             background: none;
             border: 2px solid var(--primary-foreground);
             color: var(--primary-foreground);
@@ -103,10 +250,38 @@
             flex-shrink: 0;
             transition: opacity 0.15s;
         }
-        .theme-toggle:hover { opacity: 0.7; }
+        .theme-toggle:hover, .sound-toggle:hover { opacity: 0.7; }
 
         /* ---- Layout ---- */
         .container { max-width: 1280px; margin: 0 auto; padding: 0 1rem; }
+
+        /* ---- Difficulty Selector ---- */
+        .difficulty-bar {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        .difficulty-btn {
+            padding: 0.35rem 0.7rem;
+            font-family: "Source Code Pro", monospace;
+            font-size: 0.65rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            border: 1px solid var(--border);
+            background: var(--muted);
+            color: var(--muted-foreground);
+            cursor: pointer;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+        .difficulty-btn.active {
+            background: oklch(0.45 0.20 27);
+            color: #fff;
+            border-color: oklch(0.55 0.25 30);
+            box-shadow: 0 0 10px oklch(0.5 0.2 27 / 0.5);
+        }
 
         /* ---- Search Panel ---- */
         .search-panel {
@@ -162,9 +337,11 @@
             letter-spacing: 0.05em;
             cursor: pointer;
             transition: opacity 0.15s;
+            box-shadow: 0 4px 0 oklch(0.3 0.05 250), 0 8px 16px oklch(0 0 0 / 0.3);
         }
         .btn-search:hover { opacity: 0.85; }
         .btn-search:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn-search:active { transform: translateY(2px); box-shadow: 0 2px 0 oklch(0.3 0.05 250), 0 4px 8px oklch(0 0 0 / 0.2); }
 
         /* ---- Source Chips ---- */
         .sources-bar { display: flex; gap: 0.4rem; flex-wrap: wrap; }
@@ -211,7 +388,7 @@
             box-shadow: var(--shadow-sm);
             text-align: center;
         }
-        .stat-card .value { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
+        .stat-card .value { font-size: 1.5rem; font-weight: 800; color: var(--primary); display: inline-block; }
         .stat-card .label {
             font-size: 0.65rem;
             color: var(--muted-foreground);
@@ -252,13 +429,14 @@
             overflow: hidden;
             box-shadow: var(--shadow-sm);
             cursor: pointer;
-            transition: box-shadow 0.2s, transform 0.2s;
+            transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
             display: flex;
             flex-direction: column;
         }
         .vehicle-card:hover {
-            box-shadow: var(--shadow-xl);
-            transform: translateY(-2px);
+            transform: translateY(-4px) scale(1.02);
+            animation: fireBorder 800ms ease-in-out infinite;
+            border-color: oklch(0.7 0.25 35);
         }
         .card-image {
             width: 100%;
@@ -314,38 +492,60 @@
         }
         .card-meta span { display: flex; align-items: center; gap: 0.2rem; }
 
-        /* ---- Loading ---- */
-        .loading-state { text-align: center; padding: 4rem 1rem; }
-        .loading-spinner {
-            width: 36px; height: 36px;
-            border: 3px solid var(--border);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-            margin: 0 auto 1rem;
+        /* ---- Doom Loading ---- */
+        .doom-loading { text-align: center; padding: 3rem 1rem; }
+        .doom-loading-title {
+            font-family: "Oxanium", sans-serif;
+            font-size: 1.4rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: oklch(0.65 0.25 27);
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+            animation: doomPulseText 1s ease-in-out infinite;
+            margin-bottom: 1.25rem;
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .loading-state p { color: var(--muted-foreground); font-size: 0.85rem; }
-        .loading-sources {
+        .doom-bar-outer {
+            max-width: 500px;
+            margin: 0 auto 1.5rem;
+            height: 24px;
+            background: oklch(0.15 0 0);
+            border: 3px solid oklch(0.40 0 0);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.8), 0 0 15px oklch(0.5 0.25 27 / 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .doom-bar-fill {
+            height: 100%;
+            background: linear-gradient(180deg, oklch(0.65 0.25 27) 0%, oklch(0.45 0.22 20) 100%);
+            box-shadow: inset 0 1px 2px rgba(255,255,255,0.3), 0 0 10px oklch(0.6 0.25 27 / 0.6);
+            animation: doomBarFill 12s linear forwards;
+        }
+        .doom-platforms {
             display: flex;
             justify-content: center;
             gap: 1.5rem;
-            margin-top: 1.25rem;
             flex-wrap: wrap;
         }
-        .loading-source {
+        .doom-platform {
             display: flex;
             align-items: center;
             gap: 0.4rem;
+            font-family: "Source Code Pro", monospace;
             font-size: 0.75rem;
             color: var(--muted-foreground);
+            text-transform: uppercase;
         }
-        .loading-source .mini-spinner {
-            width: 12px; height: 12px;
-            border: 2px solid var(--border);
-            border-top-color: var(--primary);
+        .doom-platform .status-dot {
+            width: 8px; height: 8px;
             border-radius: 50%;
-            animation: spin 0.6s linear infinite;
+            background: oklch(0.55 0.25 27);
+            animation: platformBlink 0.6s ease-in-out infinite;
+        }
+        .doom-platform .status-dot.done {
+            background: oklch(0.65 0.2 130);
+            animation: none;
+            box-shadow: 0 0 6px oklch(0.65 0.2 130 / 0.8);
         }
 
         /* ---- Empty / Error ---- */
@@ -370,7 +570,9 @@
             align-items: center;
             justify-content: center;
             padding: 1rem;
+            animation: fadeIn 300ms ease-out;
         }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .modal {
             background: var(--card);
             color: var(--card-foreground);
@@ -381,6 +583,7 @@
             overflow-y: auto;
             box-shadow: var(--shadow-xl);
             position: relative;
+            animation: pixelateIn 400ms cubic-bezier(0.68, -0.55, 0.27, 1.55);
         }
         .modal-close {
             position: absolute;
@@ -506,6 +709,149 @@
             color: var(--muted-foreground);
         }
 
+        /* ---- Achievement Toasts ---- */
+        .toast-container {
+            position: fixed;
+            top: 80px;
+            right: 0;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 1rem;
+            pointer-events: none;
+        }
+        .achievement-toast {
+            background: linear-gradient(135deg, #1a0000 0%, #2d0a0a 50%, #1a0000 100%);
+            border: 3px solid #ff4400;
+            border-right: none;
+            box-shadow: 0 0 20px rgba(255, 68, 0, 0.6), 0 0 40px rgba(255, 68, 0, 0.3), inset 0 0 60px rgba(255, 0, 0, 0.1);
+            min-width: 320px;
+            padding: 1rem 1.25rem;
+            position: relative;
+            overflow: hidden;
+            pointer-events: auto;
+            transform: translateX(400px);
+            animation: toastSlideIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+        .achievement-toast.exiting { animation: toastSlideOut 0.3s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards; }
+        @keyframes toastSlideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes toastSlideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(400px); opacity: 0; } }
+        .achievement-toast::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent 0%, #ffaa00 20%, #ff4400 50%, #ffaa00 80%, transparent 100%);
+            animation: toastScanline 2s linear infinite;
+        }
+        @keyframes toastScanline { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+        .achievement-toast::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(0deg, rgba(255, 68, 0, 0.03) 0px, transparent 1px, transparent 2px, rgba(255, 68, 0, 0.03) 3px);
+            pointer-events: none;
+        }
+        .toast-title {
+            font-family: "Oxanium", sans-serif;
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #ffaa00;
+            text-shadow: 0 0 10px #ff4400, 0 0 20px #ff4400, 0 0 30px #ff0000, 2px 2px 0 #000;
+            margin-bottom: 0.3rem;
+            position: relative;
+            z-index: 1;
+            animation: textGlow 1.5s ease-in-out infinite alternate;
+        }
+        @keyframes textGlow {
+            from { text-shadow: 0 0 10px #ff4400, 0 0 20px #ff4400, 0 0 30px #ff0000, 2px 2px 0 #000; }
+            to { text-shadow: 0 0 15px #ff6600, 0 0 30px #ff4400, 0 0 45px #ff2200, 2px 2px 0 #000; }
+        }
+        .toast-subtitle {
+            font-family: "Oxanium", sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #cc3300;
+            text-shadow: 1px 1px 0 #000;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ---- Doom HUD ---- */
+        .doom-hud {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            height: 70px;
+            background: linear-gradient(180deg, oklch(0.35 0 0) 0%, oklch(0.25 0 0) 50%, oklch(0.20 0 0) 100%);
+            border-top: 4px solid oklch(0.45 0 0);
+            box-shadow: inset 0 3px 0 oklch(0.45 0 0), inset 0 -2px 0 oklch(0.15 0 0), 0 -8px 20px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            font-family: "Oxanium", monospace;
+            z-index: 1000;
+            user-select: none;
+        }
+        .doom-hud-section { display: flex; flex-direction: column; gap: 0.15rem; }
+        .doom-stat { display: flex; align-items: baseline; gap: 0.5rem; }
+        .doom-label {
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: oklch(0.55 0 0);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            text-shadow: 1px 1px 0 oklch(0.15 0 0);
+        }
+        .doom-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            font-family: "Source Code Pro", monospace;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.8);
+            letter-spacing: 0.05em;
+        }
+        .doom-value.frags { color: oklch(0.75 0.15 60); }
+        .doom-value.health { color: oklch(0.65 0.25 27); }
+        .doom-value.armor { color: oklch(0.70 0.20 130); }
+        .doom-value.ammo { color: oklch(0.75 0.15 245); }
+        .doom-face {
+            width: 60px; height: 60px;
+            background: linear-gradient(135deg, oklch(0.30 0 0) 0%, oklch(0.22 0 0) 100%);
+            border: 3px solid oklch(0.15 0 0);
+            box-shadow: inset 2px 2px 0 oklch(0.40 0 0), inset -2px -2px 0 oklch(0.18 0 0), 0 4px 8px rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: "Source Code Pro", monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: oklch(0.80 0.15 60);
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.9);
+            transition: all 0.2s;
+        }
+        .doom-face.searching { color: oklch(0.75 0.15 245); animation: doomPulseText 0.8s infinite; }
+        .doom-face.results { color: oklch(0.75 0.20 130); }
+        .doom-face.error { color: oklch(0.70 0.25 27); }
+        .doom-health-bar {
+            width: 80px; height: 6px;
+            background: oklch(0.15 0 0);
+            border: 1px solid oklch(0.40 0 0);
+            margin-top: 0.2rem;
+            overflow: hidden;
+        }
+        .doom-health-fill {
+            height: 100%;
+            background: linear-gradient(90deg, oklch(0.65 0.25 27) 0%, oklch(0.75 0.20 50) 100%);
+            transition: width 0.3s;
+            box-shadow: inset 0 1px 2px rgba(255,255,255,0.3);
+        }
+        .doom-health-fill.critical { background: linear-gradient(90deg, oklch(0.55 0.25 0) 0%, oklch(0.60 0.25 27) 100%); }
+
         /* ---- Footer ---- */
         .footer {
             text-align: center;
@@ -524,22 +870,46 @@
             .vehicle-grid { grid-template-columns: 1fr; }
             .stats-row { grid-template-columns: repeat(2, 1fr); }
             .modal-details { grid-template-columns: 1fr; }
+            .difficulty-bar { gap: 0.25rem; }
+            .difficulty-btn { font-size: 0.55rem; padding: 0.25rem 0.5rem; }
+            .doom-hud { height: 60px; padding: 0 0.75rem; }
+            .doom-hud-section:nth-child(3),
+            .doom-hud-section:nth-child(4) { display: none; }
+            .doom-value { font-size: 1.2rem; }
+            .doom-label { font-size: 0.55rem; }
+            .doom-face { width: 50px; height: 50px; font-size: 1.3rem; }
+            .toast-container { top: 60px; left: 0; padding: 0.5rem; }
+            .achievement-toast { min-width: unset; width: 100%; border-right: 3px solid #ff4400; }
+            .toast-title { font-size: 1.1rem; }
+            .toast-subtitle { font-size: 0.75rem; }
         }
     </style>
 </head>
-<body x-data="app()" :class="{ dark: darkMode }">
+<body x-data="app()" :class="{ dark: darkMode, shaking: isShaking }">
+
+    <!-- CRT Scanlines -->
+    <div class="scanlines"></div>
+
+    <!-- Red Flash Overlay -->
+    <div class="red-flash-overlay" :class="{ active: redFlash }"></div>
 
     <!-- Header -->
     <div class="header">
         <div class="header-inner">
             <div class="header-text">
-                <h1>Milwaukee Vehicle Finder</h1>
+                <h1 class="glitch-text" data-text="Milwaukee Vehicle Finder">Milwaukee Vehicle Finder</h1>
                 <p>Search used cars across Craigslist, CarGurus, Cars.com &amp; AutoTrader</p>
             </div>
-            <button class="theme-toggle" @click="toggleDark()" :title="darkMode ? 'Light mode' : 'Dark mode'">
-                <svg x-show="!darkMode" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-                <svg x-show="darkMode" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-            </button>
+            <div class="header-buttons">
+                <button class="sound-toggle" @click="toggleSound()" :title="soundEnabled ? 'Mute sounds' : 'Enable sounds'">
+                    <svg x-show="soundEnabled" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                    <svg x-show="!soundEnabled" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+                </button>
+                <button class="theme-toggle" @click="toggleDark()" :title="darkMode ? 'Light mode' : 'Dark mode'">
+                    <svg x-show="!darkMode" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                    <svg x-show="darkMode" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -547,6 +917,26 @@
 
         <!-- Search Panel -->
         <div class="search-panel">
+            <!-- Difficulty Selector -->
+            <div class="difficulty-bar">
+                <button class="difficulty-btn" :class="{ active: selectedDifficulty === 'easy' }"
+                        @click="setDifficulty('easy', '50000')">
+                    &gt;&gt; I'm Too Young To Die &lt;&lt;
+                </button>
+                <button class="difficulty-btn" :class="{ active: selectedDifficulty === 'medium' }"
+                        @click="setDifficulty('medium', '20000')">
+                    &gt;&gt; Hurt Me Plenty &lt;&lt;
+                </button>
+                <button class="difficulty-btn" :class="{ active: selectedDifficulty === 'hard' }"
+                        @click="setDifficulty('hard', '10000')">
+                    &gt;&gt; Ultra-Violence &lt;&lt;
+                </button>
+                <button class="difficulty-btn" :class="{ active: selectedDifficulty === 'nightmare' }"
+                        @click="setDifficulty('nightmare', '5000')">
+                    &gt;&gt; Nightmare! &lt;&lt;
+                </button>
+            </div>
+
             <div class="search-grid">
                 <div class="form-group">
                     <label>Make</label>
@@ -616,20 +1006,34 @@
                 </div>
             </div>
             <button class="btn-search" @click="search()" :disabled="loading">
-                <span x-show="!loading">Search Vehicles</span>
-                <span x-show="loading">Searching...</span>
+                <span x-show="!loading">Rip and Tear</span>
+                <span x-show="loading">Ripping...</span>
             </button>
         </div>
 
-        <!-- Loading -->
-        <div x-show="loading" class="loading-state">
-            <div class="loading-spinner"></div>
-            <p>Searching multiple platforms...</p>
-            <div class="loading-sources">
-                <div class="loading-source"><div class="mini-spinner"></div> Craigslist</div>
-                <div class="loading-source"><div class="mini-spinner"></div> CarGurus</div>
-                <div class="loading-source"><div class="mini-spinner"></div> Cars.com</div>
-                <div class="loading-source"><div class="mini-spinner"></div> AutoTrader</div>
+        <!-- Doom Loading -->
+        <div x-show="loading" class="doom-loading">
+            <div class="doom-loading-title">Searching the wasteland...</div>
+            <div class="doom-bar-outer">
+                <div class="doom-bar-fill" :key="loadingKey"></div>
+            </div>
+            <div class="doom-platforms">
+                <div class="doom-platform">
+                    <div class="status-dot" :class="{ done: loadingComplete.craigslist }"></div>
+                    Craigslist
+                </div>
+                <div class="doom-platform">
+                    <div class="status-dot" :class="{ done: loadingComplete.cargurus }"></div>
+                    CarGurus
+                </div>
+                <div class="doom-platform">
+                    <div class="status-dot" :class="{ done: loadingComplete.carscom }"></div>
+                    Cars.com
+                </div>
+                <div class="doom-platform">
+                    <div class="status-dot" :class="{ done: loadingComplete.autotrader }"></div>
+                    AutoTrader
+                </div>
             </div>
         </div>
 
@@ -639,19 +1043,19 @@
             <!-- Stats -->
             <div class="stats-row" x-show="allResults.length > 0">
                 <div class="stat-card">
-                    <div class="value" x-text="filtered.length"></div>
+                    <div class="value" :class="{ 'stat-pop': statPop }" x-text="filtered.length"></div>
                     <div class="label">Vehicles Found</div>
                 </div>
                 <div class="stat-card">
-                    <div class="value" x-text="'$' + avgPrice.toLocaleString()"></div>
+                    <div class="value" :class="{ 'stat-pop': statPop }" x-text="'$' + avgPrice.toLocaleString()"></div>
                     <div class="label">Avg Price</div>
                 </div>
                 <div class="stat-card">
-                    <div class="value" x-text="bestDeal ? ('$' + bestDeal.toLocaleString()) : '-'"></div>
+                    <div class="value" :class="{ 'stat-pop': statPop }" x-text="bestDeal ? ('$' + bestDeal.toLocaleString()) : '-'"></div>
                     <div class="label">Lowest Price</div>
                 </div>
                 <div class="stat-card">
-                    <div class="value" x-text="sourcesWithResults + '/' + sourcesTotal"></div>
+                    <div class="value" :class="{ 'stat-pop': statPop }" x-text="sourcesWithResults + '/' + sourcesTotal"></div>
                     <div class="label">Sources</div>
                 </div>
             </div>
@@ -687,8 +1091,8 @@
 
             <!-- Grid -->
             <div class="vehicle-grid" x-show="filtered.length > 0">
-                <template x-for="v in filtered" :key="v.id">
-                    <div class="vehicle-card" @click="openModal(v)">
+                <template x-for="(v, idx) in filtered" :key="v.id">
+                    <div class="vehicle-card slam-enter" :style="'--i:' + idx" @click="openModal(v)">
                         <div class="card-image">
                             <template x-if="v.image_url">
                                 <img :src="v.image_url" :alt="v.title" loading="lazy"
@@ -756,6 +1160,50 @@
 
     <div class="footer">Milwaukee Vehicle Finder &middot; Results scraped in real-time from public listings</div>
 
+    <!-- Achievement Toast Container -->
+    <div class="toast-container">
+        <template x-for="(toast, index) in toasts" :key="toast.id">
+            <div class="achievement-toast" :class="{ 'exiting': toast.exiting }">
+                <div class="toast-title" x-text="toast.title"></div>
+                <div class="toast-subtitle" x-text="toast.subtitle"></div>
+            </div>
+        </template>
+    </div>
+
+    <!-- Doom HUD -->
+    <div class="doom-hud">
+        <div class="doom-hud-section">
+            <div class="doom-stat">
+                <span class="doom-label">Frags</span>
+                <span class="doom-value frags" x-text="allResults.length"></span>
+            </div>
+        </div>
+        <div class="doom-hud-section">
+            <div class="doom-stat">
+                <span class="doom-label">Health</span>
+                <span class="doom-value health" x-text="searchHealth + '%'"></span>
+            </div>
+            <div class="doom-health-bar">
+                <div class="doom-health-fill"
+                     :class="{ critical: searchHealth < 50 }"
+                     :style="'width: ' + searchHealth + '%'"></div>
+            </div>
+        </div>
+        <div class="doom-face" :class="hudState" x-text="hudFace"></div>
+        <div class="doom-hud-section">
+            <div class="doom-stat">
+                <span class="doom-label">Armor</span>
+                <span class="doom-value armor" x-text="avgPrice > 0 ? ('$' + (avgPrice / 1000).toFixed(1) + 'K') : '$0'"></span>
+            </div>
+        </div>
+        <div class="doom-hud-section">
+            <div class="doom-stat">
+                <span class="doom-label">Ammo</span>
+                <span class="doom-value ammo" x-text="searchCount"></span>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal -->
     <template x-if="selected">
         <div class="modal-backdrop" @click.self="closeModal()" @keydown.escape.window="closeModal()">
@@ -773,7 +1221,7 @@
                             <path d="M5 17H3v-5l2-5h9l4 5h3v5h-2"/><path d="M5 12h14"/>
                         </svg>
                     </div>
-                    <div class="loading-spinner" x-show="modalImages.length === 0 && detailLoading" style="position:absolute;"></div>
+                    <div class="loading-spinner" x-show="modalImages.length === 0 && detailLoading" style="position:absolute; width:36px; height:36px; border:3px solid var(--border); border-top-color:var(--primary); border-radius:50%; animation:spin 0.6s linear infinite;"></div>
                     <template x-if="modalImages.length > 1">
                         <button class="img-nav prev" @click.stop="modalImgIdx = (modalImgIdx - 1 + modalImages.length) % modalImages.length">&lsaquo;</button>
                     </template>
@@ -807,7 +1255,6 @@
                             <div class="dl">Source</div>
                             <div class="dv" x-text="selected.source"></div>
                         </div>
-                        <!-- Extra details from /api/details (excluding description) -->
                         <template x-for="(val, key) in extraDetails" :key="key">
                             <div class="detail-item" x-show="val && key !== 'description'">
                                 <div class="dl" x-text="key"></div>
@@ -845,6 +1292,29 @@
             extraDetails: {},
             sourceInfo: [],
             darkMode: false,
+
+            // Doom state
+            isShaking: false,
+            redFlash: false,
+            statPop: false,
+            searchCount: 0,
+            hudState: 'normal',
+            selectedDifficulty: 'medium',
+            soundEnabled: true,
+            audioContext: null,
+            toasts: [],
+            toastId: 0,
+            loadingKey: 0,
+            loadingComplete: { craigslist: false, cargurus: false, carscom: false, autotrader: false },
+            achievements: {
+                firstBlood: false,
+                overkill: false,
+                bargainHunter: false,
+                quadDamage: false,
+                multiKill: false,
+                godlike: false,
+                headshot: false,
+            },
 
             params: {
                 make: '',
@@ -901,11 +1371,15 @@
                 for (let y = cur; y >= 1990; y--) this.years.push(y);
                 this.$watch('activeSource', () => this.applySort());
 
-                // Persist dark mode
                 if (localStorage.getItem('mvf-dark') === '1' ||
                     (!localStorage.getItem('mvf-dark') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                     this.darkMode = true;
                 }
+                if (localStorage.getItem('mvf-sound') === '0') {
+                    this.soundEnabled = false;
+                }
+                const priceMap = { '50000': 'easy', '20000': 'medium', '10000': 'hard', '5000': 'nightmare' };
+                this.selectedDifficulty = priceMap[this.params.max_price] || 'medium';
             },
 
             toggleDark() {
@@ -930,25 +1404,12 @@
 
             formatDescription(text) {
                 if (!text) return '';
-                // Escape HTML entities for safety
                 let s = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-
-                // Break up run-on text at sentence boundaries
                 s = s.replace(/([.!?])(\s*)([A-Z])/g, '$1\n\n$3');
-
-                // Break before common keywords
                 s = s.replace(/(ADDRESS\s*:|LOCATION\s*:|CALL\s|CONTACT\s|TEXT\s|PHONE\s*:|PRICE\s*:)/gi, '\n\n$1');
-
-                // Break before URLs
                 s = s.replace(/(https?:\/\/|www\.)/gi, '\n$1');
-
-                // Break comma-separated ALL-CAPS feature lists
                 s = s.replace(/,\s*([A-Z]{2,})/g, '\n$1');
-
-                // Collapse excessive blank lines
                 s = s.replace(/\n{3,}/g, '\n\n');
-
-                // Add emojis for common vehicle terms
                 const emojiMap = [
                     [/\b(AWD|4WD|ALL WHEEL DRIVE|ALL-WHEEL DRIVE)\b/gi, '🔄 $1'],
                     [/\b(FWD|FRONT WHEEL DRIVE)\b/gi, '➡️ $1'],
@@ -980,20 +1441,12 @@
                     [/\b(MILES)\b/gi, '🛣️ $1'],
                     [/\b(TOW|TOWING)\b/gi, '🪝 $1'],
                 ];
-
                 for (const [pattern, replacement] of emojiMap) {
                     s = s.replace(pattern, replacement);
                 }
-
-                // Add phone emoji before phone numbers
                 s = s.replace(/(\d{3}[-.\s]?\d{3}[-.\s]?\d{4})/g, '📞 $1');
-
-                // Add link emoji before URLs
                 s = s.replace(/(https?:\/\/\S+|www\.\S+)/gi, '🔗 $1');
-
-                // Add address emoji
                 s = s.replace(/(ADDRESS\s*:)/gi, '📍 $1');
-
                 return s.trim();
             },
 
@@ -1015,6 +1468,22 @@
                 return this.sourceInfo.length;
             },
 
+            get searchHealth() {
+                if (!this.searched) return 100;
+                const healthy = this.sourceInfo.filter(s => s.count > 0).length;
+                const total = this.sourceInfo.length || 4;
+                return Math.round((healthy / total) * 100);
+            },
+
+            get hudFace() {
+                switch (this.hudState) {
+                    case 'searching': return '>:|';
+                    case 'results': return '>:D';
+                    case 'error': return 'X_X';
+                    default: return '>:)';
+                }
+            },
+
             applySort() {
                 let list = this.allResults;
                 if (this.activeSource !== 'all') {
@@ -1032,7 +1501,174 @@
                 });
             },
 
+            // Sound system
+            initAudio() {
+                if (!this.audioContext) {
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            },
+
+            toggleSound() {
+                this.soundEnabled = !this.soundEnabled;
+                localStorage.setItem('mvf-sound', this.soundEnabled ? '1' : '0');
+                if (this.soundEnabled) {
+                    this.initAudio();
+                    this.playSound('pickup');
+                }
+            },
+
+            playSound(type) {
+                if (!this.soundEnabled) return;
+                this.initAudio();
+                const ctx = this.audioContext;
+                if (!ctx) return;
+                const now = ctx.currentTime;
+
+                if (type === 'achievement') {
+                    [523, 659, 784].forEach((freq, i) => {
+                        const o = ctx.createOscillator();
+                        const g = ctx.createGain();
+                        o.connect(g); g.connect(ctx.destination);
+                        o.type = 'triangle';
+                        o.frequency.setValueAtTime(freq, now + i * 0.08);
+                        g.gain.setValueAtTime(0.08, now + i * 0.08);
+                        g.gain.exponentialRampToValueAtTime(0.01, now + i * 0.08 + 0.25);
+                        o.start(now + i * 0.08);
+                        o.stop(now + i * 0.08 + 0.25);
+                    });
+                    return;
+                }
+
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain); gain.connect(ctx.destination);
+
+                switch(type) {
+                    case 'fire':
+                        osc.type = 'sawtooth';
+                        osc.frequency.setValueAtTime(80, now);
+                        osc.frequency.exponentialRampToValueAtTime(40, now + 0.1);
+                        gain.gain.setValueAtTime(0.15, now);
+                        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+                        osc.start(now); osc.stop(now + 0.12);
+                        break;
+                    case 'pickup':
+                        osc.type = 'square';
+                        osc.frequency.setValueAtTime(400, now);
+                        osc.frequency.exponentialRampToValueAtTime(800, now + 0.15);
+                        gain.gain.setValueAtTime(0.1, now);
+                        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                        osc.start(now); osc.stop(now + 0.2);
+                        break;
+                    case 'damage':
+                        osc.type = 'sawtooth';
+                        osc.frequency.setValueAtTime(300, now);
+                        osc.frequency.exponentialRampToValueAtTime(100, now + 0.2);
+                        gain.gain.setValueAtTime(0.15, now);
+                        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                        osc.start(now); osc.stop(now + 0.25);
+                        break;
+                }
+            },
+
+            setDifficulty(name, price) {
+                this.selectedDifficulty = name;
+                this.params.max_price = price;
+                this.playSound('pickup');
+            },
+
+            // Screen shake
+            triggerShake() {
+                this.isShaking = true;
+                setTimeout(() => { this.isShaking = false; }, 500);
+            },
+
+            // Red flash
+            triggerRedFlash() {
+                this.redFlash = true;
+                setTimeout(() => { this.redFlash = false; }, 400);
+            },
+
+            // Stat pop
+            triggerStatPop() {
+                this.statPop = true;
+                setTimeout(() => { this.statPop = false; }, 500);
+            },
+
+            // Toast system
+            showToast(title, subtitle) {
+                const id = this.toastId++;
+                this.toasts.push({ id, title, subtitle, exiting: false });
+                this.playSound('achievement');
+                setTimeout(() => {
+                    const idx = this.toasts.findIndex(t => t.id === id);
+                    if (idx !== -1) {
+                        this.toasts[idx].exiting = true;
+                        setTimeout(() => {
+                            this.toasts = this.toasts.filter(t => t.id !== id);
+                        }, 300);
+                    }
+                }, 3000);
+            },
+
+            checkAchievements() {
+                const count = this.allResults.length;
+                const sourcesUp = this.sourceInfo.filter(s => s.count > 0).length;
+
+                if (!this.achievements.firstBlood) {
+                    this.achievements.firstBlood = true;
+                    this.showToast('FIRST BLOOD', 'The hunt begins...');
+                }
+                if (!this.achievements.godlike && count >= 50) {
+                    this.achievements.godlike = true;
+                    setTimeout(() => this.showToast('GODLIKE', 'The marketplace trembles'), 800);
+                } else if (!this.achievements.overkill && count >= 20) {
+                    this.achievements.overkill = true;
+                    setTimeout(() => this.showToast('OVERKILL', count + ' targets acquired'), 800);
+                }
+                if (!this.achievements.quadDamage && sourcesUp === 4) {
+                    this.achievements.quadDamage = true;
+                    setTimeout(() => this.showToast('QUAD DAMAGE', 'Full arsenal online'), 1600);
+                } else if (!this.achievements.multiKill && sourcesUp >= 3) {
+                    this.achievements.multiKill = true;
+                    setTimeout(() => this.showToast('MULTI KILL', sourcesUp + ' sources dominated'), 1600);
+                }
+                if (!this.achievements.bargainHunter && count > 0) {
+                    const cheapest = Math.min(...this.allResults.map(v => v.price));
+                    if (cheapest < 5000) {
+                        this.achievements.bargainHunter = true;
+                        setTimeout(() => this.showToast('BARGAIN HUNTER', 'Steal of the century'), 2400);
+                    }
+                }
+                if (!this.achievements.headshot && this.params.make && this.params.model && count > 0) {
+                    const maxP = parseInt(this.params.max_price);
+                    const match = this.allResults.find(v => {
+                        const t = v.title.toLowerCase();
+                        return t.includes(this.params.make.toLowerCase()) &&
+                               t.includes(this.params.model.toLowerCase()) &&
+                               v.price <= maxP;
+                    });
+                    if (match) {
+                        this.achievements.headshot = true;
+                        setTimeout(() => this.showToast('HEADSHOT', 'Precision strike'), 3200);
+                    }
+                }
+            },
+
             async search() {
+                this.playSound('fire');
+                this.triggerShake();
+                this.hudState = 'searching';
+                this.searchCount++;
+                this.loadingKey++;
+                this.loadingComplete = { craigslist: false, cargurus: false, carscom: false, autotrader: false };
+
+                // Simulate platform completion
+                setTimeout(() => { this.loadingComplete.craigslist = true; }, 3000);
+                setTimeout(() => { this.loadingComplete.cargurus = true; }, 6000);
+                setTimeout(() => { this.loadingComplete.carscom = true; }, 9000);
+                setTimeout(() => { this.loadingComplete.autotrader = true; }, 11000);
+
                 this.loading = true;
                 this.searched = true;
                 this.error = null;
@@ -1067,14 +1703,30 @@
                             key: this.sourceKey(s.name),
                         }));
                         this.applySort();
+                        this.hudState = this.allResults.length > 0 ? 'results' : 'normal';
+                        if (this.allResults.length > 0) {
+                            this.playSound('pickup');
+                            this.triggerStatPop();
+                        }
+                        this.checkAchievements();
                     } else {
                         this.error = data.error || 'Search failed. Please try again.';
+                        this.hudState = 'error';
+                        this.triggerRedFlash();
+                        this.playSound('damage');
                     }
                 } catch (e) {
                     this.error = 'Could not connect to the search API. Please try again.';
+                    this.hudState = 'error';
+                    this.triggerRedFlash();
+                    this.playSound('damage');
                     console.error(e);
                 } finally {
                     this.loading = false;
+                    this.loadingComplete = { craigslist: true, cargurus: true, carscom: true, autotrader: true };
+                    setTimeout(() => {
+                        if (this.hudState !== 'searching') this.hudState = 'normal';
+                    }, 3000);
                 }
             },
 
