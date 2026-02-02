@@ -248,101 +248,131 @@
 
         /* --- Rocket Launcher --- */
         @keyframes rocketCore {
-            0% { width: 10px; height: 10px; opacity: 1; background: #fff; box-shadow: 0 0 30px #ff6600, 0 0 60px #ff4400; }
-            20% { width: 80px; height: 80px; background: #ffaa00; }
-            50% { width: 120px; height: 120px; opacity: 0.7; background: #ff4400; box-shadow: 0 0 60px #ff2200, 0 0 100px #ff0000; }
-            100% { width: 160px; height: 160px; opacity: 0; background: #330000; box-shadow: none; }
+            0% { width: 12px; height: 12px; opacity: 1; background: radial-gradient(circle, #fff 0%, #ffdd44 30%, #ff6600 60%, #ff2200 100%); box-shadow: 0 0 40px #ff6600, 0 0 80px #ff4400, 0 0 120px #ff220088; }
+            15% { width: 100px; height: 100px; background: radial-gradient(circle, #ffee88 0%, #ff8800 40%, #ff2200 80%); }
+            40% { width: 150px; height: 150px; opacity: 0.8; background: radial-gradient(circle, #ffaa44 0%, #ff4400 50%, #880000 100%); box-shadow: 0 0 80px #ff2200, 0 0 140px #ff000088; }
+            70% { width: 180px; height: 180px; opacity: 0.4; background: radial-gradient(circle, #ff6633 0%, #661100 60%, #220000 100%); }
+            100% { width: 200px; height: 200px; opacity: 0; background: radial-gradient(circle, #331100 0%, #000 100%); box-shadow: none; }
         }
         @keyframes rocketShockwave {
-            0% { width: 20px; height: 20px; opacity: 0.9; border-color: #ffaa00; border-width: 4px; }
-            100% { width: 280px; height: 280px; opacity: 0; border-color: #ff220044; border-width: 1px; }
+            0% { width: 20px; height: 20px; opacity: 0.9; border-color: #ffcc44; border-width: 4px; box-shadow: 0 0 15px #ff880088; }
+            50% { border-color: #ff660044; border-width: 2px; }
+            100% { width: 320px; height: 320px; opacity: 0; border-color: transparent; border-width: 1px; box-shadow: none; }
         }
         @keyframes rocketParticle {
-            0% { opacity: 1; transform: translate(-50%, -50%) translate(0, 0) scale(1); }
-            30% { opacity: 1; }
-            100% { opacity: 0; transform: translate(-50%, -50%) translate(var(--px), var(--py)) scale(0); }
+            0% { opacity: 1; transform: translate(-50%, -50%) translate(0, 0) scale(1); filter: blur(0); }
+            20% { opacity: 1; filter: blur(0.5px); }
+            100% { opacity: 0; transform: translate(-50%, -50%) translate(var(--px), var(--py)) scale(0.2); filter: blur(2px); }
         }
         @keyframes rocketSmoke {
-            0% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.5); background: #888; }
-            100% { opacity: 0; transform: translate(-50%, -50%) translate(var(--sx), var(--sy)) scale(2); background: #333; }
+            0% { opacity: 0.6; transform: translate(-50%, -50%) scale(0.3); background: radial-gradient(circle, #aaa 0%, #666 100%); filter: blur(2px); }
+            100% { opacity: 0; transform: translate(-50%, -50%) translate(var(--sx), var(--sy)) scale(3); background: radial-gradient(circle, #555 0%, #111 100%); filter: blur(6px); }
+        }
+        @keyframes rocketTrail {
+            0% { opacity: 0.8; width: var(--tw); height: 2px; background: linear-gradient(90deg, #ffcc44, #ff660000); }
+            100% { opacity: 0; width: 0; height: 1px; background: linear-gradient(90deg, #ff440044, transparent); }
+        }
+        @keyframes rocketEmber {
+            0% { opacity: 1; transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 6px var(--ec); }
+            60% { opacity: 0.8; }
+            100% { opacity: 0; transform: translate(-50%, -50%) translate(var(--ex), var(--ey)) scale(0); box-shadow: none; }
         }
 
         /* --- Imp Fireball --- */
         @keyframes fireballCore {
-            0% { width: 15px; height: 15px; opacity: 1; background: #80ff40; box-shadow: 0 0 30px #40ff00, 0 0 60px #00cc00; }
-            30% { width: 70px; height: 70px; background: #60cc20; }
-            60% { width: 100px; height: 100px; opacity: 0.6; background: #408010; box-shadow: 0 0 40px #40800080; }
-            100% { width: 130px; height: 130px; opacity: 0; }
+            0% { width: 18px; height: 18px; opacity: 1; background: radial-gradient(circle, #ccff88 0%, #80ff40 30%, #40cc00 70%); box-shadow: 0 0 40px #40ff00, 0 0 80px #00cc00, 0 0 120px #00880088; }
+            25% { width: 80px; height: 80px; background: radial-gradient(circle, #aaff66 0%, #60cc20 50%, #308000 100%); }
+            50% { width: 110px; height: 110px; opacity: 0.7; background: radial-gradient(circle, #80cc40 0%, #408010 60%, #204000 100%); box-shadow: 0 0 50px #40800088; }
+            100% { width: 150px; height: 150px; opacity: 0; background: radial-gradient(circle, #204000 0%, #000 100%); box-shadow: none; }
         }
         @keyframes fireballEmber {
-            0% { opacity: 1; transform: translate(-50%, -50%) translate(0, 0) scale(1); background: #80ff40; }
-            50% { opacity: 0.8; background: #60cc20; }
-            100% { opacity: 0; transform: translate(-50%, -50%) translate(var(--px), var(--py)) scale(0.2); background: #204000; }
+            0% { opacity: 1; transform: translate(-50%, -50%) translate(0, 0) scale(1); background: radial-gradient(circle, #ccff88, #80ff40); box-shadow: 0 0 8px #40ff00; }
+            40% { opacity: 0.9; background: radial-gradient(circle, #80cc40, #408010); }
+            100% { opacity: 0; transform: translate(-50%, -50%) translate(var(--px), var(--py)) scale(0.1); background: #204000; box-shadow: none; filter: blur(2px); }
         }
         @keyframes fireballRing {
-            0% { width: 10px; height: 10px; opacity: 0.8; border-color: #80ff40; }
-            100% { width: 200px; height: 200px; opacity: 0; border-color: #40800000; }
+            0% { width: 10px; height: 10px; opacity: 0.8; border-color: #80ff40; box-shadow: 0 0 12px #40ff0066; }
+            100% { width: 240px; height: 240px; opacity: 0; border-color: transparent; box-shadow: none; }
+        }
+        @keyframes fireballWisp {
+            0% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.5); background: radial-gradient(circle, #60cc2088, #40800000); filter: blur(3px); }
+            100% { opacity: 0; transform: translate(-50%, -50%) translate(var(--wx), var(--wy)) scale(2.5); filter: blur(8px); }
         }
 
         /* --- Plasma Rifle --- */
         @keyframes plasmaCore {
-            0% { width: 8px; height: 8px; opacity: 1; background: #fff; box-shadow: 0 0 20px #44aaff, 0 0 50px #2266ff; }
-            15% { width: 50px; height: 50px; background: #88ccff; }
-            40% { width: 70px; height: 70px; opacity: 0.8; background: #4488ff; box-shadow: 0 0 40px #2244cc; }
-            100% { width: 90px; height: 90px; opacity: 0; }
+            0% { width: 10px; height: 10px; opacity: 1; background: radial-gradient(circle, #fff 0%, #aaddff 30%, #4488ff 70%); box-shadow: 0 0 30px #44aaff, 0 0 60px #2266ff, 0 0 100px #1144aa88; }
+            12% { width: 60px; height: 60px; background: radial-gradient(circle, #ddeeff 0%, #88ccff 40%, #4488ff 80%); }
+            35% { width: 80px; height: 80px; opacity: 0.8; background: radial-gradient(circle, #aaccff 0%, #4488ff 50%, #223388 100%); box-shadow: 0 0 50px #2244cc88; }
+            100% { width: 100px; height: 100px; opacity: 0; background: radial-gradient(circle, #224488 0%, #000 100%); box-shadow: none; }
         }
         @keyframes plasmaArc {
-            0% { opacity: 1; width: 2px; height: 0; background: #88ddff; box-shadow: 0 0 8px #44aaff; }
-            30% { height: var(--arc-len); opacity: 1; }
-            100% { height: var(--arc-len); opacity: 0; background: #224488; box-shadow: none; }
+            0% { opacity: 1; width: 2px; height: 0; background: #88ddff; box-shadow: 0 0 10px #44aaff, 0 0 20px #2266ff44; }
+            25% { height: var(--arc-len); opacity: 1; width: 3px; }
+            100% { height: var(--arc-len); opacity: 0; width: 1px; background: #112244; box-shadow: none; }
         }
         @keyframes plasmaSpark {
-            0% { opacity: 1; transform: translate(-50%, -50%) scale(1); background: #aaddff; }
-            100% { opacity: 0; transform: translate(-50%, -50%) translate(var(--px), var(--py)) scale(0); }
+            0% { opacity: 1; transform: translate(-50%, -50%) scale(1); background: #ddeeff; box-shadow: 0 0 6px #44aaff; }
+            100% { opacity: 0; transform: translate(-50%, -50%) translate(var(--px), var(--py)) scale(0); background: #224488; box-shadow: none; }
+        }
+        @keyframes plasmaRipple {
+            0% { width: 8px; height: 8px; opacity: 0.6; border-color: #88ccff; box-shadow: 0 0 8px #44aaff44; }
+            100% { width: 140px; height: 140px; opacity: 0; border-color: transparent; box-shadow: none; }
         }
 
         /* --- BFG 9000 --- */
         @keyframes bfgCore {
-            0% { width: 20px; height: 20px; opacity: 1; background: #aaffaa; box-shadow: 0 0 50px #00ff44, 0 0 100px #00cc22, 0 0 200px #008811; }
-            20% { width: 150px; height: 150px; background: #66ff66; }
-            50% { width: 250px; height: 250px; opacity: 0.7; background: #22cc22; }
-            100% { width: 350px; height: 350px; opacity: 0; background: #003300; box-shadow: none; }
+            0% { width: 25px; height: 25px; opacity: 1; background: radial-gradient(circle, #ffffff 0%, #aaffaa 20%, #44ff44 50%, #00cc22 80%); box-shadow: 0 0 60px #00ff44, 0 0 120px #00cc22, 0 0 200px #008811, 0 0 300px #00440088; }
+            15% { width: 180px; height: 180px; background: radial-gradient(circle, #ccffcc 0%, #66ff66 30%, #22cc22 70%); }
+            40% { width: 280px; height: 280px; opacity: 0.7; background: radial-gradient(circle, #88ff88 0%, #22aa22 50%, #005500 100%); }
+            70% { width: 340px; height: 340px; opacity: 0.3; }
+            100% { width: 400px; height: 400px; opacity: 0; background: radial-gradient(circle, #003300 0%, #000 100%); box-shadow: none; }
         }
         @keyframes bfgShockwave {
-            0% { width: 30px; height: 30px; opacity: 1; border-color: #66ff66; border-width: 5px; }
-            100% { width: 500px; height: 500px; opacity: 0; border-color: #00ff0000; border-width: 1px; }
+            0% { width: 30px; height: 30px; opacity: 1; border-color: #88ff88; border-width: 6px; box-shadow: 0 0 20px #00ff4488; }
+            100% { width: 550px; height: 550px; opacity: 0; border-color: transparent; border-width: 1px; box-shadow: none; }
         }
         @keyframes bfgFlash {
             0% { opacity: 0; }
-            10% { opacity: 0.4; }
-            30% { opacity: 0.2; }
+            8% { opacity: 0.5; }
+            20% { opacity: 0.3; }
+            40% { opacity: 0.15; }
             100% { opacity: 0; }
         }
         .bfg-screen-flash {
             position: fixed;
             inset: 0;
-            background: #00ff22;
+            background: radial-gradient(circle at var(--bfg-x, 50%) var(--bfg-y, 50%), #44ff44 0%, #00ff2244 40%, transparent 70%);
             mix-blend-mode: screen;
             pointer-events: none;
             z-index: 9997;
-            animation: bfgFlash 600ms ease-out forwards;
+            animation: bfgFlash 800ms ease-out forwards;
         }
         @keyframes bfgSecondary {
-            0% { width: 5px; height: 5px; opacity: 1; background: #88ff88; box-shadow: 0 0 15px #00ff44; }
-            50% { width: 40px; height: 40px; opacity: 0.6; }
-            100% { width: 60px; height: 60px; opacity: 0; box-shadow: none; }
+            0% { width: 8px; height: 8px; opacity: 1; background: radial-gradient(circle, #ccffcc, #44ff44); box-shadow: 0 0 20px #00ff44; }
+            40% { width: 50px; height: 50px; opacity: 0.7; }
+            100% { width: 70px; height: 70px; opacity: 0; box-shadow: none; }
+        }
+        @keyframes bfgTendril {
+            0% { opacity: 0.8; height: 0; }
+            30% { height: var(--t-len); opacity: 0.8; }
+            100% { height: var(--t-len); opacity: 0; }
         }
 
         /* --- Super Shotgun --- */
         @keyframes shotgunFlash {
-            0% { width: 30px; height: 30px; opacity: 1; background: #fff; box-shadow: 0 0 30px #ffcc00; }
-            30% { width: 50px; height: 50px; background: #ffcc00; }
-            100% { width: 60px; height: 60px; opacity: 0; background: #ff6600; box-shadow: none; }
+            0% { width: 40px; height: 40px; opacity: 1; background: radial-gradient(circle, #fff 0%, #ffee88 40%, #ffcc00 80%); box-shadow: 0 0 40px #ffcc00, 0 0 80px #ff880088; }
+            25% { width: 60px; height: 60px; background: radial-gradient(circle, #ffee88 0%, #ffaa00 50%, #ff6600 100%); }
+            100% { width: 70px; height: 70px; opacity: 0; background: radial-gradient(circle, #ff6600 0%, #330000 100%); box-shadow: none; }
         }
         @keyframes shotgunPellet {
-            0% { opacity: 1; transform: translate(-50%, -50%) translate(0, 0) scale(1); }
-            40% { opacity: 1; }
-            100% { opacity: 0; transform: translate(-50%, -50%) translate(var(--px), var(--py)) scale(0.3); }
+            0% { opacity: 1; transform: translate(-50%, -50%) translate(0, 0) scale(1); box-shadow: 0 0 4px var(--pc); }
+            30% { opacity: 1; }
+            100% { opacity: 0; transform: translate(-50%, -50%) translate(var(--px), var(--py)) scale(0.2); box-shadow: none; filter: blur(1px); }
+        }
+        @keyframes shotgunSmokeRing {
+            0% { width: 15px; height: 15px; opacity: 0.4; border-color: #aaa; filter: blur(1px); }
+            100% { width: 120px; height: 120px; opacity: 0; border-color: transparent; filter: blur(4px); }
         }
 
         /* ---- CRT Scanlines Overlay ---- */
@@ -1670,7 +1700,51 @@
             initAudio() {
                 if (!this.audioContext) {
                     this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    // Pre-generate noise buffer for explosion textures
+                    const sr = this.audioContext.sampleRate;
+                    this._noiseBuffer = this.audioContext.createBuffer(1, sr * 2, sr);
+                    const data = this._noiseBuffer.getChannelData(0);
+                    for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+                    // Waveshaper for distortion
+                    this._distCurve = new Float32Array(44100);
+                    for (let i = 0; i < 44100; i++) {
+                        const x = (i * 2) / 44100 - 1;
+                        this._distCurve[i] = (Math.PI + 8) * x / (Math.PI + 8 * Math.abs(x));
+                    }
                 }
+            },
+
+            _createNoise(ctx, duration, filterFreq, filterType, gain, startTime) {
+                const src = ctx.createBufferSource();
+                src.buffer = this._noiseBuffer;
+                const flt = ctx.createBiquadFilter();
+                flt.type = filterType || 'lowpass';
+                flt.frequency.setValueAtTime(filterFreq || 1000, startTime);
+                const g = ctx.createGain();
+                g.gain.setValueAtTime(gain || 0.15, startTime);
+                g.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+                src.connect(flt); flt.connect(g); g.connect(ctx.destination);
+                src.start(startTime); src.stop(startTime + duration);
+                return { src, flt, g };
+            },
+
+            _createDistortedOsc(ctx, type, freq, freqEnd, duration, gain, startTime) {
+                const o = ctx.createOscillator();
+                const ws = ctx.createWaveShaper();
+                ws.curve = this._distCurve;
+                const flt = ctx.createBiquadFilter();
+                flt.type = 'lowpass';
+                flt.frequency.setValueAtTime(2000, startTime);
+                flt.frequency.exponentialRampToValueAtTime(200, startTime + duration);
+                const g = ctx.createGain();
+                o.type = type;
+                o.frequency.setValueAtTime(freq, startTime);
+                o.frequency.exponentialRampToValueAtTime(freqEnd, startTime + duration);
+                g.gain.setValueAtTime(gain, startTime);
+                g.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+                o.connect(ws); ws.connect(flt); flt.connect(g); g.connect(ctx.destination);
+                o.start(startTime); o.stop(startTime + duration);
+                return o;
             },
 
             toggleSound() {
@@ -1689,50 +1763,73 @@
                 if (!ctx) return;
                 const now = ctx.currentTime;
 
-                if (type === 'achievement') {
-                    [523, 659, 784].forEach((freq, i) => {
-                        const o = ctx.createOscillator();
-                        const g = ctx.createGain();
-                        o.connect(g); g.connect(ctx.destination);
-                        o.type = 'triangle';
-                        o.frequency.setValueAtTime(freq, now + i * 0.08);
-                        g.gain.setValueAtTime(0.08, now + i * 0.08);
-                        g.gain.exponentialRampToValueAtTime(0.01, now + i * 0.08 + 0.25);
-                        o.start(now + i * 0.08);
-                        o.stop(now + i * 0.08 + 0.25);
-                    });
-                    return;
-                }
-
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.connect(gain); gain.connect(ctx.destination);
-
                 switch(type) {
-                    case 'fire':
-                        osc.type = 'sawtooth';
-                        osc.frequency.setValueAtTime(80, now);
-                        osc.frequency.exponentialRampToValueAtTime(40, now + 0.1);
-                        gain.gain.setValueAtTime(0.15, now);
-                        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
-                        osc.start(now); osc.stop(now + 0.12);
+                    case 'achievement': {
+                        // Rich fanfare: layered sine+triangle with reverb-like tail
+                        [523, 659, 784].forEach((freq, i) => {
+                            const t = now + i * 0.1;
+                            ['sine', 'triangle'].forEach((waveType, j) => {
+                                const o = ctx.createOscillator();
+                                const flt = ctx.createBiquadFilter();
+                                flt.type = 'lowpass';
+                                flt.frequency.setValueAtTime(4000, t);
+                                flt.frequency.exponentialRampToValueAtTime(800, t + 0.5);
+                                const g = ctx.createGain();
+                                o.type = waveType;
+                                o.frequency.setValueAtTime(freq + (j * 2), t);
+                                g.gain.setValueAtTime(j === 0 ? 0.07 : 0.04, t);
+                                g.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
+                                o.connect(flt); flt.connect(g); g.connect(ctx.destination);
+                                o.start(t); o.stop(t + 0.5);
+                            });
+                        });
+                        // Shimmer noise
+                        this._createNoise(ctx, 0.4, 6000, 'bandpass', 0.02, now);
                         break;
-                    case 'pickup':
-                        osc.type = 'square';
-                        osc.frequency.setValueAtTime(400, now);
-                        osc.frequency.exponentialRampToValueAtTime(800, now + 0.15);
-                        gain.gain.setValueAtTime(0.1, now);
-                        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
-                        osc.start(now); osc.stop(now + 0.2);
+                    }
+                    case 'fire': {
+                        // Punchy search initiate: noise burst + sub bass thud
+                        this._createNoise(ctx, 0.15, 800, 'lowpass', 0.12, now);
+                        this._createDistortedOsc(ctx, 'sine', 80, 30, 0.2, 0.15, now);
+                        // Transient click
+                        const click = ctx.createOscillator();
+                        const cg = ctx.createGain();
+                        click.type = 'square';
+                        click.frequency.setValueAtTime(1500, now);
+                        click.frequency.exponentialRampToValueAtTime(200, now + 0.02);
+                        cg.gain.setValueAtTime(0.1, now);
+                        cg.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+                        click.connect(cg); cg.connect(ctx.destination);
+                        click.start(now); click.stop(now + 0.03);
                         break;
-                    case 'damage':
-                        osc.type = 'sawtooth';
-                        osc.frequency.setValueAtTime(300, now);
-                        osc.frequency.exponentialRampToValueAtTime(100, now + 0.2);
-                        gain.gain.setValueAtTime(0.15, now);
-                        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
-                        osc.start(now); osc.stop(now + 0.25);
+                    }
+                    case 'pickup': {
+                        // Satisfying results chime: rising filtered tones
+                        [400, 600, 800].forEach((freq, i) => {
+                            const t = now + i * 0.06;
+                            const o = ctx.createOscillator();
+                            const flt = ctx.createBiquadFilter();
+                            flt.type = 'lowpass';
+                            flt.frequency.setValueAtTime(3000, t);
+                            const g = ctx.createGain();
+                            o.type = 'sine';
+                            o.frequency.setValueAtTime(freq, t);
+                            o.frequency.exponentialRampToValueAtTime(freq * 1.02, t + 0.2);
+                            g.gain.setValueAtTime(0.06, t);
+                            g.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+                            o.connect(flt); flt.connect(g); g.connect(ctx.destination);
+                            o.start(t); o.stop(t + 0.25);
+                        });
+                        this._createNoise(ctx, 0.12, 5000, 'highpass', 0.015, now);
                         break;
+                    }
+                    case 'damage': {
+                        // Heavy error: distorted descending noise + bass
+                        this._createNoise(ctx, 0.4, 600, 'lowpass', 0.18, now);
+                        this._createDistortedOsc(ctx, 'sawtooth', 250, 60, 0.35, 0.12, now);
+                        this._createDistortedOsc(ctx, 'square', 180, 40, 0.3, 0.06, now + 0.05);
+                        break;
+                    }
                 }
             },
 
@@ -1823,76 +1920,116 @@
             },
 
             _spawnRocket(container) {
-                // Core explosion
+                // Core explosion with radial gradient
                 const core = document.createElement('div');
                 core.className = 'weapon-core';
-                core.style.animation = 'rocketCore 600ms ease-out forwards';
+                core.style.animation = 'rocketCore 700ms ease-out forwards';
                 container.appendChild(core);
 
-                // Shockwave ring
-                const wave = document.createElement('div');
-                wave.className = 'weapon-shockwave';
-                wave.style.animation = 'rocketShockwave 500ms ease-out forwards';
-                container.appendChild(wave);
+                // Double shockwave rings
+                for (let w = 0; w < 2; w++) {
+                    const wave = document.createElement('div');
+                    wave.className = 'weapon-shockwave';
+                    wave.style.animation = 'rocketShockwave 600ms ease-out forwards';
+                    wave.style.animationDelay = w * 80 + 'ms';
+                    container.appendChild(wave);
+                }
 
-                // Debris particles
-                for (let i = 0; i < 14; i++) {
+                // Hot debris particles with glow trails
+                for (let i = 0; i < 20; i++) {
                     const p = document.createElement('div');
                     p.className = 'weapon-particle';
-                    const angle = (Math.PI * 2 * i / 14) + (Math.random() - 0.5) * 0.5;
-                    const dist = 60 + Math.random() * 80;
+                    const angle = (Math.PI * 2 * i / 20) + (Math.random() - 0.5) * 0.6;
+                    const dist = 70 + Math.random() * 100;
                     p.style.setProperty('--px', Math.cos(angle) * dist + 'px');
                     p.style.setProperty('--py', Math.sin(angle) * dist + 'px');
-                    p.style.width = (3 + Math.random() * 5) + 'px';
-                    p.style.height = p.style.width;
-                    p.style.background = Math.random() > 0.5 ? '#ff6600' : '#ffaa00';
-                    p.style.boxShadow = '0 0 6px #ff4400';
-                    p.style.animation = `rocketParticle ${400 + Math.random() * 300}ms ease-out forwards`;
-                    p.style.animationDelay = Math.random() * 50 + 'ms';
+                    const size = 3 + Math.random() * 6;
+                    p.style.width = size + 'px';
+                    p.style.height = size + 'px';
+                    const colors = ['#fff', '#ffee88', '#ffaa00', '#ff6600', '#ff2200'];
+                    p.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    p.style.boxShadow = `0 0 ${4 + Math.random() * 8}px ${p.style.background}`;
+                    p.style.animation = `rocketParticle ${450 + Math.random() * 350}ms ease-out forwards`;
+                    p.style.animationDelay = Math.random() * 60 + 'ms';
                     container.appendChild(p);
                 }
 
-                // Smoke wisps
-                for (let i = 0; i < 6; i++) {
+                // Glowing ember trails
+                for (let i = 0; i < 8; i++) {
+                    const e = document.createElement('div');
+                    e.className = 'weapon-particle';
+                    const angle = Math.random() * Math.PI * 2;
+                    const dist = 30 + Math.random() * 60;
+                    e.style.setProperty('--ex', Math.cos(angle) * dist + 'px');
+                    e.style.setProperty('--ey', Math.sin(angle) * dist + 'px');
+                    const ec = Math.random() > 0.5 ? '#ffaa00' : '#ff4400';
+                    e.style.setProperty('--ec', ec);
+                    e.style.width = '3px'; e.style.height = '3px';
+                    e.style.background = ec;
+                    e.style.animation = `rocketEmber ${600 + Math.random() * 400}ms ease-out forwards`;
+                    e.style.animationDelay = (50 + Math.random() * 150) + 'ms';
+                    container.appendChild(e);
+                }
+
+                // Thick smoke plumes
+                for (let i = 0; i < 10; i++) {
                     const s = document.createElement('div');
                     s.className = 'weapon-particle';
-                    s.style.setProperty('--sx', (Math.random() - 0.5) * 60 + 'px');
-                    s.style.setProperty('--sy', -(30 + Math.random() * 50) + 'px');
-                    s.style.width = (8 + Math.random() * 12) + 'px';
-                    s.style.height = s.style.width;
-                    s.style.background = '#888';
-                    s.style.animation = `rocketSmoke ${500 + Math.random() * 400}ms ease-out forwards`;
-                    s.style.animationDelay = (100 + Math.random() * 200) + 'ms';
+                    s.style.setProperty('--sx', (Math.random() - 0.5) * 80 + 'px');
+                    s.style.setProperty('--sy', -(20 + Math.random() * 70) + 'px');
+                    const smokeSize = 10 + Math.random() * 18;
+                    s.style.width = smokeSize + 'px';
+                    s.style.height = smokeSize + 'px';
+                    s.style.animation = `rocketSmoke ${600 + Math.random() * 500}ms ease-out forwards`;
+                    s.style.animationDelay = (80 + Math.random() * 250) + 'ms';
                     container.appendChild(s);
                 }
             },
 
             _spawnFireball(container) {
-                // Core
+                // Core with inner glow
                 const core = document.createElement('div');
                 core.className = 'weapon-core';
-                core.style.animation = 'fireballCore 550ms ease-out forwards';
+                core.style.animation = 'fireballCore 650ms ease-out forwards';
                 container.appendChild(core);
 
-                // Ring
-                const ring = document.createElement('div');
-                ring.className = 'weapon-shockwave';
-                ring.style.animation = 'fireballRing 450ms ease-out forwards';
-                container.appendChild(ring);
+                // Double expanding ring
+                for (let r = 0; r < 2; r++) {
+                    const ring = document.createElement('div');
+                    ring.className = 'weapon-shockwave';
+                    ring.style.animation = 'fireballRing 550ms ease-out forwards';
+                    ring.style.animationDelay = r * 100 + 'ms';
+                    container.appendChild(ring);
+                }
 
-                // Ember particles
-                for (let i = 0; i < 10; i++) {
+                // Many ember particles with varied sizes
+                for (let i = 0; i < 16; i++) {
                     const p = document.createElement('div');
                     p.className = 'weapon-particle';
-                    const angle = (Math.PI * 2 * i / 10) + (Math.random() - 0.5) * 0.8;
-                    const dist = 50 + Math.random() * 70;
+                    const angle = (Math.PI * 2 * i / 16) + (Math.random() - 0.5) * 0.9;
+                    const dist = 50 + Math.random() * 90;
                     p.style.setProperty('--px', Math.cos(angle) * dist + 'px');
                     p.style.setProperty('--py', Math.sin(angle) * dist + 'px');
-                    p.style.width = (4 + Math.random() * 4) + 'px';
-                    p.style.height = p.style.width;
-                    p.style.animation = `fireballEmber ${400 + Math.random() * 300}ms ease-out forwards`;
-                    p.style.animationDelay = Math.random() * 80 + 'ms';
+                    const size = 3 + Math.random() * 6;
+                    p.style.width = size + 'px';
+                    p.style.height = size + 'px';
+                    p.style.animation = `fireballEmber ${450 + Math.random() * 350}ms ease-out forwards`;
+                    p.style.animationDelay = Math.random() * 100 + 'ms';
                     container.appendChild(p);
+                }
+
+                // Green smoke wisps
+                for (let i = 0; i < 6; i++) {
+                    const w = document.createElement('div');
+                    w.className = 'weapon-particle';
+                    w.style.setProperty('--wx', (Math.random() - 0.5) * 70 + 'px');
+                    w.style.setProperty('--wy', -(20 + Math.random() * 50) + 'px');
+                    const ws = 12 + Math.random() * 14;
+                    w.style.width = ws + 'px';
+                    w.style.height = ws + 'px';
+                    w.style.animation = `fireballWisp ${500 + Math.random() * 400}ms ease-out forwards`;
+                    w.style.animationDelay = (100 + Math.random() * 200) + 'ms';
+                    container.appendChild(w);
                 }
             },
 
@@ -1900,114 +2037,153 @@
                 // Core flash
                 const core = document.createElement('div');
                 core.className = 'weapon-core';
-                core.style.animation = 'plasmaCore 400ms ease-out forwards';
+                core.style.animation = 'plasmaCore 450ms ease-out forwards';
                 container.appendChild(core);
 
-                // Electric arcs
-                for (let i = 0; i < 8; i++) {
+                // Ripple rings
+                for (let r = 0; r < 3; r++) {
+                    const rp = document.createElement('div');
+                    rp.className = 'weapon-shockwave';
+                    rp.style.animation = 'plasmaRipple 400ms ease-out forwards';
+                    rp.style.animationDelay = r * 60 + 'ms';
+                    container.appendChild(rp);
+                }
+
+                // Electric arcs - more of them, varied
+                for (let i = 0; i < 12; i++) {
                     const arc = document.createElement('div');
                     arc.style.position = 'absolute';
                     arc.style.transformOrigin = '50% 0';
-                    const angle = (Math.PI * 2 * i / 8) + (Math.random() - 0.5) * 0.4;
+                    const angle = (Math.PI * 2 * i / 12) + (Math.random() - 0.5) * 0.5;
                     arc.style.transform = `translate(-50%, 0) rotate(${angle}rad)`;
-                    const len = 30 + Math.random() * 50;
+                    const len = 25 + Math.random() * 65;
                     arc.style.setProperty('--arc-len', len + 'px');
-                    arc.style.animation = `plasmaArc ${250 + Math.random() * 200}ms ease-out forwards`;
-                    arc.style.animationDelay = Math.random() * 60 + 'ms';
+                    arc.style.animation = `plasmaArc ${250 + Math.random() * 250}ms ease-out forwards`;
+                    arc.style.animationDelay = Math.random() * 80 + 'ms';
                     container.appendChild(arc);
                 }
 
-                // Crackling sparks
-                for (let i = 0; i < 12; i++) {
+                // Crackling sparks - more
+                for (let i = 0; i < 18; i++) {
                     const sp = document.createElement('div');
                     sp.className = 'weapon-particle';
                     const angle = Math.random() * Math.PI * 2;
-                    const dist = 20 + Math.random() * 50;
+                    const dist = 15 + Math.random() * 60;
                     sp.style.setProperty('--px', Math.cos(angle) * dist + 'px');
                     sp.style.setProperty('--py', Math.sin(angle) * dist + 'px');
-                    sp.style.width = (2 + Math.random() * 3) + 'px';
-                    sp.style.height = sp.style.width;
-                    sp.style.animation = `plasmaSpark ${200 + Math.random() * 250}ms ease-out forwards`;
-                    sp.style.animationDelay = Math.random() * 100 + 'ms';
+                    const sz = 2 + Math.random() * 3;
+                    sp.style.width = sz + 'px';
+                    sp.style.height = sz + 'px';
+                    sp.style.animation = `plasmaSpark ${180 + Math.random() * 280}ms ease-out forwards`;
+                    sp.style.animationDelay = Math.random() * 120 + 'ms';
                     container.appendChild(sp);
                 }
             },
 
             _spawnBfg(container) {
-                // Screen flash
+                // Positioned screen flash
                 const flash = document.createElement('div');
                 flash.className = 'bfg-screen-flash';
+                const rect = container.getBoundingClientRect ? null : null;
+                flash.style.setProperty('--bfg-x', container.style.left);
+                flash.style.setProperty('--bfg-y', container.style.top);
                 document.body.appendChild(flash);
-                setTimeout(() => flash.remove(), 700);
+                setTimeout(() => flash.remove(), 900);
 
                 // Massive core
                 const core = document.createElement('div');
                 core.className = 'weapon-core';
-                core.style.animation = 'bfgCore 900ms ease-out forwards';
+                core.style.animation = 'bfgCore 1000ms ease-out forwards';
                 container.appendChild(core);
 
-                // Double shockwave
-                for (let w = 0; w < 2; w++) {
+                // Triple shockwave
+                for (let w = 0; w < 3; w++) {
                     const wave = document.createElement('div');
                     wave.className = 'weapon-shockwave';
-                    wave.style.animation = 'bfgShockwave 700ms ease-out forwards';
-                    wave.style.animationDelay = w * 150 + 'ms';
+                    wave.style.animation = 'bfgShockwave 800ms ease-out forwards';
+                    wave.style.animationDelay = w * 120 + 'ms';
                     container.appendChild(wave);
                 }
 
-                // Secondary explosions around the main one
-                for (let i = 0; i < 6; i++) {
+                // Secondary explosions - more, varied distance
+                for (let i = 0; i < 8; i++) {
                     const sec = document.createElement('div');
                     sec.className = 'weapon-core';
-                    const angle = (Math.PI * 2 * i / 6);
-                    const dist = 60 + Math.random() * 40;
+                    const angle = (Math.PI * 2 * i / 8) + (Math.random() - 0.5) * 0.4;
+                    const dist = 50 + Math.random() * 70;
                     sec.style.left = Math.cos(angle) * dist + 'px';
                     sec.style.top = Math.sin(angle) * dist + 'px';
-                    sec.style.animation = `bfgSecondary ${400 + Math.random() * 300}ms ease-out forwards`;
-                    sec.style.animationDelay = (200 + Math.random() * 300) + 'ms';
+                    sec.style.animation = `bfgSecondary ${400 + Math.random() * 400}ms ease-out forwards`;
+                    sec.style.animationDelay = (150 + Math.random() * 350) + 'ms';
                     container.appendChild(sec);
                 }
 
-                // Green particles
-                for (let i = 0; i < 16; i++) {
+                // Energy tendrils radiating outward
+                for (let i = 0; i < 10; i++) {
+                    const t = document.createElement('div');
+                    t.style.position = 'absolute';
+                    t.style.transformOrigin = '50% 0';
+                    const angle = (Math.PI * 2 * i / 10) + (Math.random() - 0.5) * 0.3;
+                    t.style.transform = `translate(-50%, 0) rotate(${angle}rad)`;
+                    const len = 60 + Math.random() * 100;
+                    t.style.setProperty('--t-len', len + 'px');
+                    t.style.width = '2px';
+                    t.style.background = '#66ff66';
+                    t.style.boxShadow = '0 0 6px #00ff44';
+                    t.style.animation = `bfgTendril ${400 + Math.random() * 300}ms ease-out forwards`;
+                    t.style.animationDelay = (100 + Math.random() * 200) + 'ms';
+                    container.appendChild(t);
+                }
+
+                // Green particles - more
+                for (let i = 0; i < 24; i++) {
                     const p = document.createElement('div');
                     p.className = 'weapon-particle';
                     const angle = Math.random() * Math.PI * 2;
-                    const dist = 80 + Math.random() * 120;
+                    const dist = 80 + Math.random() * 150;
                     p.style.setProperty('--px', Math.cos(angle) * dist + 'px');
                     p.style.setProperty('--py', Math.sin(angle) * dist + 'px');
-                    p.style.width = (4 + Math.random() * 6) + 'px';
-                    p.style.height = p.style.width;
-                    p.style.background = '#88ff88';
-                    p.style.boxShadow = '0 0 8px #00ff44';
-                    p.style.animation = `rocketParticle ${500 + Math.random() * 400}ms ease-out forwards`;
-                    p.style.animationDelay = Math.random() * 150 + 'ms';
+                    const sz = 3 + Math.random() * 7;
+                    p.style.width = sz + 'px';
+                    p.style.height = sz + 'px';
+                    p.style.background = Math.random() > 0.3 ? '#88ff88' : '#ccffcc';
+                    p.style.boxShadow = `0 0 ${6 + Math.random() * 10}px #00ff44`;
+                    p.style.animation = `rocketParticle ${500 + Math.random() * 500}ms ease-out forwards`;
+                    p.style.animationDelay = Math.random() * 200 + 'ms';
                     container.appendChild(p);
                 }
             },
 
             _spawnShotgun(container) {
-                // Muzzle flash
+                // Bright muzzle flash
                 const flash = document.createElement('div');
                 flash.className = 'weapon-core';
-                flash.style.animation = 'shotgunFlash 250ms ease-out forwards';
+                flash.style.animation = 'shotgunFlash 300ms ease-out forwards';
                 container.appendChild(flash);
 
-                // Pellet spread - wide cone of sparks
-                for (let i = 0; i < 22; i++) {
+                // Smoke ring
+                const smoke = document.createElement('div');
+                smoke.className = 'weapon-shockwave';
+                smoke.style.animation = 'shotgunSmokeRing 500ms ease-out forwards';
+                smoke.style.animationDelay = '50ms';
+                container.appendChild(smoke);
+
+                // Pellet spread - wider, more varied
+                for (let i = 0; i < 30; i++) {
                     const p = document.createElement('div');
                     p.className = 'weapon-particle';
-                    const angle = (Math.random() - 0.5) * Math.PI * 1.2;
-                    const dist = 40 + Math.random() * 100;
+                    const angle = (Math.random() - 0.5) * Math.PI * 1.4;
+                    const dist = 35 + Math.random() * 130;
                     p.style.setProperty('--px', Math.cos(angle) * dist + 'px');
                     p.style.setProperty('--py', Math.sin(angle) * dist + 'px');
-                    const size = 2 + Math.random() * 4;
+                    const size = 2 + Math.random() * 5;
                     p.style.width = size + 'px';
                     p.style.height = size + 'px';
-                    p.style.background = Math.random() > 0.3 ? '#ffcc00' : '#fff';
-                    p.style.boxShadow = '0 0 4px #ff8800';
-                    p.style.animation = `shotgunPellet ${200 + Math.random() * 250}ms ease-out forwards`;
-                    p.style.animationDelay = Math.random() * 30 + 'ms';
+                    const pc = ['#fff', '#ffee88', '#ffcc00', '#ffaa00', '#ff8800'][Math.floor(Math.random() * 5)];
+                    p.style.setProperty('--pc', pc);
+                    p.style.background = pc;
+                    p.style.animation = `shotgunPellet ${180 + Math.random() * 280}ms ease-out forwards`;
+                    p.style.animationDelay = Math.random() * 40 + 'ms';
                     container.appendChild(p);
                 }
             },
@@ -2021,104 +2197,92 @@
 
                 switch (type) {
                     case 'rocket': {
-                        // Deep boom + crackle
-                        const o = ctx.createOscillator();
-                        const g = ctx.createGain();
-                        o.connect(g); g.connect(ctx.destination);
-                        o.type = 'sawtooth';
-                        o.frequency.setValueAtTime(60, now);
-                        o.frequency.exponentialRampToValueAtTime(25, now + 0.3);
-                        g.gain.setValueAtTime(0.2, now);
-                        g.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
-                        o.start(now); o.stop(now + 0.35);
-                        // High crackle
-                        const o2 = ctx.createOscillator();
-                        const g2 = ctx.createGain();
-                        o2.connect(g2); g2.connect(ctx.destination);
-                        o2.type = 'square';
-                        o2.frequency.setValueAtTime(200, now);
-                        o2.frequency.exponentialRampToValueAtTime(50, now + 0.15);
-                        g2.gain.setValueAtTime(0.1, now);
-                        g2.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
-                        o2.start(now); o2.stop(now + 0.15);
+                        // Heavy explosion: noise burst + filtered sub-bass + distorted mid
+                        this._createNoise(ctx, 0.5, 400, 'lowpass', 0.2, now);
+                        this._createNoise(ctx, 0.3, 2000, 'bandpass', 0.08, now);
+                        this._createDistortedOsc(ctx, 'sine', 50, 20, 0.5, 0.2, now);
+                        this._createDistortedOsc(ctx, 'sawtooth', 120, 30, 0.3, 0.08, now + 0.02);
+                        // Crackle tail
+                        this._createNoise(ctx, 0.4, 3000, 'highpass', 0.04, now + 0.1);
                         break;
                     }
                     case 'fireball': {
-                        // Whoosh upward sweep
-                        const o = ctx.createOscillator();
-                        const g = ctx.createGain();
-                        o.connect(g); g.connect(ctx.destination);
-                        o.type = 'sawtooth';
-                        o.frequency.setValueAtTime(100, now);
-                        o.frequency.exponentialRampToValueAtTime(400, now + 0.15);
-                        o.frequency.exponentialRampToValueAtTime(80, now + 0.3);
-                        g.gain.setValueAtTime(0.12, now);
-                        g.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
-                        o.start(now); o.stop(now + 0.3);
+                        // Whoosh: filtered noise sweep + resonant tone
+                        const n = this._createNoise(ctx, 0.4, 300, 'bandpass', 0.12, now);
+                        n.flt.frequency.exponentialRampToValueAtTime(2000, now + 0.15);
+                        n.flt.frequency.exponentialRampToValueAtTime(200, now + 0.4);
+                        n.flt.Q.setValueAtTime(5, now);
+                        this._createDistortedOsc(ctx, 'sawtooth', 100, 300, 0.2, 0.08, now);
+                        // Sizzle
+                        this._createNoise(ctx, 0.3, 4000, 'highpass', 0.03, now + 0.05);
                         break;
                     }
                     case 'plasma': {
-                        // Electric zap - high freq buzz
+                        // Electric zap: modulated noise + detuned oscillators
+                        this._createNoise(ctx, 0.2, 3000, 'bandpass', 0.1, now);
+                        // Rapidly modulated tone for electric feel
                         const o = ctx.createOscillator();
+                        const lfo = ctx.createOscillator();
+                        const lfoGain = ctx.createGain();
+                        const flt = ctx.createBiquadFilter();
+                        flt.type = 'bandpass';
+                        flt.frequency.setValueAtTime(2000, now);
+                        flt.frequency.exponentialRampToValueAtTime(500, now + 0.2);
+                        flt.Q.setValueAtTime(8, now);
                         const g = ctx.createGain();
-                        o.connect(g); g.connect(ctx.destination);
-                        o.type = 'square';
-                        o.frequency.setValueAtTime(800, now);
-                        o.frequency.exponentialRampToValueAtTime(200, now + 0.12);
-                        g.gain.setValueAtTime(0.08, now);
-                        g.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
-                        o.start(now); o.stop(now + 0.15);
-                        // Secondary buzz
-                        const o2 = ctx.createOscillator();
-                        const g2 = ctx.createGain();
-                        o2.connect(g2); g2.connect(ctx.destination);
-                        o2.type = 'sawtooth';
-                        o2.frequency.setValueAtTime(1200, now + 0.02);
-                        o2.frequency.exponentialRampToValueAtTime(300, now + 0.1);
-                        g2.gain.setValueAtTime(0.05, now + 0.02);
-                        g2.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
-                        o2.start(now + 0.02); o2.stop(now + 0.12);
+                        o.type = 'sawtooth';
+                        o.frequency.setValueAtTime(600, now);
+                        o.frequency.exponentialRampToValueAtTime(200, now + 0.2);
+                        lfo.type = 'square';
+                        lfo.frequency.setValueAtTime(40, now);
+                        lfoGain.gain.setValueAtTime(200, now);
+                        lfo.connect(lfoGain); lfoGain.connect(o.frequency);
+                        g.gain.setValueAtTime(0.06, now);
+                        g.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+                        o.connect(flt); flt.connect(g); g.connect(ctx.destination);
+                        o.start(now); o.stop(now + 0.2);
+                        lfo.start(now); lfo.stop(now + 0.2);
+                        // High crackle
+                        this._createNoise(ctx, 0.15, 6000, 'highpass', 0.04, now + 0.02);
                         break;
                     }
                     case 'bfg': {
-                        // Massive bass chord + high harmonic
-                        [40, 60, 80].forEach((freq, i) => {
-                            const o = ctx.createOscillator();
-                            const g = ctx.createGain();
-                            o.connect(g); g.connect(ctx.destination);
-                            o.type = 'sawtooth';
-                            o.frequency.setValueAtTime(freq, now);
-                            o.frequency.exponentialRampToValueAtTime(freq * 0.5, now + 0.5);
-                            g.gain.setValueAtTime(0.12, now);
-                            g.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-                            o.start(now); o.stop(now + 0.5);
+                        // Massive: layered noise + sub bass chord + filtered sweep
+                        this._createNoise(ctx, 0.8, 300, 'lowpass', 0.22, now);
+                        this._createNoise(ctx, 0.6, 1500, 'bandpass', 0.1, now);
+                        this._createNoise(ctx, 0.5, 5000, 'highpass', 0.04, now + 0.1);
+                        // Sub bass chord
+                        [35, 52, 70].forEach(freq => {
+                            this._createDistortedOsc(ctx, 'sawtooth', freq, freq * 0.4, 0.7, 0.12, now);
                         });
-                        // High shimmer
-                        const o3 = ctx.createOscillator();
-                        const g3 = ctx.createGain();
-                        o3.connect(g3); g3.connect(ctx.destination);
-                        o3.type = 'sine';
-                        o3.frequency.setValueAtTime(600, now);
-                        o3.frequency.exponentialRampToValueAtTime(1200, now + 0.2);
-                        o3.frequency.exponentialRampToValueAtTime(200, now + 0.5);
-                        g3.gain.setValueAtTime(0.06, now);
-                        g3.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-                        o3.start(now); o3.stop(now + 0.5);
+                        // Rising then falling sweep
+                        const sw = ctx.createOscillator();
+                        const sf = ctx.createBiquadFilter();
+                        sf.type = 'lowpass';
+                        sf.frequency.setValueAtTime(500, now);
+                        sf.frequency.exponentialRampToValueAtTime(3000, now + 0.3);
+                        sf.frequency.exponentialRampToValueAtTime(100, now + 0.7);
+                        const sg = ctx.createGain();
+                        sw.type = 'sawtooth';
+                        sw.frequency.setValueAtTime(80, now);
+                        sw.frequency.exponentialRampToValueAtTime(200, now + 0.3);
+                        sw.frequency.exponentialRampToValueAtTime(40, now + 0.7);
+                        sg.gain.setValueAtTime(0.08, now);
+                        sg.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+                        sw.connect(sf); sf.connect(sg); sg.connect(ctx.destination);
+                        sw.start(now); sw.stop(now + 0.7);
                         break;
                     }
                     case 'shotgun': {
-                        // Sharp burst - two quick pops
+                        // Double-barrel blast: two noise bursts + sub thump
                         for (let i = 0; i < 2; i++) {
-                            const o = ctx.createOscillator();
-                            const g = ctx.createGain();
-                            o.connect(g); g.connect(ctx.destination);
-                            o.type = 'sawtooth';
-                            o.frequency.setValueAtTime(150, now + i * 0.06);
-                            o.frequency.exponentialRampToValueAtTime(30, now + i * 0.06 + 0.08);
-                            g.gain.setValueAtTime(0.18, now + i * 0.06);
-                            g.gain.exponentialRampToValueAtTime(0.01, now + i * 0.06 + 0.1);
-                            o.start(now + i * 0.06); o.stop(now + i * 0.06 + 0.1);
+                            const t = now + i * 0.07;
+                            this._createNoise(ctx, 0.15, 600, 'lowpass', 0.2, t);
+                            this._createNoise(ctx, 0.1, 4000, 'highpass', 0.08, t);
+                            this._createDistortedOsc(ctx, 'sine', 100, 25, 0.12, 0.15, t);
                         }
+                        // Ringing tail
+                        this._createNoise(ctx, 0.3, 2000, 'bandpass', 0.03, now + 0.15);
                         break;
                     }
                 }
