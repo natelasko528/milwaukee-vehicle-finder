@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;600;700;800&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -408,6 +409,22 @@
         }
         .red-flash-overlay.active { animation: redFlash 400ms cubic-bezier(0.4, 0, 0.2, 1); }
 
+        /* ---- 3D Canvases ---- */
+        #bg-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        #weapon-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9998;
+        }
+
         /* ---- Header ---- */
         .header {
             background: var(--primary);
@@ -760,25 +777,31 @@
             position: fixed;
             inset: 0;
             background: rgba(0,0,0,0.7);
-            z-index: 100;
+            z-index: 1100;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
-            padding: 1rem;
+            padding: 1rem 1rem 80px 1rem;
+            overflow-y: auto;
             animation: fadeIn 300ms ease-out;
         }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .modal {
             background: var(--card);
             color: var(--card-foreground);
-            border: 1px solid var(--border);
+            border: 2px solid var(--border);
             max-width: 580px;
             width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: var(--shadow-xl);
+            flex-shrink: 0;
+            margin-top: auto;
+            margin-bottom: auto;
+            box-shadow: var(--shadow-xl), 0 0 20px oklch(0.5 0.19 27 / 0.3);
             position: relative;
-            animation: pixelateIn 400ms cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            animation: pixelateIn 400ms cubic-bezier(0.68, -0.55, 0.27, 1.55), modalGlow 3s ease-in-out infinite;
+        }
+        @keyframes modalGlow {
+            0%, 100% { box-shadow: var(--shadow-xl), 0 0 20px oklch(0.5 0.19 27 / 0.3); }
+            50% { box-shadow: var(--shadow-xl), 0 0 40px oklch(0.6 0.22 27 / 0.6), 0 0 80px oklch(0.5 0.19 27 / 0.3), inset 0 0 20px oklch(0.5 0.19 27 / 0.1); }
         }
         .modal-close {
             position: absolute;
@@ -804,6 +827,27 @@
             justify-content: center;
             overflow: hidden;
             position: relative;
+        }
+        .modal-image::before {
+            content: '';
+            position: absolute;
+            inset: -10px;
+            background: conic-gradient(from 0deg, oklch(0.5 0.19 27 / 0), oklch(0.6 0.22 27 / 0.3), oklch(0.5 0.19 27 / 0), oklch(0.6 0.22 27 / 0.3), oklch(0.5 0.19 27 / 0));
+            animation: portalSpin 6s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .modal-image::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at center, transparent 50%, oklch(0 0 0 / 0.4) 100%);
+            pointer-events: none;
+            z-index: 2;
+        }
+        @keyframes portalSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
         .modal-image img { width: 100%; height: 100%; object-fit: cover; }
         .modal-image .placeholder-icon { color: var(--muted-foreground); opacity: 0.3; }
@@ -870,14 +914,45 @@
             font-size: 0.8rem;
             color: var(--muted-foreground);
             line-height: 1.8;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
             white-space: pre-line;
             border: 1px solid var(--border);
             padding: 0.75rem;
             background: var(--background);
             word-wrap: break-word;
             overflow-wrap: break-word;
+            transition: max-height 0.3s ease;
         }
+        .modal-desc.collapsed {
+            max-height: 150px;
+            overflow: hidden;
+            position: relative;
+        }
+        .modal-desc.collapsed::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 50px;
+            background: linear-gradient(to bottom, transparent, var(--background));
+            pointer-events: none;
+        }
+        .desc-toggle {
+            display: block;
+            width: 100%;
+            padding: 0.4rem;
+            background: var(--muted);
+            color: var(--muted-foreground);
+            border: 1px solid var(--border);
+            font-family: "Oxanium", sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            cursor: pointer;
+            margin-bottom: 1rem;
+            transition: all 0.15s;
+        }
+        .desc-toggle:hover { opacity: 0.8; background: var(--primary); color: var(--primary-foreground); }
         .btn-listing {
             display: block;
             width: 100%;
@@ -1087,6 +1162,12 @@
 
     <!-- Red Flash Overlay -->
     <div class="red-flash-overlay" :class="{ active: redFlash }"></div>
+
+    <!-- 3D Background Canvas -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- 3D Weapon Effects Canvas -->
+    <canvas id="weapon-canvas"></canvas>
 
     <!-- Header -->
     <div class="header">
@@ -1460,7 +1541,15 @@
 
                     <div class="detail-loading" x-show="detailLoading">Loading additional details...</div>
 
-                    <div class="modal-desc" x-show="extraDetails.description" x-html="formatDescription(extraDetails.description)"></div>
+                    <div x-show="extraDetails.description">
+                        <div class="modal-desc"
+                             :class="{ 'collapsed': descCollapsed && extraDetails.description && extraDetails.description.length > 200 }"
+                             x-html="formatDescription(extraDetails.description)"></div>
+                        <button x-show="extraDetails.description && extraDetails.description.length > 200"
+                                class="desc-toggle"
+                                @click="descCollapsed = !descCollapsed"
+                                x-text="descCollapsed ? '[ Show Full Description ]' : '[ Collapse Description ]'"></button>
+                    </div>
 
                     <a class="btn-listing" :href="selected.url" target="_blank" rel="noopener">
                         View Full Listing &rarr;
@@ -1485,6 +1574,7 @@
             modalImgIdx: 0,
             detailLoading: false,
             extraDetails: {},
+            descCollapsed: true,
             sourceInfo: [],
             darkMode: false,
 
@@ -1500,6 +1590,16 @@
             toasts: [],
             toastId: 0,
             loadingKey: 0,
+            // Three.js state
+            threeInitialized: false,
+            weaponScene: null,
+            weaponCamera: null,
+            weaponRenderer: null,
+            bgScene: null,
+            bgCamera: null,
+            bgRenderer: null,
+            particleSystems: [],
+            bgParticles: null,
             loadingComplete: { craigslist: false, cargurus: false, carscom: false, autotrader: false },
             achievements: {
                 firstBlood: false,
@@ -1575,6 +1675,248 @@
                 }
                 const priceMap = { '50000': 'easy', '20000': 'medium', '10000': 'hard', '5000': 'nightmare' };
                 this.selectedDifficulty = priceMap[this.params.max_price] || 'medium';
+
+                // Initialize Three.js after a tick to ensure DOM is ready
+                this.$nextTick(() => this.initThreeJS());
+            },
+
+            initThreeJS() {
+                if (typeof THREE === 'undefined' || this.threeInitialized) return;
+                this.threeInitialized = true;
+
+                // Weapon effects canvas (transparent overlay)
+                const weaponCanvas = document.getElementById('weapon-canvas');
+                this.weaponScene = new THREE.Scene();
+                this.weaponCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                this.weaponCamera.position.z = 5;
+                this.weaponRenderer = new THREE.WebGLRenderer({ canvas: weaponCanvas, alpha: true, antialias: true });
+                this.weaponRenderer.setSize(window.innerWidth, window.innerHeight);
+                this.weaponRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                this.weaponRenderer.setClearColor(0x000000, 0);
+
+                // Background canvas (floating embers/particles)
+                const bgCanvas = document.getElementById('bg-canvas');
+                this.bgScene = new THREE.Scene();
+                this.bgCamera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+                this.bgCamera.position.z = 15;
+                this.bgRenderer = new THREE.WebGLRenderer({ canvas: bgCanvas, alpha: true, antialias: false });
+                this.bgRenderer.setSize(window.innerWidth, window.innerHeight);
+                this.bgRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                this.bgRenderer.setClearColor(0x000000, 0);
+
+                // Create background ember particles
+                this._createBgEmbers();
+
+                // Add ambient light to weapon scene
+                const light = new THREE.PointLight(0xff6600, 2, 50);
+                light.position.set(0, 0, 5);
+                this.weaponScene.add(light);
+
+                // Handle resize
+                window.addEventListener('resize', () => {
+                    const w = window.innerWidth, h = window.innerHeight;
+                    [this.weaponCamera, this.bgCamera].forEach(cam => {
+                        cam.aspect = w / h;
+                        cam.updateProjectionMatrix();
+                    });
+                    this.weaponRenderer.setSize(w, h);
+                    this.bgRenderer.setSize(w, h);
+                });
+
+                // Start render loop
+                this._animateThree();
+            },
+
+            _createBgEmbers() {
+                // Floating ember particles for atmosphere
+                const count = 120;
+                const geo = new THREE.BufferGeometry();
+                const pos = new Float32Array(count * 3);
+                const colors = new Float32Array(count * 3);
+                const sizes = new Float32Array(count);
+                const vels = [];
+
+                for (let i = 0; i < count; i++) {
+                    pos[i * 3] = (Math.random() - 0.5) * 40;
+                    pos[i * 3 + 1] = (Math.random() - 0.5) * 40;
+                    pos[i * 3 + 2] = (Math.random() - 0.5) * 20;
+
+                    // Orange/red ember colors
+                    const r = 0.8 + Math.random() * 0.2;
+                    const g = 0.2 + Math.random() * 0.4;
+                    const b = Math.random() * 0.1;
+                    colors[i * 3] = r;
+                    colors[i * 3 + 1] = g;
+                    colors[i * 3 + 2] = b;
+
+                    sizes[i] = 0.05 + Math.random() * 0.15;
+
+                    vels.push({
+                        x: (Math.random() - 0.5) * 0.008,
+                        y: 0.005 + Math.random() * 0.02,
+                        z: (Math.random() - 0.5) * 0.005,
+                        phase: Math.random() * Math.PI * 2,
+                    });
+                }
+
+                geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+                geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+                geo.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+                const mat = new THREE.PointsMaterial({
+                    size: 0.12,
+                    transparent: true,
+                    opacity: 0.35,
+                    vertexColors: true,
+                    blending: THREE.AdditiveBlending,
+                    depthWrite: false,
+                    sizeAttenuation: true,
+                });
+
+                this.bgParticles = new THREE.Points(geo, mat);
+                this.bgParticles.userData.velocities = vels;
+                this.bgScene.add(this.bgParticles);
+            },
+
+            _animateThree() {
+                if (!this.threeInitialized) return;
+                requestAnimationFrame(() => this._animateThree());
+
+                const time = performance.now() * 0.001;
+
+                // Animate background embers
+                if (this.bgParticles) {
+                    const positions = this.bgParticles.geometry.attributes.position.array;
+                    const vels = this.bgParticles.userData.velocities;
+                    for (let i = 0; i < vels.length; i++) {
+                        // Upward drift with sinusoidal horizontal sway
+                        positions[i * 3] += vels[i].x + Math.sin(time + vels[i].phase) * 0.003;
+                        positions[i * 3 + 1] += vels[i].y;
+                        positions[i * 3 + 2] += vels[i].z;
+                        // Wrap
+                        if (positions[i * 3 + 1] > 20) {
+                            positions[i * 3 + 1] = -20;
+                            positions[i * 3] = (Math.random() - 0.5) * 40;
+                        }
+                    }
+                    this.bgParticles.geometry.attributes.position.needsUpdate = true;
+                    this.bgParticles.rotation.y = Math.sin(time * 0.1) * 0.05;
+                }
+
+                // Animate weapon particle systems
+                for (let i = this.particleSystems.length - 1; i >= 0; i--) {
+                    const sys = this.particleSystems[i];
+                    sys.age += 0.016;
+
+                    if (sys.age >= sys.maxLife) {
+                        this.weaponScene.remove(sys.mesh);
+                        sys.mesh.geometry.dispose();
+                        sys.mesh.material.dispose();
+                        this.particleSystems.splice(i, 1);
+                        continue;
+                    }
+
+                    const t = sys.age / sys.maxLife;
+                    sys.mesh.material.opacity = 1.0 - t;
+                    sys.mesh.material.size = sys.baseSize * (1.0 + t * 0.5);
+
+                    const positions = sys.mesh.geometry.attributes.position.array;
+                    for (let j = 0; j < sys.velocities.length; j++) {
+                        positions[j * 3] += sys.velocities[j].x;
+                        positions[j * 3 + 1] += sys.velocities[j].y;
+                        positions[j * 3 + 2] += sys.velocities[j].z;
+                        // Gravity + drag
+                        sys.velocities[j].y -= 0.0008;
+                        sys.velocities[j].x *= 0.995;
+                        sys.velocities[j].z *= 0.995;
+                    }
+                    sys.mesh.geometry.attributes.position.needsUpdate = true;
+                }
+
+                // Render
+                this.bgRenderer.render(this.bgScene, this.bgCamera);
+                this.weaponRenderer.render(this.weaponScene, this.weaponCamera);
+            },
+
+            _spawnThreeExplosion(type, screenX, screenY) {
+                // Convert screen coords to Three.js world coords
+                const ndcX = (screenX / window.innerWidth) * 2 - 1;
+                const ndcY = -(screenY / window.innerHeight) * 2 + 1;
+                const vec = new THREE.Vector3(ndcX, ndcY, 0.5);
+                vec.unproject(this.weaponCamera);
+                const dir = vec.sub(this.weaponCamera.position).normalize();
+                const dist = -this.weaponCamera.position.z / dir.z;
+                const worldPos = this.weaponCamera.position.clone().add(dir.multiplyScalar(dist));
+
+                const configs = {
+                    rocket:   { count: 80, color1: 0xff6600, color2: 0xff2200, size: 0.25, speed: 0.12, life: 1.0 },
+                    fireball: { count: 60, color1: 0x80ff40, color2: 0x40cc00, size: 0.2, speed: 0.1, life: 0.85 },
+                    plasma:   { count: 50, color1: 0x44aaff, color2: 0x2266ff, size: 0.15, speed: 0.15, life: 0.6 },
+                    bfg:      { count: 120, color1: 0x44ff44, color2: 0x00cc22, size: 0.35, speed: 0.14, life: 1.4 },
+                    shotgun:  { count: 70, color1: 0xffcc00, color2: 0xff8800, size: 0.12, speed: 0.2, life: 0.5 },
+                };
+
+                const cfg = configs[type] || configs.rocket;
+                const geo = new THREE.BufferGeometry();
+                const positions = new Float32Array(cfg.count * 3);
+                const colors = new Float32Array(cfg.count * 3);
+                const velocities = [];
+
+                const c1 = new THREE.Color(cfg.color1);
+                const c2 = new THREE.Color(cfg.color2);
+
+                for (let i = 0; i < cfg.count; i++) {
+                    positions[i * 3] = worldPos.x;
+                    positions[i * 3 + 1] = worldPos.y;
+                    positions[i * 3 + 2] = worldPos.z;
+
+                    // Random color between c1 and c2
+                    const blend = Math.random();
+                    colors[i * 3] = c1.r + (c2.r - c1.r) * blend;
+                    colors[i * 3 + 1] = c1.g + (c2.g - c1.g) * blend;
+                    colors[i * 3 + 2] = c1.b + (c2.b - c1.b) * blend;
+
+                    // Spherical velocity distribution
+                    const phi = Math.random() * Math.PI * 2;
+                    const theta = Math.random() * Math.PI;
+                    const spd = cfg.speed * (0.3 + Math.random() * 0.7);
+                    velocities.push({
+                        x: Math.sin(theta) * Math.cos(phi) * spd,
+                        y: Math.sin(theta) * Math.sin(phi) * spd,
+                        z: Math.cos(theta) * spd * 0.3,
+                    });
+                }
+
+                geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+                const mat = new THREE.PointsMaterial({
+                    size: cfg.size,
+                    transparent: true,
+                    opacity: 1,
+                    vertexColors: true,
+                    blending: THREE.AdditiveBlending,
+                    depthWrite: false,
+                    sizeAttenuation: true,
+                });
+
+                const mesh = new THREE.Points(geo, mat);
+                this.weaponScene.add(mesh);
+
+                this.particleSystems.push({
+                    mesh,
+                    velocities,
+                    age: 0,
+                    maxLife: cfg.life,
+                    baseSize: cfg.size,
+                });
+
+                // For BFG: add a second wave with delay
+                if (type === 'bfg') {
+                    setTimeout(() => {
+                        this._spawnThreeExplosion('fireball', screenX + (Math.random() - 0.5) * 60, screenY + (Math.random() - 0.5) * 60);
+                    }, 200);
+                }
             },
 
             toggleDark() {
@@ -1901,6 +2243,12 @@
             },
 
             spawnWeaponEffect(type, x, y) {
+                // Spawn 3D WebGL particles (real depth + glow)
+                if (this.threeInitialized) {
+                    this._spawnThreeExplosion(type, x, y);
+                }
+
+                // Also spawn DOM effects for the 2D overlay (shockwaves, etc.)
                 const container = document.createElement('div');
                 container.className = 'weapon-impact';
                 container.style.left = x + 'px';
@@ -2469,6 +2817,7 @@
                 this.selected = null;
                 this.modalImages = [];
                 this.extraDetails = {};
+                this.descCollapsed = true;
                 document.body.style.overflow = '';
             },
         };
