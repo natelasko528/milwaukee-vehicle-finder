@@ -1,7 +1,10 @@
 """
-API Endpoint: AI Chat Assistant (Google Gemini 2.5 Flash)
+API Endpoint: AI Chat Assistant (Google Gemini)
 Provides automotive advice using Gemini AI with vehicle context awareness.
 Deployed as a Vercel serverless function.
+
+Primary model: gemini-2.5-flash
+Fallback model: gemini-2.0-flash
 """
 
 from http.server import BaseHTTPRequestHandler
@@ -38,19 +41,45 @@ def _check_rate_limit(ip):
 
 
 # ---------------------------------------------------------------------------
+# Model configuration
+# ---------------------------------------------------------------------------
+
+_PRIMARY_MODEL = "gemini-2.5-flash"
+_FALLBACK_MODEL = "gemini-2.0-flash"
+
+# ---------------------------------------------------------------------------
 # System prompt
 # ---------------------------------------------------------------------------
 
 SYSTEM_PROMPT = (
     "You are the DOOM SLAYER's Vehicle Intelligence AI, built into Milwaukee Vehicle Finder.\n"
-    "You are an expert automotive advisor who helps users evaluate used vehicles in the Milwaukee area.\n"
-    "Your knowledge covers vehicle reliability, fair pricing, common issues, maintenance costs, "
-    "insurance estimates, safety ratings, and purchase negotiations.\n\n"
+    "You are an expert automotive advisor who helps users evaluate used vehicles in the Milwaukee area.\n\n"
+
+    "Your core knowledge areas:\n"
+    "- **Vehicle reliability**: Known mechanical issues, longevity expectations, and maintenance costs "
+    "for specific makes, models, and model years.\n"
+    "- **Fair pricing & market comparison**: Whether a listing price is competitive compared to "
+    "KBB, Edmunds, and current local market conditions. Reference the user's actual search results "
+    "when available to compare across listings.\n"
+    "- **Safety ratings & recall awareness**: NHTSA safety ratings, IIHS scores, and any known "
+    "recalls or technical service bulletins (TSBs) for the vehicle in question. Always flag active "
+    "recalls — unfixed recalls are a serious safety and negotiation point.\n"
+    "- **Dealership reputation**: General guidance on buying from private sellers vs. dealerships, "
+    "red flags in dealer listings (e.g., suspiciously low prices, salvage titles marketed as clean), "
+    "and tips for verifying dealer credibility in the Milwaukee area.\n"
+    "- **Owner sentiment**: Summarize common owner complaints and praise for specific vehicles based "
+    "on widely reported owner feedback (forums, long-term reviews). Mention recurring themes like "
+    "transmission issues, rust-prone models, or surprisingly reliable budget picks.\n"
+    "- **Insurance & total cost of ownership**: Rough insurance cost factors, fuel economy, typical "
+    "repair bills, and depreciation outlook.\n"
+    "- **Purchase negotiations**: Practical tactics for negotiating price, what inspections to request, "
+    "and when to walk away from a deal.\n\n"
+
     "When the user is viewing a specific vehicle, use the provided context to give targeted advice.\n"
-    "When comparing prices, reference the user's actual search results when available.\n"
     "Always mention important safety recalls when relevant.\n\n"
+
     "Keep responses concise (2-4 paragraphs max). Use bullet points for lists.\n"
-    "Be direct, practical, and honest - if a vehicle is overpriced or unreliable, say so clearly.\n"
+    "Be direct, practical, and honest — if a vehicle is overpriced or unreliable, say so clearly.\n"
     "You have a slightly intense, no-nonsense personality fitting the Doom theme, but remain helpful and informative."
 )
 
@@ -134,6 +163,20 @@ def _convert_messages(messages, context):
     return gemini_history, latest_text
 
 
+def _try_gemini_model(genai, model_name, history, latest_text):
+    """
+    Attempt to chat with a specific Gemini model.
+    Returns the response object on success, raises on failure.
+    """
+    model = genai.GenerativeModel(
+        model_name=model_name,
+        system_instruction=SYSTEM_PROMPT,
+    )
+    chat = model.start_chat(history=history)
+    response = chat.send_message(latest_text)
+    return response
+
+
 # ---------------------------------------------------------------------------
 # Handler
 # ---------------------------------------------------------------------------
@@ -163,8 +206,9 @@ class handler(BaseHTTPRequestHandler):
         self._send_json(200, {
             "status": "ok",
             "endpoint": "chat",
-            "model": "gemini-2.5-flash-preview-05-20",
-            "version": "1.0.0",
+            "primary_model": _PRIMARY_MODEL,
+            "fallback_model": _FALLBACK_MODEL,
+            "version": "2.0.0",
         })
 
     # -- POST (chat) -------------------------------------------------------
@@ -176,6 +220,7 @@ class handler(BaseHTTPRequestHandler):
             self._send_json(429, {
                 "success": False,
                 "error": "Rate limit exceeded. Max 30 requests per minute.",
+                "hint": "Please wait a moment before sending another message.",
             })
             return
 
@@ -188,6 +233,7 @@ class handler(BaseHTTPRequestHandler):
             self._send_json(400, {
                 "success": False,
                 "error": "Invalid JSON in request body.",
+                "hint": "Ensure the request body is valid JSON with a 'messages' array.",
             })
             return
 
@@ -196,6 +242,7 @@ class handler(BaseHTTPRequestHandler):
             self._send_json(400, {
                 "success": False,
                 "error": "Request must include a 'messages' array.",
+                "hint": "Send {\"messages\": [{\"role\": \"user\", \"content\": \"your question\"}]}.",
             })
             return
 
@@ -207,39 +254,84 @@ class handler(BaseHTTPRequestHandler):
             self._send_json(500, {
                 "success": False,
                 "error": "GOOGLE_API_KEY is not configured on the server.",
+                "hint": "The server administrator needs to set the GOOGLE_API_KEY environment variable in Vercel.",
             })
             return
 
-        # Call Gemini
+        # Call Gemini with model fallback
         try:
             import google.generativeai as genai
 
             genai.configure(api_key=api_key)
-
-            model = genai.GenerativeModel(
-                model_name="gemini-2.5-flash-preview-05-20",
-                system_instruction=SYSTEM_PROMPT,
-            )
-
             history, latest_text = _convert_messages(messages, context)
 
-            chat = model.start_chat(history=history)
-            response = chat.send_message(latest_text)
+            # Try primary model first, fall back to secondary on failure
+            used_model = _PRIMARY_MODEL
+            primary_error = None
+            try:
+                response = _try_gemini_model(genai, _PRIMARY_MODEL, history, latest_text)
+            except Exception as primary_exc:
+                primary_error = str(primary_exc)
+                print(f"[chat] Primary model {_PRIMARY_MODEL} failed: {primary_error}")
+                print(f"[chat] Falling back to {_FALLBACK_MODEL}...")
+                try:
+                    response = _try_gemini_model(genai, _FALLBACK_MODEL, history, latest_text)
+                    used_model = _FALLBACK_MODEL
+                except Exception as fallback_exc:
+                    traceback.print_exc()
+                    self._send_json(500, {
+                        "success": False,
+                        "error": "Both AI models failed to generate a response.",
+                        "details": {
+                            "primary_model": _PRIMARY_MODEL,
+                            "primary_error": primary_error,
+                            "fallback_model": _FALLBACK_MODEL,
+                            "fallback_error": str(fallback_exc),
+                        },
+                        "hint": (
+                            "This may be a temporary issue with the Gemini API. "
+                            "Try again in a few seconds. If the problem persists, "
+                            "the API key may be invalid or have exceeded its quota."
+                        ),
+                    })
+                    return
 
-            self._send_json(200, {
+            result = {
                 "success": True,
                 "response": response.text,
-                "model": "gemini-2.5-flash-preview-05-20",
-            })
+                "model": used_model,
+            }
+            if primary_error:
+                result["fallback_used"] = True
+            self._send_json(200, result)
 
         except ImportError:
             self._send_json(500, {
                 "success": False,
                 "error": "google-generativeai package is not installed.",
+                "hint": (
+                    "Add 'google-generativeai' to requirements.txt and redeploy. "
+                    "This is a server configuration issue."
+                ),
             })
         except Exception as e:
             traceback.print_exc()
+            error_msg = str(e)
+            hint = "An unexpected error occurred. Try again shortly."
+
+            # Provide more specific hints for common errors
+            lower_err = error_msg.lower()
+            if "api_key" in lower_err or "authentication" in lower_err or "permission" in lower_err:
+                hint = "The API key appears to be invalid or lacks permissions. Check the GOOGLE_API_KEY in Vercel settings."
+            elif "quota" in lower_err or "rate" in lower_err or "resource" in lower_err:
+                hint = "The Gemini API quota or rate limit has been reached. Wait a minute and try again."
+            elif "not found" in lower_err or "404" in lower_err:
+                hint = f"The requested model may not be available. The server will attempt fallback models automatically."
+            elif "timeout" in lower_err or "deadline" in lower_err:
+                hint = "The AI model took too long to respond. Try a shorter or simpler question."
+
             self._send_json(500, {
                 "success": False,
-                "error": f"Gemini API error: {str(e)}",
+                "error": f"AI service error: {error_msg}",
+                "hint": hint,
             })
