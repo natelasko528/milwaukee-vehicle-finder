@@ -7,8 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;600;700;800&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script>
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -1867,13 +1866,13 @@
             init() {
                 const cur = new Date().getFullYear() + 1;
                 for (let y = cur; y >= 1990; y--) this.years.push(y);
-                this.\('activeSource', () => this.applySort());
+                this.$watch('activeSource', () => this.applySort());
                 if (localStorage.getItem('mvf-dark') === '1' || (!localStorage.getItem('mvf-dark') && window.matchMedia('(prefers-color-scheme: dark)').matches)) this.darkMode = true;
                 if (localStorage.getItem('mvf-sound') === '0') this.soundEnabled = false;
                 try { this.favorites = JSON.parse(localStorage.getItem('mvf-favorites') || '[]'); } catch(e) { this.favorites = []; }
                 const priceMap = { '50000': 'easy', '20000': 'medium', '10000': 'hard', '5000': 'nightmare' };
                 this.selectedDifficulty = priceMap[this.params.max_price] || 'medium';
-                this.\(() => this.initThreeJS());
+                this.$nextTick(() => this.initThreeJS());
             },
 
             isFavorite(url) { return this.favorites.includes(url); },
@@ -1943,7 +1942,7 @@
                 this.chatInput = '';
                 this.chatMessages.push({ role: 'user', text: msg });
                 this.chatTyping = true;
-                this.\(() => { if (this.\.chatMessages) this.\.chatMessages.scrollTop = this.\.chatMessages.scrollHeight; });
+                this.$nextTick(() => { if (this.$refs.chatMessages) this.$refs.chatMessages.scrollTop = this.$refs.chatMessages.scrollHeight; });
                 const context = {
                     message: msg,
                     vehicle: this.selected ? { title: this.selected.title, price: this.selected.price, year: this.selected.year, mileage: this.selected.mileage, source: this.selected.source } : null,
@@ -1959,10 +1958,10 @@
                     for (let i = 0; i < fullText.length; i++) {
                         await new Promise(r => setTimeout(r, 20));
                         this.chatMessages[idx].text = fullText.substring(0, i + 1);
-                        if (i % 10 === 0 && this.\.chatMessages) this.\.chatMessages.scrollTop = this.\.chatMessages.scrollHeight;
+                        if (i % 10 === 0 && this.$refs.chatMessages) this.$refs.chatMessages.scrollTop = this.$refs.chatMessages.scrollHeight;
                     }
                 } catch(e) { this.chatTyping = false; this.chatMessages.push({ role: 'ai', text: 'Chat service unavailable.' }); }
-                if (this.\.chatMessages) this.\.chatMessages.scrollTop = this.\.chatMessages.scrollHeight;
+                if (this.$refs.chatMessages) this.$refs.chatMessages.scrollTop = this.$refs.chatMessages.scrollHeight;
             },
 
             renderMarkdown(text) {
@@ -2746,5 +2745,6 @@
         };
     }
     </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </body>
 </html>
