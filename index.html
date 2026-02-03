@@ -1153,6 +1153,161 @@
             .toast-title { font-size: 1.1rem; }
             .toast-subtitle { font-size: 0.75rem; }
         }
+
+/* ---- AI Chat Drawer ---- */
+.chat-fab { position: fixed; bottom: 80px; right: 1.25rem; width: 52px; height: 52px; background: linear-gradient(135deg, oklch(0.55 0.22 27), oklch(0.40 0.18 20)); border: 2px solid oklch(0.65 0.25 35); border-radius: 50%; box-shadow: 0 0 18px oklch(0.5 0.2 27 / 0.5), 0 4px 12px rgba(0,0,0,0.4); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1050; transition: transform 0.2s, box-shadow 0.2s; }
+.chat-fab:hover { transform: scale(1.1); box-shadow: 0 0 28px oklch(0.6 0.25 27 / 0.7); }
+.chat-drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 420px; max-width: 100vw; background: var(--card); border-left: 2px solid var(--border); box-shadow: -8px 0 30px rgba(0,0,0,0.5); z-index: 1200; display: flex; flex-direction: column; transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+.chat-drawer.open { transform: translateX(0); }
+.chat-header { padding: 1rem 1.25rem; background: linear-gradient(135deg, oklch(0.30 0.08 27), oklch(0.22 0.04 20)); border-bottom: 2px solid oklch(0.45 0.15 27); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.chat-header h3 { font-size: 1rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: oklch(0.75 0.18 40); text-shadow: 0 0 10px oklch(0.6 0.2 27 / 0.5); }
+.chat-close-btn { background: none; border: 1px solid oklch(0.45 0 0); color: var(--card-foreground); width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; }
+.chat-messages { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.75rem; }
+.chat-msg { max-width: 88%; padding: 0.7rem 0.9rem; font-size: 0.82rem; line-height: 1.6; border: 1px solid var(--border); word-wrap: break-word; }
+.chat-msg.user { align-self: flex-end; background: oklch(0.35 0.10 27); color: oklch(0.9 0 0); border-color: oklch(0.45 0.12 27); }
+.chat-msg.ai { align-self: flex-start; background: var(--background); color: var(--foreground); }
+.chat-msg .ai-label { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: oklch(0.65 0.18 27); margin-bottom: 0.3rem; }
+.chat-typing { font-size: 0.75rem; color: var(--muted-foreground); font-family: "Source Code Pro", monospace; animation: doomPulseText 0.8s infinite; }
+.chat-input-area { padding: 0.75rem 1rem; border-top: 1px solid var(--border); flex-shrink: 0; }
+.chat-chips { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+.chat-chip { padding: 0.25rem 0.5rem; font-family: "Oxanium", sans-serif; font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; border: 1px solid var(--border); background: var(--muted); color: var(--muted-foreground); cursor: pointer; transition: all 0.15s; }
+.chat-chip:hover { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); }
+.chat-input-row { display: flex; gap: 0.5rem; }
+.chat-input { flex: 1; padding: 0.5rem 0.75rem; border: 1px solid var(--border); font-family: "Oxanium", sans-serif; font-size: 0.85rem; background: var(--background); color: var(--foreground); }
+.chat-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px var(--ring); }
+.chat-send { padding: 0.5rem 1rem; background: var(--primary); color: var(--primary-foreground); border: none; font-family: "Oxanium", sans-serif; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; cursor: pointer; }
+.chat-send:hover { opacity: 0.85; }
+.chat-send:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ---- AI Review in Modal ---- */
+.ai-intel-section { border: 1px solid var(--border); background: var(--background); margin-bottom: 1rem; }
+.ai-intel-header { padding: 0.6rem 0.75rem; background: linear-gradient(135deg, oklch(0.30 0.08 27), oklch(0.25 0.04 20)); border-bottom: 1px solid oklch(0.45 0.12 27); cursor: pointer; }
+.ai-intel-header h3 { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: oklch(0.75 0.18 40); }
+.ai-intel-body { padding: 0.75rem; }
+.ai-scanning { text-align: center; padding: 1.5rem; font-family: "Source Code Pro", monospace; font-size: 0.8rem; color: oklch(0.65 0.18 27); animation: doomPulseText 1s infinite; }
+.ai-summary { font-size: 0.8rem; line-height: 1.6; margin-bottom: 0.75rem; padding: 0.5rem; border-left: 3px solid oklch(0.55 0.18 27); background: var(--card); }
+.ai-pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.75rem; }
+.ai-list-title { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem; padding: 0.2rem 0.4rem; }
+.ai-list-title.pros { color: oklch(0.7 0.2 130); background: oklch(0.7 0.2 130 / 0.1); }
+.ai-list-title.cons { color: oklch(0.65 0.22 27); background: oklch(0.65 0.22 27 / 0.1); }
+.ai-list { list-style: none; padding: 0; font-size: 0.75rem; line-height: 1.5; }
+.ai-list li { padding: 0.2rem 0 0.2rem 0.8rem; position: relative; }
+.ai-list.pros li::before { content: '+'; position: absolute; left: 0; color: oklch(0.7 0.2 130); font-weight: 800; }
+.ai-list.cons li::before { content: '!'; position: absolute; left: 0; color: oklch(0.65 0.22 27); font-weight: 800; }
+.ai-reliability { margin-bottom: 0.5rem; }
+.ai-reliability .bar { height: 8px; background: oklch(0.2 0 0); border: 1px solid var(--border); overflow: hidden; margin-top: 0.3rem; }
+.ai-reliability .fill { height: 100%; background: linear-gradient(90deg, oklch(0.65 0.22 27), oklch(0.7 0.2 130)); transition: width 0.5s; }
+.ai-verdict { display: inline-block; padding: 0.2rem 0.6rem; font-family: "Oxanium", sans-serif; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; color: #fff; }
+.verdict-great_deal { background: oklch(0.55 0.2 145); box-shadow: 0 0 8px oklch(0.55 0.2 145 / 0.4); }
+.verdict-good_deal { background: oklch(0.55 0.15 240); }
+.verdict-fair { background: oklch(0.45 0 0); }
+.verdict-above_market { background: oklch(0.6 0.18 60); color: #000; }
+.verdict-overpriced { background: oklch(0.55 0.22 27); }
+.ai-sources { display: flex; gap: 0.35rem; flex-wrap: wrap; margin-top: 0.5rem; }
+.ai-source-link { display: inline-block; padding: 0.2rem 0.5rem; font-size: 0.6rem; font-weight: 700; font-family: "Oxanium", sans-serif; text-transform: uppercase; border: 1px solid var(--border); background: var(--muted); color: var(--muted-foreground); text-decoration: none; transition: all 0.15s; }
+.ai-source-link:hover { background: var(--primary); color: var(--primary-foreground); }
+
+/* ---- Safety Section ---- */
+.safety-section { border: 1px solid var(--border); background: var(--background); margin-bottom: 1rem; padding: 0.75rem; }
+.safety-section h4 { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: oklch(0.7 0.15 245); margin-bottom: 0.5rem; }
+.safety-stars { font-size: 1.1rem; letter-spacing: 0.15rem; margin-bottom: 0.4rem; }
+.recall-item { font-size: 0.72rem; padding: 0.4rem; border: 1px solid var(--border); margin-bottom: 0.3rem; }
+.recall-item .r-comp { font-weight: 700; color: oklch(0.7 0.2 40); }
+
+/* ---- Deal Badge (on cards) ---- */
+.deal-badge { position: absolute; top: 0.5rem; right: 0.5rem; padding: 0.15rem 0.45rem; font-family: "Oxanium", sans-serif; font-size: 0.55rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; z-index: 2; color: #fff; }
+.deal-great { background: oklch(0.55 0.2 145); box-shadow: 0 0 8px oklch(0.55 0.2 145 / 0.4); }
+.deal-good { background: oklch(0.55 0.15 240); }
+.deal-fair { background: oklch(0.45 0 0); }
+.deal-above { background: oklch(0.6 0.18 60); color: #000; }
+.deal-over { background: oklch(0.55 0.22 27); }
+
+/* ---- Favorites ---- */
+.fav-btn { position: absolute; bottom: 0.5rem; right: 0.5rem; background: rgba(0,0,0,0.5); border: none; color: oklch(0.6 0 0); font-size: 1.1rem; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; z-index: 2; }
+.fav-btn:hover { color: oklch(0.65 0.22 27); transform: scale(1.2); }
+.fav-btn.active { color: oklch(0.65 0.22 27); text-shadow: 0 0 6px oklch(0.6 0.2 27 / 0.6); }
+.dot-favorites { background: oklch(0.65 0.22 27); }
+
+        /* ---- Deal Badges ---- */
+        .deal-badge { position: absolute; top: 0.5rem; right: 0.5rem; padding: 0.2rem 0.5rem; font-family: "Oxanium", sans-serif; font-size: 0.55rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: #fff; z-index: 2; }
+        .deal-great { background: #16a34a; }
+        .deal-good { background: #2563eb; }
+        .deal-fair { background: #6b7280; }
+        .deal-above { background: #ea580c; }
+        .deal-over { background: #dc2626; }
+
+        /* ---- Card Extras ---- */
+        .card-extra-info { display: flex; gap: 0.5rem; margin-top: 0.4rem; flex-wrap: wrap; }
+        .card-extra-tag { font-size: 0.6rem; padding: 0.15rem 0.4rem; background: var(--muted); color: var(--muted-foreground); font-family: "Source Code Pro", monospace; text-transform: uppercase; }
+
+        /* ---- Skeleton Loading ---- */
+        @keyframes skeletonPulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.15; } }
+        @keyframes pulseGlow { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+        .skeleton-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; margin-top: 1rem; }
+        .skeleton-card { background: var(--card); border: 1px solid var(--border); overflow: hidden; }
+        .skeleton-img { height: 190px; background: var(--muted); animation: skeletonPulse 1.5s ease-in-out infinite; }
+        .skeleton-body { padding: 0.9rem; }
+        .skeleton-line { height: 14px; background: var(--muted); margin-bottom: 0.6rem; animation: skeletonPulse 1.5s ease-in-out infinite; }
+        .skeleton-line.w60 { width: 60%; }
+        .skeleton-line.w80 { width: 80%; }
+        .skeleton-line.w40 { width: 40%; }
+        .skeleton-line.thick { height: 24px; width: 50%; }
+
+        /* ---- Best Deal Stat ---- */
+        .stat-card.best-deal { border-color: oklch(0.55 0.2 130); }
+        .stat-card.best-deal .value { color: oklch(0.55 0.2 130); font-size: 1rem; }
+
+        /* ---- Modal Tabs ---- */
+        .modal-tabs { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 1rem; }
+        .modal-tab { padding: 0.5rem 1rem; font-family: "Oxanium", sans-serif; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; background: none; border: none; color: var(--muted-foreground); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.15s; }
+        .modal-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+        .modal-tab:hover { color: var(--foreground); }
+
+        /* ---- AI Intel ---- */
+        .ai-intel { padding: 0.5rem 0; }
+        .ai-scanning { text-align: center; padding: 2rem 0; }
+        .ai-scanning-text { font-family: "Source Code Pro", monospace; font-size: 0.85rem; color: oklch(0.65 0.25 27); animation: pulseGlow 1.2s ease-in-out infinite; text-transform: uppercase; letter-spacing: 0.1em; }
+        .ai-summary { background: var(--background); border: 1px solid var(--border); padding: 0.75rem; margin-bottom: 0.75rem; font-size: 0.8rem; line-height: 1.6; }
+        .ai-pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem; }
+        .ai-list { list-style: none; padding: 0; }
+        .ai-list li { font-size: 0.75rem; padding: 0.25rem 0 0.25rem 1rem; position: relative; }
+        .ai-list li::before { content: ''; position: absolute; left: 0; top: 0.55rem; width: 6px; height: 6px; border-radius: 50%; }
+        .ai-list.pros li::before { background: #16a34a; box-shadow: 0 0 4px #16a34a; }
+        .ai-list.cons li::before { background: #ea580c; box-shadow: 0 0 4px #ea580c; }
+        .ai-list-title { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted-foreground); margin-bottom: 0.4rem; }
+        .reliability-bar { height: 8px; background: var(--muted); border: 1px solid var(--border); overflow: hidden; margin-top: 0.3rem; }
+        .reliability-fill { height: 100%; transition: width 0.5s; }
+        .price-verdict { display: inline-block; padding: 0.2rem 0.6rem; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: #fff; margin-bottom: 0.75rem; }
+        .ai-issues { margin-bottom: 0.75rem; }
+        .ai-issues summary { font-size: 0.75rem; font-weight: 700; cursor: pointer; color: var(--muted-foreground); text-transform: uppercase; }
+        .ai-issues ul { list-style: disc; padding-left: 1.2rem; margin-top: 0.4rem; }
+        .ai-issues li { font-size: 0.75rem; color: var(--muted-foreground); margin-bottom: 0.2rem; }
+
+        /* ---- Safety Intel ---- */
+        .safety-intel { padding: 0.5rem 0; }
+        .safety-stars { display: flex; gap: 0.2rem; margin: 0.3rem 0 0.5rem; }
+        .safety-star { width: 20px; height: 20px; }
+        .safety-stat { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border); font-size: 0.8rem; }
+        .safety-stat .s-label { color: var(--muted-foreground); text-transform: uppercase; font-size: 0.7rem; }
+        .safety-stat .s-val { font-weight: 700; }
+
+        /* ---- Save Button ---- */
+        .btn-save { display: block; width: 100%; padding: 0.5rem; background: none; border: 2px solid oklch(0.65 0.25 0); color: oklch(0.65 0.25 0); font-family: "Oxanium", sans-serif; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; cursor: pointer; margin-top: 0.5rem; transition: all 0.15s; }
+        .btn-save:hover, .btn-save.saved { background: oklch(0.65 0.25 0); color: #fff; }
+
+        /* ---- Empty State Doom ---- */
+        .empty-state .doom-text { font-family: "Oxanium", sans-serif; color: oklch(0.65 0.25 27); font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; text-shadow: 1px 1px 0 rgba(0,0,0,0.3); }
+
+        /* ---- Vehicle Card Tilt ---- */
+        .vehicle-card { perspective: 800px; }
+        .vehicle-card:hover { transform: translateY(-4px) scale(1.02) rotateX(2deg) rotateY(-1deg); }
+
+        @media (max-width: 640px) {
+            .chat-drawer { width: 100vw; }
+            .ai-pros-cons { grid-template-columns: 1fr; }
+            .chat-fab { bottom: 70px; right: 0.75rem; width: 44px; height: 44px; }
+            .skeleton-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body x-data="app()" :class="{ dark: darkMode, shaking: isShaking }">
@@ -1193,61 +1348,39 @@
 
         <!-- Search Panel -->
         <div class="search-panel">
-            <!-- Difficulty Selector -->
             <div class="difficulty-bar">
-                <button class="difficulty-btn" :class="{ active: selectedDifficulty === 'easy' }"
-                        @click="setDifficulty('easy', '50000')">
-                    &gt;&gt; I'm Too Young To Die &lt;&lt;
-                </button>
-                <button class="difficulty-btn" :class="{ active: selectedDifficulty === 'medium' }"
-                        @click="setDifficulty('medium', '20000')">
-                    &gt;&gt; Hurt Me Plenty &lt;&lt;
-                </button>
-                <button class="difficulty-btn" :class="{ active: selectedDifficulty === 'hard' }"
-                        @click="setDifficulty('hard', '10000')">
-                    &gt;&gt; Ultra-Violence &lt;&lt;
-                </button>
-                <button class="difficulty-btn" :class="{ active: selectedDifficulty === 'nightmare' }"
-                        @click="setDifficulty('nightmare', '5000')">
-                    &gt;&gt; Nightmare! &lt;&lt;
-                </button>
+                <button class="difficulty-btn" :class="{ active: selectedDifficulty === 'easy' }" @click="setDifficulty('easy', '50000')">&gt;&gt; I'm Too Young To Die &lt;&lt;</button>
+                <button class="difficulty-btn" :class="{ active: selectedDifficulty === 'medium' }" @click="setDifficulty('medium', '20000')">&gt;&gt; Hurt Me Plenty &lt;&lt;</button>
+                <button class="difficulty-btn" :class="{ active: selectedDifficulty === 'hard' }" @click="setDifficulty('hard', '10000')">&gt;&gt; Ultra-Violence &lt;&lt;</button>
+                <button class="difficulty-btn" :class="{ active: selectedDifficulty === 'nightmare' }" @click="setDifficulty('nightmare', '5000')">&gt;&gt; Nightmare! &lt;&lt;</button>
             </div>
-
             <div class="search-grid">
                 <div class="form-group">
                     <label>Make</label>
                     <select x-model="params.make" @change="onMakeChange()">
                         <option value="">Any Make</option>
-                        <template x-for="m in makes" :key="m">
-                            <option :value="m" x-text="m"></option>
-                        </template>
+                        <template x-for="m in makes" :key="m"><option :value="m" x-text="m"></option></template>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Model</label>
                     <select x-model="params.model">
                         <option value="">Any Model</option>
-                        <template x-for="m in availableModels" :key="m">
-                            <option :value="m" x-text="m"></option>
-                        </template>
+                        <template x-for="m in availableModels" :key="m"><option :value="m" x-text="m"></option></template>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Min Year</label>
                     <select x-model="params.min_year">
                         <option value="">Any</option>
-                        <template x-for="y in years" :key="'min'+y">
-                            <option :value="y" x-text="y"></option>
-                        </template>
+                        <template x-for="y in years" :key="'min'+y"><option :value="y" x-text="y"></option></template>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Max Year</label>
                     <select x-model="params.max_year">
                         <option value="">Any</option>
-                        <template x-for="y in years" :key="'max'+y">
-                            <option :value="y" x-text="y"></option>
-                        </template>
+                        <template x-for="y in years" :key="'max'+y"><option :value="y" x-text="y"></option></template>
                     </select>
                 </div>
                 <div class="form-group">
@@ -1294,22 +1427,23 @@
                 <div class="doom-bar-fill" :key="loadingKey"></div>
             </div>
             <div class="doom-platforms">
-                <div class="doom-platform">
-                    <div class="status-dot" :class="{ done: loadingComplete.craigslist }"></div>
-                    Craigslist
-                </div>
-                <div class="doom-platform">
-                    <div class="status-dot" :class="{ done: loadingComplete.cargurus }"></div>
-                    CarGurus
-                </div>
-                <div class="doom-platform">
-                    <div class="status-dot" :class="{ done: loadingComplete.carscom }"></div>
-                    Cars.com
-                </div>
-                <div class="doom-platform">
-                    <div class="status-dot" :class="{ done: loadingComplete.autotrader }"></div>
-                    AutoTrader
-                </div>
+                <div class="doom-platform"><div class="status-dot" :class="{ done: loadingComplete.craigslist }"></div> Craigslist</div>
+                <div class="doom-platform"><div class="status-dot" :class="{ done: loadingComplete.cargurus }"></div> CarGurus</div>
+                <div class="doom-platform"><div class="status-dot" :class="{ done: loadingComplete.carscom }"></div> Cars.com</div>
+                <div class="doom-platform"><div class="status-dot" :class="{ done: loadingComplete.autotrader }"></div> AutoTrader</div>
+            </div>
+            <!-- Skeleton placeholders -->
+            <div class="skeleton-grid">
+                <template x-for="i in 6" :key="'skel'+i">
+                    <div class="skeleton-card">
+                        <div class="skeleton-img"></div>
+                        <div class="skeleton-body">
+                            <div class="skeleton-line w80"></div>
+                            <div class="skeleton-line thick"></div>
+                            <div class="skeleton-line w60"></div>
+                        </div>
+                    </div>
+                </template>
             </div>
         </div>
 
@@ -1327,8 +1461,12 @@
                     <div class="label">Avg Price</div>
                 </div>
                 <div class="stat-card">
-                    <div class="value" :class="{ 'stat-pop': statPop }" x-text="bestDeal ? ('$' + bestDeal.toLocaleString()) : '-'"></div>
+                    <div class="value" :class="{ 'stat-pop': statPop }" x-text="lowestPrice ? ('$' + lowestPrice.toLocaleString()) : '-'"></div>
                     <div class="label">Lowest Price</div>
+                </div>
+                <div class="stat-card best-deal" x-show="bestDealVehicle">
+                    <div class="value" :class="{ 'stat-pop': statPop }" x-text="bestDealVehicle ? bestDealVehicle.title.substring(0, 30) + '...' : '-'"></div>
+                    <div class="label">Best Deal</div>
                 </div>
                 <div class="stat-card">
                     <div class="value" :class="{ 'stat-pop': statPop }" x-text="sourcesWithResults + '/' + sourcesTotal"></div>
@@ -1340,18 +1478,20 @@
             <div class="toolbar" x-show="allResults.length > 0">
                 <div class="sources-bar">
                     <div class="source-chip" :class="{ active: activeSource === 'all' }" @click="activeSource = 'all'">
-                        All
-                        <span style="opacity:0.7" x-text="'(' + allResults.length + ')'"></span>
+                        All <span style="opacity:0.7" x-text="'(' + allResults.length + ')'"></span>
                     </div>
                     <template x-for="s in sourceInfo" :key="s.name">
-                        <div class="source-chip"
-                             :class="{ active: activeSource === s.name }"
-                             @click="activeSource = s.name">
+                        <div class="source-chip" :class="{ active: activeSource === s.name }" @click="activeSource = s.name">
                             <span class="dot" :class="'dot-' + s.key"></span>
                             <span x-text="s.name"></span>
                             <span style="opacity:0.7" x-text="'(' + s.count + ')'"></span>
                         </div>
                     </template>
+                    <div class="source-chip" :class="{ active: activeSource === 'favorites' }" @click="activeSource = 'favorites'" x-show="favorites.length > 0">
+                        <span class="dot dot-favorites"></span>
+                        Favorites
+                        <span style="opacity:0.7" x-text="'(' + favoritesInResults + ')'"></span>
+                    </div>
                 </div>
                 <div>
                     <select x-model="sortBy" @change="applySort()">
@@ -1371,33 +1511,31 @@
                     <div class="vehicle-card slam-enter" :style="'--i:' + idx" @click="fireWeaponAndOpen($event, v)">
                         <div class="card-image">
                             <template x-if="v.image_url">
-                                <img :src="v.image_url" :alt="v.title" loading="lazy"
-                                     @error="$event.target.style.display='none'; $event.target.nextElementSibling.style.display='flex'">
+                                <img :src="v.image_url" :alt="v.title" loading="lazy" @error="$event.target.style.display='none'; $event.target.nextElementSibling.style.display='flex'">
                             </template>
                             <div class="placeholder-icon" :style="v.image_url ? 'display:none' : ''">
-                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                    <path d="M7 17a2 2 0 1 0 4 0 2 2 0 0 0-4 0Zm10 0a2 2 0 1 0-4 0 2 2 0 0 0 4 0Z"/>
-                                    <path d="M5 17H3v-5l2-5h9l4 5h3v5h-2"/><path d="M5 12h14"/>
-                                </svg>
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17a2 2 0 1 0 4 0 2 2 0 0 0-4 0Zm10 0a2 2 0 1 0-4 0 2 2 0 0 0 4 0Z"/><path d="M5 17H3v-5l2-5h9l4 5h3v5h-2"/><path d="M5 12h14"/></svg>
                             </div>
                             <span class="card-source" :class="'badge-' + sourceKey(v.source)" x-text="v.source"></span>
+                            <template x-if="getDealBadge(v)">
+                                <span class="deal-badge" :class="getDealBadge(v).cls" x-text="getDealBadge(v).label"></span>
+                            </template>
                         </div>
                         <div class="card-body">
+                            <button class="fav-btn" @click.stop="toggleFavorite(v)" :style="isFavorite(v.url) ? 'background:oklch(0.65 0.25 0);' : ''">
+                                <svg viewBox="0 0 24 24" :fill="isFavorite(v.url) ? '#fff' : 'none'" stroke="#fff" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                            </button>
                             <div class="card-title" x-text="v.title"></div>
                             <div class="card-price" x-text="'$' + v.price.toLocaleString()"></div>
                             <div class="card-meta">
-                                <span x-show="v.year">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                                    <span x-text="v.year"></span>
-                                </span>
-                                <span x-show="v.mileage">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                                    <span x-text="v.mileage ? v.mileage.toLocaleString() + ' mi' : ''"></span>
-                                </span>
-                                <span x-show="v.location">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                                    <span x-text="v.location"></span>
-                                </span>
+                                <span x-show="v.year"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> <span x-text="v.year"></span></span>
+                                <span x-show="v.mileage"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> <span x-text="v.mileage ? v.mileage.toLocaleString() + ' mi' : ''"></span></span>
+                                <span x-show="v.location"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> <span x-text="v.location"></span></span>
+                            </div>
+                            <div class="card-extra-info" x-show="v.transmission || v.fuel_type || hasReviewCache(v)">
+                                <span class="card-extra-tag" x-show="v.transmission" x-text="v.transmission"></span>
+                                <span class="card-extra-tag" x-show="v.fuel_type" x-text="v.fuel_type"></span>
+                                <span class="card-extra-tag" x-show="hasReviewCache(v)" style="color:oklch(0.65 0.25 27);">AI Reviewed</span>
                             </div>
                         </div>
                     </div>
@@ -1406,22 +1544,14 @@
 
             <!-- Empty State -->
             <div class="empty-state" x-show="allResults.length === 0 && !error">
-                <div class="icon">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                    </svg>
-                </div>
-                <h3>No vehicles found</h3>
-                <p>Try broadening your search criteria &mdash; increase max price, mileage, or year range.</p>
+                <div class="icon"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+                <h3 class="doom-text">No Targets Acquired</h3>
+                <p>The wasteland is barren. Broaden your search parameters - increase max price, mileage, or year range to find more vehicles.</p>
             </div>
 
             <!-- Filtered to 0 -->
             <div class="empty-state" x-show="allResults.length > 0 && filtered.length === 0">
-                <div class="icon">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
-                    </svg>
-                </div>
+                <div class="icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg></div>
                 <h3>No results for this filter</h3>
                 <p>Try selecting a different source.</p>
             </div>
@@ -1449,33 +1579,51 @@
     <!-- Doom HUD -->
     <div class="doom-hud">
         <div class="doom-hud-section">
-            <div class="doom-stat">
-                <span class="doom-label">Frags</span>
-                <span class="doom-value frags" x-text="allResults.length"></span>
-            </div>
+            <div class="doom-stat"><span class="doom-label">Frags</span><span class="doom-value frags" x-text="allResults.length"></span></div>
         </div>
         <div class="doom-hud-section">
-            <div class="doom-stat">
-                <span class="doom-label">Health</span>
-                <span class="doom-value health" x-text="searchHealth + '%'"></span>
-            </div>
-            <div class="doom-health-bar">
-                <div class="doom-health-fill"
-                     :class="{ critical: searchHealth < 50 }"
-                     :style="'width: ' + searchHealth + '%'"></div>
-            </div>
+            <div class="doom-stat"><span class="doom-label">Health</span><span class="doom-value health" x-text="searchHealth + '%'"></span></div>
+            <div class="doom-health-bar"><div class="doom-health-fill" :class="{ critical: searchHealth < 50 }" :style="'width: ' + searchHealth + '%'"></div></div>
         </div>
         <div class="doom-face" :class="hudState" x-text="hudFace"></div>
         <div class="doom-hud-section">
-            <div class="doom-stat">
-                <span class="doom-label">Armor</span>
-                <span class="doom-value armor" x-text="avgPrice > 0 ? ('$' + (avgPrice / 1000).toFixed(1) + 'K') : '$0'"></span>
-            </div>
+            <div class="doom-stat"><span class="doom-label">Armor</span><span class="doom-value armor" x-text="avgPrice > 0 ? ('$' + (avgPrice / 1000).toFixed(1) + 'K') : '$0'"></span></div>
         </div>
         <div class="doom-hud-section">
-            <div class="doom-stat">
-                <span class="doom-label">Ammo</span>
-                <span class="doom-value ammo" x-text="searchCount"></span>
+            <div class="doom-stat"><span class="doom-label">Ammo</span><span class="doom-value ammo" x-text="searchCount"></span></div>
+        </div>
+    </div>
+
+    <!-- Chat FAB -->
+    <button class="chat-fab" @click="chatOpen = !chatOpen" title="AI Advisor">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    </button>
+
+    <!-- Chat Drawer -->
+    <div class="chat-drawer" :class="{ open: chatOpen }">
+        <div class="chat-header">
+            <h3>AI Advisor</h3>
+            <button class="chat-close" @click="chatOpen = false">&times;</button>
+        </div>
+        <div class="chat-messages" x-ref="chatMessages">
+            <template x-for="(msg, i) in chatMessages" :key="i">
+                <div class="chat-msg" :class="msg.role">
+                    <template x-if="msg.role === 'ai'"><span class="ai-icon">AI</span></template>
+                    <span x-html="msg.role === 'ai' ? renderMarkdown(msg.text) : msg.text"></span>
+                </div>
+            </template>
+            <div class="chat-msg ai" x-show="chatTyping"><span class="ai-icon">AI</span> <span class="chat-typing">PROCESSING...</span></div>
+        </div>
+        <div class="chat-input-area">
+            <div class="chat-chips">
+                <button class="chat-chip" @click="sendChat('Is this a good deal?')">Is this a good deal?</button>
+                <button class="chat-chip" @click="sendChat('Known issues?')">Known issues?</button>
+                <button class="chat-chip" @click="sendChat('Reliability?')">Reliability?</button>
+                <button class="chat-chip" @click="sendChat('Maintenance costs?')">Maintenance costs?</button>
+            </div>
+            <div class="chat-input-row">
+                <input class="chat-input" type="text" x-model="chatInput" @keydown.enter="sendChat(chatInput)" placeholder="Ask about vehicles...">
+                <button class="chat-send" @click="sendChat(chatInput)" :disabled="chatTyping || !chatInput.trim()">Send</button>
             </div>
         </div>
     </div>
@@ -1488,16 +1636,12 @@
 
                 <div class="modal-image">
                     <template x-if="modalImages.length > 0">
-                        <img :src="modalImages[modalImgIdx]" :alt="selected.title"
-                             @error="$event.target.style.display='none'">
+                        <img :src="modalImages[modalImgIdx]" :alt="selected.title" @error="$event.target.style.display='none'">
                     </template>
                     <div class="placeholder-icon" x-show="modalImages.length === 0 && !detailLoading">
-                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path d="M7 17a2 2 0 1 0 4 0 2 2 0 0 0-4 0Zm10 0a2 2 0 1 0-4 0 2 2 0 0 0 4 0Z"/>
-                            <path d="M5 17H3v-5l2-5h9l4 5h3v5h-2"/><path d="M5 12h14"/>
-                        </svg>
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17a2 2 0 1 0 4 0 2 2 0 0 0-4 0Zm10 0a2 2 0 1 0-4 0 2 2 0 0 0 4 0Z"/><path d="M5 17H3v-5l2-5h9l4 5h3v5h-2"/><path d="M5 12h14"/></svg>
                     </div>
-                    <div class="loading-spinner" x-show="modalImages.length === 0 && detailLoading" style="position:absolute; width:36px; height:36px; border:3px solid var(--border); border-top-color:var(--primary); border-radius:50%; animation:spin 0.6s linear infinite;"></div>
+                    <div x-show="modalImages.length === 0 && detailLoading" style="position:absolute; width:36px; height:36px; border:3px solid var(--border); border-top-color:var(--primary); border-radius:50%; animation:spin 0.6s linear infinite;"></div>
                     <template x-if="modalImages.length > 1">
                         <button class="img-nav prev" @click.stop="modalImgIdx = (modalImgIdx - 1 + modalImages.length) % modalImages.length">&lsaquo;</button>
                     </template>
@@ -1514,46 +1658,92 @@
                     <h2 x-text="selected.title"></h2>
                     <div class="price" x-text="'$' + selected.price.toLocaleString()"></div>
 
-                    <div class="modal-details">
-                        <div class="detail-item" x-show="selected.year">
-                            <div class="dl">Year</div>
-                            <div class="dv" x-text="selected.year"></div>
+                    <!-- Modal Tabs -->
+                    <div class="modal-tabs">
+                        <button class="modal-tab" :class="{ active: modalTab === 'details' }" @click="modalTab = 'details'">Details</button>
+                        <button class="modal-tab" :class="{ active: modalTab === 'ai' }" @click="modalTab = 'ai'; fetchReview()">AI Intel</button>
+                        <button class="modal-tab" :class="{ active: modalTab === 'safety' }" @click="modalTab = 'safety'; fetchSafety()">Safety</button>
+                    </div>
+
+                    <!-- Details Tab -->
+                    <div x-show="modalTab === 'details'">
+                        <div class="modal-details">
+                            <div class="detail-item" x-show="selected.year"><div class="dl">Year</div><div class="dv" x-text="selected.year"></div></div>
+                            <div class="detail-item" x-show="selected.mileage"><div class="dl">Mileage</div><div class="dv" x-text="selected.mileage ? selected.mileage.toLocaleString() + ' mi' : '-'"></div></div>
+                            <div class="detail-item" x-show="selected.location"><div class="dl">Location</div><div class="dv" x-text="selected.location"></div></div>
+                            <div class="detail-item" x-show="selected.source"><div class="dl">Source</div><div class="dv" x-text="selected.source"></div></div>
+                            <template x-for="(val, key) in extraDetails" :key="key">
+                                <div class="detail-item" x-show="val && key !== 'description'"><div class="dl" x-text="key"></div><div class="dv" x-text="val"></div></div>
+                            </template>
                         </div>
-                        <div class="detail-item" x-show="selected.mileage">
-                            <div class="dl">Mileage</div>
-                            <div class="dv" x-text="selected.mileage ? selected.mileage.toLocaleString() + ' mi' : '-'"></div>
+                        <div class="detail-loading" x-show="detailLoading">Loading additional details...</div>
+                        <div x-show="extraDetails.description">
+                            <div class="modal-desc" :class="{ 'collapsed': descCollapsed && extraDetails.description && extraDetails.description.length > 200 }" x-html="formatDescription(extraDetails.description)"></div>
+                            <button x-show="extraDetails.description && extraDetails.description.length > 200" class="desc-toggle" @click="descCollapsed = !descCollapsed" x-text="descCollapsed ? '[ Show Full Description ]' : '[ Collapse Description ]'"></button>
                         </div>
-                        <div class="detail-item" x-show="selected.location">
-                            <div class="dl">Location</div>
-                            <div class="dv" x-text="selected.location"></div>
+                    </div>
+
+                    <!-- AI Intel Tab -->
+                    <div x-show="modalTab === 'ai'" class="ai-intel">
+                        <div class="ai-scanning" x-show="reviewLoading">
+                            <div class="ai-scanning-text">Scanning Target...</div>
                         </div>
-                        <div class="detail-item" x-show="selected.source">
-                            <div class="dl">Source</div>
-                            <div class="dv" x-text="selected.source"></div>
-                        </div>
-                        <template x-for="(val, key) in extraDetails" :key="key">
-                            <div class="detail-item" x-show="val && key !== 'description'">
-                                <div class="dl" x-text="key"></div>
-                                <div class="dv" x-text="val"></div>
+                        <div x-show="!reviewLoading && currentReview">
+                            <div class="ai-summary" x-text="currentReview ? currentReview.summary : ''"></div>
+                            <template x-if="currentReview && currentReview.price_verdict">
+                                <span class="price-verdict" :class="'deal-' + (currentReview.price_verdict === 'great_deal' ? 'great' : currentReview.price_verdict === 'good_deal' ? 'good' : currentReview.price_verdict === 'fair' ? 'fair' : currentReview.price_verdict === 'above_market' ? 'above' : 'over')" x-text="(currentReview.price_verdict || '').replace(/_/g, ' ')"></span>
+                            </template>
+                            <div class="ai-pros-cons">
+                                <div>
+                                    <div class="ai-list-title">Pros</div>
+                                    <ul class="ai-list pros">
+                                        <template x-for="p in (currentReview ? currentReview.pros || [] : [])" :key="p"><li x-text="p"></li></template>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <div class="ai-list-title">Cons</div>
+                                    <ul class="ai-list cons">
+                                        <template x-for="c in (currentReview ? currentReview.cons || [] : [])" :key="c"><li x-text="c"></li></template>
+                                    </ul>
+                                </div>
                             </div>
-                        </template>
+                            <div x-show="currentReview && currentReview.reliability" style="margin-bottom:0.75rem;">
+                                <div class="ai-list-title">Reliability <span x-text="currentReview ? currentReview.reliability + '/5' : ''"></span></div>
+                                <div class="reliability-bar"><div class="reliability-fill" :style="'width:' + (currentReview ? currentReview.reliability * 20 : 0) + '%; background: linear-gradient(90deg, oklch(0.65 0.25 27), oklch(0.65 0.2 130));'"></div></div>
+                            </div>
+                            <details class="ai-issues" x-show="currentReview && currentReview.known_issues && currentReview.known_issues.length > 0">
+                                <summary>Known Issues</summary>
+                                <ul><template x-for="issue in (currentReview ? currentReview.known_issues || [] : [])" :key="issue"><li x-text="issue"></li></template></ul>
+                            </details>
+                        </div>
+                        <div x-show="!reviewLoading && !currentReview && reviewError" style="text-align:center; padding:1rem; font-size:0.8rem; color:var(--muted-foreground);" x-text="reviewError"></div>
                     </div>
 
-                    <div class="detail-loading" x-show="detailLoading">Loading additional details...</div>
-
-                    <div x-show="extraDetails.description">
-                        <div class="modal-desc"
-                             :class="{ 'collapsed': descCollapsed && extraDetails.description && extraDetails.description.length > 200 }"
-                             x-html="formatDescription(extraDetails.description)"></div>
-                        <button x-show="extraDetails.description && extraDetails.description.length > 200"
-                                class="desc-toggle"
-                                @click="descCollapsed = !descCollapsed"
-                                x-text="descCollapsed ? '[ Show Full Description ]' : '[ Collapse Description ]'"></button>
+                    <!-- Safety Tab -->
+                    <div x-show="modalTab === 'safety'" class="safety-intel">
+                        <div class="ai-scanning" x-show="safetyLoading"><div class="ai-scanning-text">Scanning Safety Data...</div></div>
+                        <div x-show="!safetyLoading && currentSafety">
+                            <div class="ai-list-title">NHTSA Overall Rating</div>
+                            <div class="safety-stars">
+                                <template x-for="i in 5" :key="'star'+i">
+                                    <svg class="safety-star" viewBox="0 0 24 24" :fill="i <= (currentSafety ? currentSafety.overall_rating : 0) ? '#ffaa00' : 'none'" stroke="#ffaa00" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                </template>
+                            </div>
+                            <div class="safety-stat"><span class="s-label">Recalls</span><span class="s-val" x-text="currentSafety ? currentSafety.recall_count : '-'"></span></div>
+                            <div class="safety-stat"><span class="s-label">Complaints</span><span class="s-val" x-text="currentSafety ? currentSafety.complaint_count : '-'"></span></div>
+                            <template x-if="currentSafety && currentSafety.recalls && currentSafety.recalls.length > 0">
+                                <details class="ai-issues" style="margin-top:0.75rem;">
+                                    <summary>Recall Details</summary>
+                                    <ul><template x-for="r in currentSafety.recalls" :key="r"><li x-text="r"></li></template></ul>
+                                </details>
+                            </template>
+                            <a x-show="currentSafety && currentSafety.nhtsa_url" :href="currentSafety ? currentSafety.nhtsa_url : '#'" target="_blank" rel="noopener" style="display:inline-block; margin-top:0.75rem; font-size:0.75rem; color:var(--primary);">View on NHTSA.gov</a>
+                        </div>
+                        <div x-show="!safetyLoading && !currentSafety && safetyError" style="text-align:center; padding:1rem; font-size:0.8rem; color:var(--muted-foreground);" x-text="safetyError"></div>
                     </div>
 
-                    <a class="btn-listing" :href="selected.url" target="_blank" rel="noopener">
-                        View Full Listing &rarr;
-                    </a>
+                    <a class="btn-listing" :href="selected.url" target="_blank" rel="noopener" style="margin-top:1rem;">View Full Listing &rarr;</a>
+                    <button class="btn-save" :class="{ saved: isFavorite(selected.url) }" @click="toggleFavorite(selected)" x-text="isFavorite(selected.url) ? 'Target Saved' : 'Save Target'"></button>
                 </div>
             </div>
         </div>
@@ -1577,6 +1767,7 @@
             descCollapsed: true,
             sourceInfo: [],
             darkMode: false,
+            modalTab: 'details',
 
             // Doom state
             isShaking: false,
@@ -1590,46 +1781,49 @@
             toasts: [],
             toastId: 0,
             loadingKey: 0,
+            loadingComplete: { craigslist: false, cargurus: false, carscom: false, autotrader: false },
+
             // Three.js state
             threeInitialized: false,
-            weaponScene: null,
-            weaponCamera: null,
-            weaponRenderer: null,
-            bgScene: null,
-            bgCamera: null,
-            bgRenderer: null,
+            weaponScene: null, weaponCamera: null, weaponRenderer: null,
+            bgScene: null, bgCamera: null, bgRenderer: null,
             particleSystems: [],
             bgParticles: null,
-            loadingComplete: { craigslist: false, cargurus: false, carscom: false, autotrader: false },
+            fogParticles: null,
+
+            // AI features
+            reviewCache: {},
+            reviewLoading: false,
+            reviewError: null,
+            currentReview: null,
+            safetyCache: {},
+            safetyLoading: false,
+            safetyError: null,
+            currentSafety: null,
+
+            // Chat
+            chatOpen: false,
+            chatMessages: [],
+            chatInput: '',
+            chatTyping: false,
+
+            // Favorites
+            favorites: [],
+
             achievements: {
-                firstBlood: false,
-                overkill: false,
-                bargainHunter: false,
-                quadDamage: false,
-                multiKill: false,
-                godlike: false,
-                headshot: false,
+                firstBlood: false, overkill: false, bargainHunter: false,
+                quadDamage: false, multiKill: false, godlike: false, headshot: false,
             },
 
             params: {
-                make: '',
-                model: '',
-                min_year: '',
-                max_year: '',
-                max_price: '20000',
-                max_mileage: '150000',
-                zip_code: '53202',
+                make: '', model: '', min_year: '', max_year: '',
+                max_price: '20000', max_mileage: '150000', zip_code: '53202',
             },
 
             years: [],
             availableModels: [],
 
-            makes: [
-                'Acura','Audi','BMW','Buick','Cadillac','Chevrolet','Chrysler','Dodge',
-                'Ford','GMC','Honda','Hyundai','Infiniti','Jeep','Kia','Lexus',
-                'Lincoln','Mazda','Mercedes-Benz','Mitsubishi','Nissan','Ram','Subaru',
-                'Tesla','Toyota','Volkswagen','Volvo'
-            ],
+            makes: ['Acura','Audi','BMW','Buick','Cadillac','Chevrolet','Chrysler','Dodge','Ford','GMC','Honda','Hyundai','Infiniti','Jeep','Kia','Lexus','Lincoln','Mazda','Mercedes-Benz','Mitsubishi','Nissan','Ram','Subaru','Tesla','Toyota','Volkswagen','Volvo'],
 
             modelsByMake: {
                 'Acura': ['ILX','TLX','RDX','MDX','Integra'],
@@ -1661,30 +1855,134 @@
                 'Volvo': ['S60','S90','XC40','XC60','XC90'],
             },
 
+            weaponIndex: 0,
+            weapons: [
+                { name: 'ROCKET LAUNCHER', key: 'rocket' },
+                { name: 'IMP FIREBALL', key: 'fireball' },
+                { name: 'PLASMA RIFLE', key: 'plasma' },
+                { name: 'BFG 9000', key: 'bfg' },
+                { name: 'SUPER SHOTGUN', key: 'shotgun' },
+            ],
+
             init() {
                 const cur = new Date().getFullYear() + 1;
                 for (let y = cur; y >= 1990; y--) this.years.push(y);
-                this.$watch('activeSource', () => this.applySort());
-
-                if (localStorage.getItem('mvf-dark') === '1' ||
-                    (!localStorage.getItem('mvf-dark') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                    this.darkMode = true;
-                }
-                if (localStorage.getItem('mvf-sound') === '0') {
-                    this.soundEnabled = false;
-                }
+                this.\('activeSource', () => this.applySort());
+                if (localStorage.getItem('mvf-dark') === '1' || (!localStorage.getItem('mvf-dark') && window.matchMedia('(prefers-color-scheme: dark)').matches)) this.darkMode = true;
+                if (localStorage.getItem('mvf-sound') === '0') this.soundEnabled = false;
+                try { this.favorites = JSON.parse(localStorage.getItem('mvf-favorites') || '[]'); } catch(e) { this.favorites = []; }
                 const priceMap = { '50000': 'easy', '20000': 'medium', '10000': 'hard', '5000': 'nightmare' };
                 this.selectedDifficulty = priceMap[this.params.max_price] || 'medium';
-
-                // Initialize Three.js after a tick to ensure DOM is ready
-                this.$nextTick(() => this.initThreeJS());
+                this.\(() => this.initThreeJS());
             },
 
+            isFavorite(url) { return this.favorites.includes(url); },
+            toggleFavorite(v) {
+                const idx = this.favorites.indexOf(v.url);
+                if (idx === -1) { this.favorites.push(v.url); } else { this.favorites.splice(idx, 1); }
+                localStorage.setItem('mvf-favorites', JSON.stringify(this.favorites));
+            },
+            get favoritesInResults() { return this.allResults.filter(v => this.favorites.includes(v.url)).length; },
+
+            getDealBadge(v) {
+                const makeModel = (v.title || '').split(' ').slice(0, 3).join(' ').toLowerCase();
+                const similar = this.allResults.filter(r => (r.title || '').split(' ').slice(0, 3).join(' ').toLowerCase() === makeModel);
+                if (similar.length < 3) return null;
+                const avg = similar.reduce((s, r) => s + r.price, 0) / similar.length;
+                const diff = (v.price - avg) / avg;
+                if (diff < -0.15) return { cls: 'deal-great', label: 'GREAT DEAL' };
+                if (diff < -0.05) return { cls: 'deal-good', label: 'GOOD DEAL' };
+                if (diff <= 0.05) return { cls: 'deal-fair', label: 'FAIR PRICE' };
+                if (diff <= 0.15) return { cls: 'deal-above', label: 'ABOVE AVG' };
+                return { cls: 'deal-over', label: 'OVERPRICED' };
+            },
+
+            hasReviewCache(v) {
+                if (!v.year) return false;
+                const parts = (v.title || '').split(' ');
+                return !!this.reviewCache[(parts[1]||'') + '_' + (parts[2]||'') + '_' + v.year];
+            },
+
+            async fetchReview() {
+                if (!this.selected) return;
+                const v = this.selected;
+                const parts = (v.title || '').split(' ');
+                const make = parts[1] || '', model = parts[2] || '', year = v.year || '';
+                const key = make + '_' + model + '_' + year;
+                if (this.reviewCache[key]) { this.currentReview = this.reviewCache[key]; return; }
+                this.reviewLoading = true; this.reviewError = null; this.currentReview = null;
+                try {
+                    const resp = await fetch('/api/review', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ make, model, year: parseInt(year), price: v.price, mileage: v.mileage || 0 }) });
+                    const data = await resp.json();
+                    if (data.success !== false) { this.reviewCache[key] = data; this.currentReview = data; }
+                    else { this.reviewError = data.error || 'Could not load AI review.'; }
+                } catch(e) { this.reviewError = 'AI review service unavailable.'; }
+                finally { this.reviewLoading = false; }
+            },
+
+            async fetchSafety() {
+                if (!this.selected) return;
+                const v = this.selected;
+                const parts = (v.title || '').split(' ');
+                const make = parts[1] || '', model = parts[2] || '', year = v.year || '';
+                const key = make + '_' + model + '_' + year;
+                if (this.safetyCache[key]) { this.currentSafety = this.safetyCache[key]; return; }
+                this.safetyLoading = true; this.safetyError = null; this.currentSafety = null;
+                try {
+                    const resp = await fetch('/api/safety?make=' + encodeURIComponent(make) + '&model=' + encodeURIComponent(model) + '&year=' + encodeURIComponent(year));
+                    const data = await resp.json();
+                    if (data.success !== false) { this.safetyCache[key] = data; this.currentSafety = data; }
+                    else { this.safetyError = data.error || 'Could not load safety data.'; }
+                } catch(e) { this.safetyError = 'Safety data service unavailable.'; }
+                finally { this.safetyLoading = false; }
+            },
+
+            async sendChat(text) {
+                if (!text || !text.trim()) return;
+                const msg = text.trim();
+                this.chatInput = '';
+                this.chatMessages.push({ role: 'user', text: msg });
+                this.chatTyping = true;
+                this.\(() => { if (this.\.chatMessages) this.\.chatMessages.scrollTop = this.\.chatMessages.scrollHeight; });
+                const context = {
+                    message: msg,
+                    vehicle: this.selected ? { title: this.selected.title, price: this.selected.price, year: this.selected.year, mileage: this.selected.mileage, source: this.selected.source } : null,
+                    search_summary: { total: this.allResults.length, avg_price: this.avgPrice, make: this.params.make, model: this.params.model },
+                };
+                try {
+                    const resp = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(context) });
+                    const data = await resp.json();
+                    const fullText = data.response || data.message || 'No response received.';
+                    this.chatTyping = false;
+                    this.chatMessages.push({ role: 'ai', text: '' });
+                    const idx = this.chatMessages.length - 1;
+                    for (let i = 0; i < fullText.length; i++) {
+                        await new Promise(r => setTimeout(r, 20));
+                        this.chatMessages[idx].text = fullText.substring(0, i + 1);
+                        if (i % 10 === 0 && this.\.chatMessages) this.\.chatMessages.scrollTop = this.\.chatMessages.scrollHeight;
+                    }
+                } catch(e) { this.chatTyping = false; this.chatMessages.push({ role: 'ai', text: 'Chat service unavailable.' }); }
+                if (this.\.chatMessages) this.\.chatMessages.scrollTop = this.\.chatMessages.scrollHeight;
+            },
+
+            renderMarkdown(text) {
+                if (!text) return '';
+                let s = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                s = s.replace(/\*\*(.+?)\*\*/g, '<strong>\</strong>');
+                s = s.replace(/\*(.+?)\*/g, '<em>\</em>');
+                s = s.replace(/^[-*] (.+)$/gm, '<li>\</li>');
+                s = s.replace(/(<li>.*<\/li>)/gs, '<ul>\</ul>');
+                s = s.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="" target="_blank" rel="noopener" style="color:var(--primary);">\</a>');
+                s = s.replace(/
+/g, '<br>');
+                return s;
+            },
+
+            // ---- Three.js ----
             initThreeJS() {
                 if (typeof THREE === 'undefined' || this.threeInitialized) return;
                 this.threeInitialized = true;
 
-                // Weapon effects canvas (transparent overlay)
                 const weaponCanvas = document.getElementById('weapon-canvas');
                 this.weaponScene = new THREE.Scene();
                 this.weaponCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -1694,7 +1992,6 @@
                 this.weaponRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
                 this.weaponRenderer.setClearColor(0x000000, 0);
 
-                // Background canvas (floating embers/particles)
                 const bgCanvas = document.getElementById('bg-canvas');
                 this.bgScene = new THREE.Scene();
                 this.bgCamera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -1704,142 +2001,135 @@
                 this.bgRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
                 this.bgRenderer.setClearColor(0x000000, 0);
 
-                // Create background ember particles
                 this._createBgEmbers();
-
-                // Add ambient light to weapon scene
+                this._createFogLayer();
                 const light = new THREE.PointLight(0xff6600, 2, 50);
                 light.position.set(0, 0, 5);
                 this.weaponScene.add(light);
-
-                // Handle resize
                 window.addEventListener('resize', () => {
                     const w = window.innerWidth, h = window.innerHeight;
-                    [this.weaponCamera, this.bgCamera].forEach(cam => {
-                        cam.aspect = w / h;
-                        cam.updateProjectionMatrix();
-                    });
+                    [this.weaponCamera, this.bgCamera].forEach(cam => { cam.aspect = w / h; cam.updateProjectionMatrix(); });
                     this.weaponRenderer.setSize(w, h);
                     this.bgRenderer.setSize(w, h);
                 });
-
-                // Start render loop
                 this._animateThree();
             },
 
+            _generateEmberTexture() {
+                const c = document.createElement('canvas'); c.width = 32; c.height = 32;
+                const ctx = c.getContext('2d');
+                const g = ctx.createRadialGradient(16, 16, 0, 16, 16, 16);
+                g.addColorStop(0, 'rgba(255, 200, 80, 1)');
+                g.addColorStop(0.3, 'rgba(255, 120, 20, 0.8)');
+                g.addColorStop(0.7, 'rgba(200, 50, 0, 0.3)');
+                g.addColorStop(1, 'rgba(100, 20, 0, 0)');
+                ctx.fillStyle = g; ctx.fillRect(0, 0, 32, 32);
+                return new THREE.CanvasTexture(c);
+            },
+
             _createBgEmbers() {
-                // Floating ember particles for atmosphere
-                const count = 120;
+                const count = 150;
                 const geo = new THREE.BufferGeometry();
                 const pos = new Float32Array(count * 3);
-                const colors = new Float32Array(count * 3);
                 const sizes = new Float32Array(count);
                 const vels = [];
-
                 for (let i = 0; i < count; i++) {
                     pos[i * 3] = (Math.random() - 0.5) * 40;
                     pos[i * 3 + 1] = (Math.random() - 0.5) * 40;
                     pos[i * 3 + 2] = (Math.random() - 0.5) * 20;
-
-                    // Orange/red ember colors
-                    const r = 0.8 + Math.random() * 0.2;
-                    const g = 0.2 + Math.random() * 0.4;
-                    const b = Math.random() * 0.1;
-                    colors[i * 3] = r;
-                    colors[i * 3 + 1] = g;
-                    colors[i * 3 + 2] = b;
-
-                    sizes[i] = 0.05 + Math.random() * 0.15;
-
-                    vels.push({
-                        x: (Math.random() - 0.5) * 0.008,
-                        y: 0.005 + Math.random() * 0.02,
-                        z: (Math.random() - 0.5) * 0.005,
-                        phase: Math.random() * Math.PI * 2,
-                    });
+                    sizes[i] = 0.08 + Math.random() * 0.2;
+                    vels.push({ x: (Math.random() - 0.5) * 0.008, y: 0.005 + Math.random() * 0.02, z: (Math.random() - 0.5) * 0.005, phase: Math.random() * Math.PI * 2, pulseSpeed: 0.5 + Math.random() * 2 });
                 }
-
                 geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-                geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-                geo.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
-
-                const mat = new THREE.PointsMaterial({
-                    size: 0.12,
-                    transparent: true,
-                    opacity: 0.35,
-                    vertexColors: true,
-                    blending: THREE.AdditiveBlending,
-                    depthWrite: false,
-                    sizeAttenuation: true,
-                });
-
+                const emberTex = this._generateEmberTexture();
+                const mat = new THREE.PointsMaterial({ size: 0.2, map: emberTex, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true, color: 0xff8844 });
                 this.bgParticles = new THREE.Points(geo, mat);
                 this.bgParticles.userData.velocities = vels;
                 this.bgScene.add(this.bgParticles);
             },
 
+            _createFogLayer() {
+                const count = 30;
+                const geo = new THREE.BufferGeometry();
+                const pos = new Float32Array(count * 3);
+                const vels = [];
+                for (let i = 0; i < count; i++) {
+                    pos[i * 3] = (Math.random() - 0.5) * 50;
+                    pos[i * 3 + 1] = (Math.random() - 0.5) * 30;
+                    pos[i * 3 + 2] = -5 + Math.random() * 10;
+                    vels.push({ x: (Math.random() - 0.5) * 0.003, y: (Math.random() - 0.5) * 0.002 });
+                }
+                geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+                const c = document.createElement('canvas'); c.width = 64; c.height = 64;
+                const ctx = c.getContext('2d');
+                const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+                g.addColorStop(0, 'rgba(255,255,255,0.3)'); g.addColorStop(0.5, 'rgba(200,180,150,0.15)'); g.addColorStop(1, 'rgba(100,80,60,0)');
+                ctx.fillStyle = g; ctx.fillRect(0, 0, 64, 64);
+                const fogTex = new THREE.CanvasTexture(c);
+                const mat = new THREE.PointsMaterial({ size: 5, map: fogTex, transparent: true, opacity: 0.08, blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true, color: 0x885522 });
+                this.fogParticles = new THREE.Points(geo, mat);
+                this.fogParticles.userData.velocities = vels;
+                this.bgScene.add(this.fogParticles);
+            },
+
             _animateThree() {
                 if (!this.threeInitialized) return;
                 requestAnimationFrame(() => this._animateThree());
-
                 const time = performance.now() * 0.001;
 
-                // Animate background embers
                 if (this.bgParticles) {
                     const positions = this.bgParticles.geometry.attributes.position.array;
                     const vels = this.bgParticles.userData.velocities;
                     for (let i = 0; i < vels.length; i++) {
-                        // Upward drift with sinusoidal horizontal sway
                         positions[i * 3] += vels[i].x + Math.sin(time + vels[i].phase) * 0.003;
                         positions[i * 3 + 1] += vels[i].y;
                         positions[i * 3 + 2] += vels[i].z;
-                        // Wrap
-                        if (positions[i * 3 + 1] > 20) {
-                            positions[i * 3 + 1] = -20;
-                            positions[i * 3] = (Math.random() - 0.5) * 40;
-                        }
+                        if (positions[i * 3 + 1] > 20) { positions[i * 3 + 1] = -20; positions[i * 3] = (Math.random() - 0.5) * 40; }
                     }
                     this.bgParticles.geometry.attributes.position.needsUpdate = true;
                     this.bgParticles.rotation.y = Math.sin(time * 0.1) * 0.05;
+                    this.bgParticles.material.size = 0.2 + Math.sin(time * 0.8) * 0.04;
+                }
+                if (this.fogParticles) {
+                    const fp = this.fogParticles.geometry.attributes.position.array;
+                    const fv = this.fogParticles.userData.velocities;
+                    for (let i = 0; i < fv.length; i++) { fp[i*3] += fv[i].x; fp[i*3+1] += fv[i].y; if (fp[i*3]>25) fp[i*3]=-25; if (fp[i*3]<-25) fp[i*3]=25; }
+                    this.fogParticles.geometry.attributes.position.needsUpdate = true;
+                    this.fogParticles.material.opacity = 0.06 + Math.sin(time * 0.3) * 0.02;
                 }
 
-                // Animate weapon particle systems
                 for (let i = this.particleSystems.length - 1; i >= 0; i--) {
                     const sys = this.particleSystems[i];
                     sys.age += 0.016;
-
-                    if (sys.age >= sys.maxLife) {
-                        this.weaponScene.remove(sys.mesh);
-                        sys.mesh.geometry.dispose();
-                        sys.mesh.material.dispose();
-                        this.particleSystems.splice(i, 1);
-                        continue;
-                    }
-
+                    if (sys.age >= sys.maxLife) { this.weaponScene.remove(sys.mesh); sys.mesh.geometry.dispose(); sys.mesh.material.dispose(); this.particleSystems.splice(i, 1); continue; }
                     const t = sys.age / sys.maxLife;
                     sys.mesh.material.opacity = 1.0 - t;
                     sys.mesh.material.size = sys.baseSize * (1.0 + t * 0.5);
-
                     const positions = sys.mesh.geometry.attributes.position.array;
                     for (let j = 0; j < sys.velocities.length; j++) {
-                        positions[j * 3] += sys.velocities[j].x;
-                        positions[j * 3 + 1] += sys.velocities[j].y;
-                        positions[j * 3 + 2] += sys.velocities[j].z;
-                        // Gravity + drag
-                        sys.velocities[j].y -= 0.0008;
-                        sys.velocities[j].x *= 0.995;
-                        sys.velocities[j].z *= 0.995;
+                        positions[j*3] += sys.velocities[j].x; positions[j*3+1] += sys.velocities[j].y; positions[j*3+2] += sys.velocities[j].z;
+                        sys.velocities[j].y -= sys.gravity || 0.0008;
+                        sys.velocities[j].x *= 0.995; sys.velocities[j].z *= 0.995;
                     }
                     sys.mesh.geometry.attributes.position.needsUpdate = true;
                 }
-
-                // Render
                 this.bgRenderer.render(this.bgScene, this.bgCamera);
                 this.weaponRenderer.render(this.weaponScene, this.weaponCamera);
             },
 
+            _generateExplosionTexture(r1, g1, b1) {
+                const c = document.createElement('canvas'); c.width = 32; c.height = 32;
+                const ctx = c.getContext('2d');
+                const g = ctx.createRadialGradient(16, 16, 0, 16, 16, 16);
+                g.addColorStop(0, 'rgba(255,255,255,1)');
+                g.addColorStop(0.2, 'rgba(' + r1 + ',' + g1 + ',' + b1 + ',0.9)');
+                g.addColorStop(0.6, 'rgba(' + (r1>>1) + ',' + (g1>>1) + ',' + (b1>>1) + ',0.4)');
+                g.addColorStop(1, 'rgba(0,0,0,0)');
+                ctx.fillStyle = g; ctx.fillRect(0, 0, 32, 32);
+                return new THREE.CanvasTexture(c);
+            },
+
             _spawnThreeExplosion(type, screenX, screenY) {
-                // Convert screen coords to Three.js world coords
                 const ndcX = (screenX / window.innerWidth) * 2 - 1;
                 const ndcY = -(screenY / window.innerHeight) * 2 + 1;
                 const vec = new THREE.Vector3(ndcX, ndcY, 0.5);
@@ -1849,95 +2139,55 @@
                 const worldPos = this.weaponCamera.position.clone().add(dir.multiplyScalar(dist));
 
                 const configs = {
-                    rocket:   { count: 80, color1: 0xff6600, color2: 0xff2200, size: 0.25, speed: 0.12, life: 1.0 },
-                    fireball: { count: 60, color1: 0x80ff40, color2: 0x40cc00, size: 0.2, speed: 0.1, life: 0.85 },
-                    plasma:   { count: 50, color1: 0x44aaff, color2: 0x2266ff, size: 0.15, speed: 0.15, life: 0.6 },
-                    bfg:      { count: 120, color1: 0x44ff44, color2: 0x00cc22, size: 0.35, speed: 0.14, life: 1.4 },
-                    shotgun:  { count: 70, color1: 0xffcc00, color2: 0xff8800, size: 0.12, speed: 0.2, life: 0.5 },
+                    rocket:   { count: 100, r: 255, g: 100, b: 0, size: 0.3, speed: 0.12, life: 1.0 },
+                    fireball: { count: 70, r: 128, g: 255, b: 64, size: 0.22, speed: 0.1, life: 0.85 },
+                    plasma:   { count: 60, r: 68, g: 170, b: 255, size: 0.18, speed: 0.15, life: 0.6 },
+                    bfg:      { count: 150, r: 68, g: 255, b: 68, size: 0.4, speed: 0.14, life: 1.4 },
+                    shotgun:  { count: 80, r: 255, g: 200, b: 0, size: 0.14, speed: 0.2, life: 0.5 },
                 };
-
                 const cfg = configs[type] || configs.rocket;
                 const geo = new THREE.BufferGeometry();
                 const positions = new Float32Array(cfg.count * 3);
-                const colors = new Float32Array(cfg.count * 3);
                 const velocities = [];
-
-                const c1 = new THREE.Color(cfg.color1);
-                const c2 = new THREE.Color(cfg.color2);
-
                 for (let i = 0; i < cfg.count; i++) {
-                    positions[i * 3] = worldPos.x;
-                    positions[i * 3 + 1] = worldPos.y;
-                    positions[i * 3 + 2] = worldPos.z;
-
-                    // Random color between c1 and c2
-                    const blend = Math.random();
-                    colors[i * 3] = c1.r + (c2.r - c1.r) * blend;
-                    colors[i * 3 + 1] = c1.g + (c2.g - c1.g) * blend;
-                    colors[i * 3 + 2] = c1.b + (c2.b - c1.b) * blend;
-
-                    // Spherical velocity distribution
+                    positions[i*3] = worldPos.x; positions[i*3+1] = worldPos.y; positions[i*3+2] = worldPos.z;
                     const phi = Math.random() * Math.PI * 2;
                     const theta = Math.random() * Math.PI;
                     const spd = cfg.speed * (0.3 + Math.random() * 0.7);
-                    velocities.push({
-                        x: Math.sin(theta) * Math.cos(phi) * spd,
-                        y: Math.sin(theta) * Math.sin(phi) * spd,
-                        z: Math.cos(theta) * spd * 0.3,
-                    });
+                    velocities.push({ x: Math.sin(theta)*Math.cos(phi)*spd, y: Math.sin(theta)*Math.sin(phi)*spd, z: Math.cos(theta)*spd*0.3 });
                 }
-
                 geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-                geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
-                const mat = new THREE.PointsMaterial({
-                    size: cfg.size,
-                    transparent: true,
-                    opacity: 1,
-                    vertexColors: true,
-                    blending: THREE.AdditiveBlending,
-                    depthWrite: false,
-                    sizeAttenuation: true,
-                });
-
+                const tex = this._generateExplosionTexture(cfg.r, cfg.g, cfg.b);
+                const mat = new THREE.PointsMaterial({ size: cfg.size, map: tex, transparent: true, opacity: 1, blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true });
                 const mesh = new THREE.Points(geo, mat);
                 this.weaponScene.add(mesh);
+                this.particleSystems.push({ mesh, velocities, age: 0, maxLife: cfg.life, baseSize: cfg.size, gravity: 0.0008 });
 
-                this.particleSystems.push({
-                    mesh,
-                    velocities,
-                    age: 0,
-                    maxLife: cfg.life,
-                    baseSize: cfg.size,
-                });
-
-                // For BFG: add a second wave with delay
                 if (type === 'bfg') {
+                    setTimeout(() => this._spawnThreeExplosion('fireball', screenX + (Math.random()-0.5)*60, screenY + (Math.random()-0.5)*60), 200);
+                    setTimeout(() => this._spawnThreeExplosion('plasma', screenX + (Math.random()-0.5)*80, screenY + (Math.random()-0.5)*80), 350);
+                }
+                if (type === 'rocket') {
                     setTimeout(() => {
-                        this._spawnThreeExplosion('fireball', screenX + (Math.random() - 0.5) * 60, screenY + (Math.random() - 0.5) * 60);
-                    }, 200);
+                        const dGeo = new THREE.BufferGeometry();
+                        const dp = new Float32Array(20*3); const dv = [];
+                        for (let i=0;i<20;i++) { dp[i*3]=worldPos.x+(Math.random()-0.5)*0.5; dp[i*3+1]=worldPos.y+(Math.random()-0.5)*0.5; dp[i*3+2]=worldPos.z; dv.push({x:(Math.random()-0.5)*0.08,y:Math.random()*0.1,z:(Math.random()-0.5)*0.03}); }
+                        dGeo.setAttribute('position', new THREE.BufferAttribute(dp, 3));
+                        const dMat = new THREE.PointsMaterial({ size: 0.1, color: 0x886644, transparent: true, opacity: 0.8, depthWrite: false });
+                        const dMesh = new THREE.Points(dGeo, dMat);
+                        this.weaponScene.add(dMesh);
+                        this.particleSystems.push({ mesh: dMesh, velocities: dv, age: 0, maxLife: 0.8, baseSize: 0.1, gravity: 0.004 });
+                    }, 100);
                 }
             },
 
-            toggleDark() {
-                this.darkMode = !this.darkMode;
-                localStorage.setItem('mvf-dark', this.darkMode ? '1' : '0');
-            },
-
+            toggleDark() { this.darkMode = !this.darkMode; localStorage.setItem('mvf-dark', this.darkMode ? '1' : '0'); },
             onMakeChange() {
                 const make = this.params.make;
                 this.availableModels = make && this.modelsByMake[make] ? this.modelsByMake[make] : [];
                 if (!this.availableModels.includes(this.params.model)) this.params.model = '';
             },
-
-            sourceKey(name) {
-                return {
-                    'Craigslist': 'craigslist',
-                    'CarGurus': 'cargurus',
-                    'Cars.com': 'carscom',
-                    'AutoTrader': 'autotrader',
-                }[name] || 'craigslist';
-            },
+            sourceKey(name) { return { 'Craigslist': 'craigslist', 'CarGurus': 'cargurus', 'Cars.com': 'carscom', 'AutoTrader': 'autotrader' }[name] || 'craigslist'; },
 
             formatDescription(text) {
                 if (!text) return '';
@@ -1947,43 +2197,6 @@
                 s = s.replace(/(https?:\/\/|www\.)/gi, '\n$1');
                 s = s.replace(/,\s*([A-Z]{2,})/g, '\n$1');
                 s = s.replace(/\n{3,}/g, '\n\n');
-                const emojiMap = [
-                    [/\b(AWD|4WD|ALL WHEEL DRIVE|ALL-WHEEL DRIVE)\b/gi, '🔄 $1'],
-                    [/\b(FWD|FRONT WHEEL DRIVE)\b/gi, '➡️ $1'],
-                    [/\b(RWD|REAR WHEEL DRIVE)\b/gi, '⬅️ $1'],
-                    [/\b(V6|V8|V4|I4|I6)\b/gi, '⚡ $1'],
-                    [/\b(LOW MILES|LOW MILEAGE)\b/gi, '✅ $1'],
-                    [/\b(CLEAN TITLE|CLEAR TITLE|CLEAN AND CLEAR TITLE)\b/gi, '📋✅ $1'],
-                    [/\b(LOADED)\b/gi, '🔥 $1'],
-                    [/\b(SUNROOF|MOONROOF)\b/gi, '☀️ $1'],
-                    [/\b(LEATHER)\b/gi, '💺 $1'],
-                    [/\b(HEATED SEATS)\b/gi, '🔥💺 $1'],
-                    [/\b(NAVIGATION|NAV)\b/gi, '🧭 $1'],
-                    [/\b(BLUETOOTH)\b/gi, '📶 $1'],
-                    [/\b(BACKUP CAMERA|REAR CAMERA|REARVIEW CAMERA)\b/gi, '📷 $1'],
-                    [/\b(CRUISE CONTROL)\b/gi, '🚗 $1'],
-                    [/\b(POWER WINDOWS)\b/gi, '🪟 $1'],
-                    [/\b(POWER DOOR LOCKS)\b/gi, '🔒 $1'],
-                    [/\b(FOG LIGHTS)\b/gi, '🔦 $1'],
-                    [/\b(PREMIUM SOUND|PREMIUM AUDIO|SOUND SYSTEM)\b/gi, '🔊 $1'],
-                    [/\b(CD RADIO|AM FM|RADIO)\b/gi, '📻 $1'],
-                    [/\b(AIR CONDITIONING|A\/C|AC)\b/gi, '❄️ $1'],
-                    [/\b(WARRANTY)\b/gi, '🛡️ $1'],
-                    [/\b(DUAL POWER SEATS|POWER SEATS)\b/gi, '🪑 $1'],
-                    [/\b(KEYLESS|KEY FOB|PUSH START)\b/gi, '🔑 $1'],
-                    [/\b(AUTOMATIC|AUTO TRANS)\b/gi, '🅰️ $1'],
-                    [/\b(MANUAL|STICK SHIFT|6 SPEED|5 SPEED)\b/gi, '🕹️ $1'],
-                    [/\b(TURBO|TURBOCHARGED)\b/gi, '💨 $1'],
-                    [/\b(HYBRID|ELECTRIC)\b/gi, '🔋 $1'],
-                    [/\b(MILES)\b/gi, '🛣️ $1'],
-                    [/\b(TOW|TOWING)\b/gi, '🪝 $1'],
-                ];
-                for (const [pattern, replacement] of emojiMap) {
-                    s = s.replace(pattern, replacement);
-                }
-                s = s.replace(/(\d{3}[-.\s]?\d{3}[-.\s]?\d{4})/g, '📞 $1');
-                s = s.replace(/(https?:\/\/\S+|www\.\S+)/gi, '🔗 $1');
-                s = s.replace(/(ADDRESS\s*:)/gi, '📍 $1');
                 return s.trim();
             },
 
@@ -1991,27 +2204,26 @@
                 if (this.filtered.length === 0) return 0;
                 return Math.round(this.filtered.reduce((s, v) => s + v.price, 0) / this.filtered.length);
             },
-
-            get bestDeal() {
+            get lowestPrice() {
                 if (this.filtered.length === 0) return null;
                 return Math.min(...this.filtered.map(v => v.price));
             },
-
-            get sourcesWithResults() {
-                return this.sourceInfo.filter(s => s.count > 0).length;
+            get bestDealVehicle() {
+                if (this.filtered.length < 2) return null;
+                let best = null, bestScore = Infinity;
+                for (const v of this.filtered) {
+                    const score = v.price / Math.max(v.year || 2000, 1990) + (v.mileage || 100000) * 0.01;
+                    if (score < bestScore) { bestScore = score; best = v; }
+                }
+                return best;
             },
-
-            get sourcesTotal() {
-                return this.sourceInfo.length;
-            },
-
+            get sourcesWithResults() { return this.sourceInfo.filter(s => s.count > 0).length; },
+            get sourcesTotal() { return this.sourceInfo.length; },
             get searchHealth() {
                 if (!this.searched) return 100;
                 const healthy = this.sourceInfo.filter(s => s.count > 0).length;
-                const total = this.sourceInfo.length || 4;
-                return Math.round((healthy / total) * 100);
+                return Math.round((healthy / (this.sourceInfo.length || 4)) * 100);
             },
-
             get hudFace() {
                 switch (this.hudState) {
                     case 'searching': return '>:|';
@@ -2023,7 +2235,9 @@
 
             applySort() {
                 let list = this.allResults;
-                if (this.activeSource !== 'all') {
+                if (this.activeSource === 'favorites') {
+                    list = list.filter(v => this.favorites.includes(v.url));
+                } else if (this.activeSource !== 'all') {
                     list = list.filter(v => v.source === this.activeSource);
                 }
                 this.filtered = [...list];
@@ -2038,33 +2252,30 @@
                 });
             },
 
-            // Sound system
+            // ---- Sound system ----
             initAudio() {
                 if (!this.audioContext) {
                     this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    // Pre-generate noise buffer for explosion textures
                     const sr = this.audioContext.sampleRate;
                     this._noiseBuffer = this.audioContext.createBuffer(1, sr * 2, sr);
                     const data = this._noiseBuffer.getChannelData(0);
                     for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
-                    // Waveshaper for distortion
                     this._distCurve = new Float32Array(44100);
-                    for (let i = 0; i < 44100; i++) {
-                        const x = (i * 2) / 44100 - 1;
-                        this._distCurve[i] = (Math.PI + 8) * x / (Math.PI + 8 * Math.abs(x));
+                    for (let i = 0; i < 44100; i++) { const x = (i * 2) / 44100 - 1; this._distCurve[i] = (Math.PI + 8) * x / (Math.PI + 8 * Math.abs(x)); }
+                    // Generate impulse response for reverb
+                    const irLen = sr * 1.5;
+                    this._irBuffer = this.audioContext.createBuffer(2, irLen, sr);
+                    for (let ch = 0; ch < 2; ch++) {
+                        const d = this._irBuffer.getChannelData(ch);
+                        for (let i = 0; i < irLen; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (sr * 0.3));
                     }
                 }
             },
 
             _createNoise(ctx, duration, filterFreq, filterType, gain, startTime) {
-                const src = ctx.createBufferSource();
-                src.buffer = this._noiseBuffer;
-                const flt = ctx.createBiquadFilter();
-                flt.type = filterType || 'lowpass';
-                flt.frequency.setValueAtTime(filterFreq || 1000, startTime);
-                const g = ctx.createGain();
-                g.gain.setValueAtTime(gain || 0.15, startTime);
-                g.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+                const src = ctx.createBufferSource(); src.buffer = this._noiseBuffer;
+                const flt = ctx.createBiquadFilter(); flt.type = filterType || 'lowpass'; flt.frequency.setValueAtTime(filterFreq || 1000, startTime);
+                const g = ctx.createGain(); g.gain.setValueAtTime(gain || 0.15, startTime); g.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
                 src.connect(flt); flt.connect(g); g.connect(ctx.destination);
                 src.start(startTime); src.stop(startTime + duration);
                 return { src, flt, g };
@@ -2072,101 +2283,83 @@
 
             _createDistortedOsc(ctx, type, freq, freqEnd, duration, gain, startTime) {
                 const o = ctx.createOscillator();
-                const ws = ctx.createWaveShaper();
-                ws.curve = this._distCurve;
-                const flt = ctx.createBiquadFilter();
-                flt.type = 'lowpass';
-                flt.frequency.setValueAtTime(2000, startTime);
-                flt.frequency.exponentialRampToValueAtTime(200, startTime + duration);
+                const ws = ctx.createWaveShaper(); ws.curve = this._distCurve;
+                const flt = ctx.createBiquadFilter(); flt.type = 'lowpass'; flt.frequency.setValueAtTime(2000, startTime); flt.frequency.exponentialRampToValueAtTime(200, startTime + duration);
                 const g = ctx.createGain();
-                o.type = type;
-                o.frequency.setValueAtTime(freq, startTime);
-                o.frequency.exponentialRampToValueAtTime(freqEnd, startTime + duration);
-                g.gain.setValueAtTime(gain, startTime);
-                g.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+                o.type = type; o.frequency.setValueAtTime(freq, startTime); o.frequency.exponentialRampToValueAtTime(freqEnd, startTime + duration);
+                g.gain.setValueAtTime(gain, startTime); g.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
                 o.connect(ws); ws.connect(flt); flt.connect(g); g.connect(ctx.destination);
                 o.start(startTime); o.stop(startTime + duration);
                 return o;
             },
 
+            _createReverbSend(ctx, src, duration, startTime) {
+                if (!this._irBuffer) return;
+                const conv = ctx.createConvolver(); conv.buffer = this._irBuffer;
+                const g = ctx.createGain(); g.gain.setValueAtTime(0.15, startTime); g.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+                src.connect(conv); conv.connect(g); g.connect(ctx.destination);
+            },
+
             toggleSound() {
                 this.soundEnabled = !this.soundEnabled;
                 localStorage.setItem('mvf-sound', this.soundEnabled ? '1' : '0');
-                if (this.soundEnabled) {
-                    this.initAudio();
-                    this.playSound('pickup');
-                }
+                if (this.soundEnabled) { this.initAudio(); this.playSound('pickup'); }
             },
 
             playSound(type) {
                 if (!this.soundEnabled) return;
                 this.initAudio();
-                const ctx = this.audioContext;
-                if (!ctx) return;
+                const ctx = this.audioContext; if (!ctx) return;
                 const now = ctx.currentTime;
-
                 switch(type) {
                     case 'achievement': {
-                        // Rich fanfare: layered sine+triangle with reverb-like tail
+                        // Trumpet-like fanfare with harmonics
                         [523, 659, 784].forEach((freq, i) => {
                             const t = now + i * 0.1;
-                            ['sine', 'triangle'].forEach((waveType, j) => {
+                            // Additive synthesis - trumpet harmonics
+                            [1, 2, 3, 4, 5].forEach((h, j) => {
                                 const o = ctx.createOscillator();
-                                const flt = ctx.createBiquadFilter();
-                                flt.type = 'lowpass';
-                                flt.frequency.setValueAtTime(4000, t);
-                                flt.frequency.exponentialRampToValueAtTime(800, t + 0.5);
                                 const g = ctx.createGain();
-                                o.type = waveType;
-                                o.frequency.setValueAtTime(freq + (j * 2), t);
-                                g.gain.setValueAtTime(j === 0 ? 0.07 : 0.04, t);
-                                g.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
+                                const flt = ctx.createBiquadFilter(); flt.type = 'lowpass'; flt.frequency.setValueAtTime(4000, t); flt.frequency.exponentialRampToValueAtTime(800, t + 0.6);
+                                o.type = j === 0 ? 'sine' : 'triangle';
+                                o.frequency.setValueAtTime(freq * h + (Math.random() - 0.5) * 2, t);
+                                const vol = 0.06 / (h * h);
+                                g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.6);
                                 o.connect(flt); flt.connect(g); g.connect(ctx.destination);
-                                o.start(t); o.stop(t + 0.5);
+                                o.start(t); o.stop(t + 0.6);
                             });
                         });
-                        // Shimmer noise
                         this._createNoise(ctx, 0.4, 6000, 'bandpass', 0.02, now);
                         break;
                     }
                     case 'fire': {
-                        // Punchy search initiate: noise burst + sub bass thud
-                        this._createNoise(ctx, 0.15, 800, 'lowpass', 0.12, now);
-                        this._createDistortedOsc(ctx, 'sine', 80, 30, 0.2, 0.15, now);
-                        // Transient click
-                        const click = ctx.createOscillator();
-                        const cg = ctx.createGain();
-                        click.type = 'square';
-                        click.frequency.setValueAtTime(1500, now);
-                        click.frequency.exponentialRampToValueAtTime(200, now + 0.02);
-                        cg.gain.setValueAtTime(0.1, now);
-                        cg.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
-                        click.connect(cg); cg.connect(ctx.destination);
-                        click.start(now); click.stop(now + 0.03);
+                        // Deep bass drop + rising noise sweep
+                        this._createDistortedOsc(ctx, 'sine', 80, 20, 0.3, 0.18, now);
+                        const n = this._createNoise(ctx, 0.25, 200, 'bandpass', 0.12, now);
+                        n.flt.frequency.exponentialRampToValueAtTime(3000, now + 0.2);
+                        this._createNoise(ctx, 0.15, 800, 'lowpass', 0.1, now);
+                        const click = ctx.createOscillator(); const cg = ctx.createGain();
+                        click.type = 'square'; click.frequency.setValueAtTime(1500, now); click.frequency.exponentialRampToValueAtTime(200, now + 0.02);
+                        cg.gain.setValueAtTime(0.1, now); cg.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+                        click.connect(cg); cg.connect(ctx.destination); click.start(now); click.stop(now + 0.03);
                         break;
                     }
                     case 'pickup': {
-                        // Satisfying results chime: rising filtered tones
-                        [400, 600, 800].forEach((freq, i) => {
-                            const t = now + i * 0.06;
-                            const o = ctx.createOscillator();
-                            const flt = ctx.createBiquadFilter();
-                            flt.type = 'lowpass';
-                            flt.frequency.setValueAtTime(3000, t);
-                            const g = ctx.createGain();
-                            o.type = 'sine';
-                            o.frequency.setValueAtTime(freq, t);
-                            o.frequency.exponentialRampToValueAtTime(freq * 1.02, t + 0.2);
-                            g.gain.setValueAtTime(0.06, t);
-                            g.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
-                            o.connect(flt); flt.connect(g); g.connect(ctx.destination);
-                            o.start(t); o.stop(t + 0.25);
+                        // Multi-tone chime with slight detuning
+                        [400, 600, 800, 1000].forEach((freq, i) => {
+                            const t = now + i * 0.05;
+                            [0, 1.5, -1.5].forEach(detune => {
+                                const o = ctx.createOscillator(); const g = ctx.createGain();
+                                const flt = ctx.createBiquadFilter(); flt.type = 'lowpass'; flt.frequency.setValueAtTime(4000, t);
+                                o.type = 'sine'; o.frequency.setValueAtTime(freq + detune, t);
+                                g.gain.setValueAtTime(detune === 0 ? 0.05 : 0.02, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+                                o.connect(flt); flt.connect(g); g.connect(ctx.destination); o.start(t); o.stop(t + 0.3);
+                            });
                         });
                         this._createNoise(ctx, 0.12, 5000, 'highpass', 0.015, now);
                         break;
                     }
                     case 'damage': {
-                        // Heavy error: distorted descending noise + bass
                         this._createNoise(ctx, 0.4, 600, 'lowpass', 0.18, now);
                         this._createDistortedOsc(ctx, 'sawtooth', 250, 60, 0.35, 0.12, now);
                         this._createDistortedOsc(ctx, 'square', 180, 40, 0.3, 0.06, now + 0.05);
@@ -2175,86 +2368,35 @@
                 }
             },
 
-            setDifficulty(name, price) {
-                this.selectedDifficulty = name;
-                this.params.max_price = price;
-                this.playSound('pickup');
-            },
-
-            // Screen shake
-            triggerShake() {
-                this.isShaking = true;
-                setTimeout(() => { this.isShaking = false; }, 500);
-            },
-
-            // Red flash
-            triggerRedFlash() {
-                this.redFlash = true;
-                setTimeout(() => { this.redFlash = false; }, 400);
-            },
-
-            // Stat pop
-            triggerStatPop() {
-                this.statPop = true;
-                setTimeout(() => { this.statPop = false; }, 500);
-            },
-
-            // Weapon system
-            weaponIndex: 0,
-            weapons: [
-                { name: 'ROCKET LAUNCHER', key: 'rocket' },
-                { name: 'IMP FIREBALL', key: 'fireball' },
-                { name: 'PLASMA RIFLE', key: 'plasma' },
-                { name: 'BFG 9000', key: 'bfg' },
-                { name: 'SUPER SHOTGUN', key: 'shotgun' },
-            ],
+            setDifficulty(name, price) { this.selectedDifficulty = name; this.params.max_price = price; this.playSound('pickup'); },
+            triggerShake() { this.isShaking = true; setTimeout(() => { this.isShaking = false; }, 500); },
+            triggerRedFlash() { this.redFlash = true; setTimeout(() => { this.redFlash = false; }, 400); },
+            triggerStatPop() { this.statPop = true; setTimeout(() => { this.statPop = false; }, 500); },
 
             fireWeaponAndOpen(event, vehicle) {
                 const weapon = this.weapons[this.weaponIndex % this.weapons.length];
                 this.weaponIndex++;
-                const x = event.clientX;
-                const y = event.clientY;
-
-                // Hit flash on the card
+                const x = event.clientX, y = event.clientY;
                 const card = event.currentTarget;
                 card.classList.add('card-hit-flash');
                 setTimeout(() => card.classList.remove('card-hit-flash'), 300);
-
-                // Fire the weapon effect
                 this.spawnWeaponEffect(weapon.key, x, y);
                 this.playWeaponSound(weapon.key);
                 this.showWeaponName(weapon.name);
-
-                // Small screen shake for big weapons
-                if (weapon.key === 'rocket' || weapon.key === 'bfg' || weapon.key === 'shotgun') {
-                    this.triggerShake();
-                }
-
-                // Delay modal open slightly so the blast is visible
+                if (weapon.key === 'rocket' || weapon.key === 'bfg' || weapon.key === 'shotgun') this.triggerShake();
                 setTimeout(() => this.openModal(vehicle), 200);
             },
 
             showWeaponName(name) {
-                const el = document.createElement('div');
-                el.className = 'weapon-name-hud';
-                el.textContent = name;
-                document.body.appendChild(el);
-                setTimeout(() => el.remove(), 900);
+                const el = document.createElement('div'); el.className = 'weapon-name-hud'; el.textContent = name;
+                document.body.appendChild(el); setTimeout(() => el.remove(), 900);
             },
 
             spawnWeaponEffect(type, x, y) {
-                // Spawn 3D WebGL particles (real depth + glow)
-                if (this.threeInitialized) {
-                    this._spawnThreeExplosion(type, x, y);
-                }
-
-                // Also spawn DOM effects for the 2D overlay (shockwaves, etc.)
-                const container = document.createElement('div');
-                container.className = 'weapon-impact';
-                container.style.left = x + 'px';
-                container.style.top = y + 'px';
+                if (this.threeInitialized) this._spawnThreeExplosion(type, x, y);
+                const container = document.createElement('div'); container.className = 'weapon-impact';
+                container.style.left = x + 'px'; container.style.top = y + 'px';
                 document.body.appendChild(container);
-
                 switch (type) {
                     case 'rocket': this._spawnRocket(container); break;
                     case 'fireball': this._spawnFireball(container); break;
@@ -2262,374 +2404,215 @@
                     case 'bfg': this._spawnBfg(container); break;
                     case 'shotgun': this._spawnShotgun(container); break;
                 }
-
-                const dur = type === 'bfg' ? 1200 : 800;
-                setTimeout(() => container.remove(), dur);
+                setTimeout(() => container.remove(), type === 'bfg' ? 1200 : 800);
             },
 
-            _spawnRocket(container) {
-                // Core explosion with radial gradient
-                const core = document.createElement('div');
-                core.className = 'weapon-core';
-                core.style.animation = 'rocketCore 700ms ease-out forwards';
-                container.appendChild(core);
-
-                // Double shockwave rings
-                for (let w = 0; w < 2; w++) {
-                    const wave = document.createElement('div');
-                    wave.className = 'weapon-shockwave';
-                    wave.style.animation = 'rocketShockwave 600ms ease-out forwards';
-                    wave.style.animationDelay = w * 80 + 'ms';
-                    container.appendChild(wave);
-                }
-
-                // Hot debris particles with glow trails
+            _spawnRocket(c) {
+                const core = document.createElement('div'); core.className = 'weapon-core'; core.style.animation = 'rocketCore 700ms ease-out forwards'; c.appendChild(core);
+                for (let w = 0; w < 2; w++) { const wave = document.createElement('div'); wave.className = 'weapon-shockwave'; wave.style.animation = 'rocketShockwave 600ms ease-out forwards'; wave.style.animationDelay = w * 80 + 'ms'; c.appendChild(wave); }
                 for (let i = 0; i < 20; i++) {
-                    const p = document.createElement('div');
-                    p.className = 'weapon-particle';
+                    const p = document.createElement('div'); p.className = 'weapon-particle';
                     const angle = (Math.PI * 2 * i / 20) + (Math.random() - 0.5) * 0.6;
                     const dist = 70 + Math.random() * 100;
-                    p.style.setProperty('--px', Math.cos(angle) * dist + 'px');
-                    p.style.setProperty('--py', Math.sin(angle) * dist + 'px');
-                    const size = 3 + Math.random() * 6;
-                    p.style.width = size + 'px';
-                    p.style.height = size + 'px';
-                    const colors = ['#fff', '#ffee88', '#ffaa00', '#ff6600', '#ff2200'];
-                    p.style.background = colors[Math.floor(Math.random() * colors.length)];
-                    p.style.boxShadow = `0 0 ${4 + Math.random() * 8}px ${p.style.background}`;
-                    p.style.animation = `rocketParticle ${450 + Math.random() * 350}ms ease-out forwards`;
-                    p.style.animationDelay = Math.random() * 60 + 'ms';
-                    container.appendChild(p);
+                    p.style.setProperty('--px', Math.cos(angle) * dist + 'px'); p.style.setProperty('--py', Math.sin(angle) * dist + 'px');
+                    const size = 3 + Math.random() * 6; p.style.width = size + 'px'; p.style.height = size + 'px';
+                    p.style.background = ['#fff','#ffee88','#ffaa00','#ff6600','#ff2200'][Math.floor(Math.random()*5)];
+                    p.style.boxShadow = '0 0 ' + (4+Math.random()*8) + 'px ' + p.style.background;
+                    p.style.animation = 'rocketParticle ' + (450+Math.random()*350) + 'ms ease-out forwards'; p.style.animationDelay = Math.random()*60+'ms';
+                    c.appendChild(p);
                 }
-
-                // Glowing ember trails
-                for (let i = 0; i < 8; i++) {
-                    const e = document.createElement('div');
-                    e.className = 'weapon-particle';
-                    const angle = Math.random() * Math.PI * 2;
-                    const dist = 30 + Math.random() * 60;
-                    e.style.setProperty('--ex', Math.cos(angle) * dist + 'px');
-                    e.style.setProperty('--ey', Math.sin(angle) * dist + 'px');
-                    const ec = Math.random() > 0.5 ? '#ffaa00' : '#ff4400';
-                    e.style.setProperty('--ec', ec);
-                    e.style.width = '3px'; e.style.height = '3px';
-                    e.style.background = ec;
-                    e.style.animation = `rocketEmber ${600 + Math.random() * 400}ms ease-out forwards`;
-                    e.style.animationDelay = (50 + Math.random() * 150) + 'ms';
-                    container.appendChild(e);
-                }
-
-                // Thick smoke plumes
                 for (let i = 0; i < 10; i++) {
-                    const s = document.createElement('div');
-                    s.className = 'weapon-particle';
-                    s.style.setProperty('--sx', (Math.random() - 0.5) * 80 + 'px');
-                    s.style.setProperty('--sy', -(20 + Math.random() * 70) + 'px');
-                    const smokeSize = 10 + Math.random() * 18;
-                    s.style.width = smokeSize + 'px';
-                    s.style.height = smokeSize + 'px';
-                    s.style.animation = `rocketSmoke ${600 + Math.random() * 500}ms ease-out forwards`;
-                    s.style.animationDelay = (80 + Math.random() * 250) + 'ms';
-                    container.appendChild(s);
+                    const s = document.createElement('div'); s.className = 'weapon-particle';
+                    s.style.setProperty('--sx', (Math.random()-0.5)*80+'px'); s.style.setProperty('--sy', -(20+Math.random()*70)+'px');
+                    const sz = 10+Math.random()*18; s.style.width = sz+'px'; s.style.height = sz+'px';
+                    s.style.animation = 'rocketSmoke '+(600+Math.random()*500)+'ms ease-out forwards'; s.style.animationDelay = (80+Math.random()*250)+'ms';
+                    s.style.filter = 'blur(3px)'; s.style.background = 'radial-gradient(circle, #aaa, #333)';
+                    c.appendChild(s);
                 }
             },
-
-            _spawnFireball(container) {
-                // Core with inner glow
-                const core = document.createElement('div');
-                core.className = 'weapon-core';
-                core.style.animation = 'fireballCore 650ms ease-out forwards';
-                container.appendChild(core);
-
-                // Double expanding ring
-                for (let r = 0; r < 2; r++) {
-                    const ring = document.createElement('div');
-                    ring.className = 'weapon-shockwave';
-                    ring.style.animation = 'fireballRing 550ms ease-out forwards';
-                    ring.style.animationDelay = r * 100 + 'ms';
-                    container.appendChild(ring);
-                }
-
-                // Many ember particles with varied sizes
+            _spawnFireball(c) {
+                const core = document.createElement('div'); core.className = 'weapon-core'; core.style.animation = 'fireballCore 650ms ease-out forwards'; c.appendChild(core);
+                for (let r = 0; r < 2; r++) { const ring = document.createElement('div'); ring.className = 'weapon-shockwave'; ring.style.animation = 'fireballRing 550ms ease-out forwards'; ring.style.animationDelay = r*100+'ms'; c.appendChild(ring); }
                 for (let i = 0; i < 16; i++) {
-                    const p = document.createElement('div');
-                    p.className = 'weapon-particle';
-                    const angle = (Math.PI * 2 * i / 16) + (Math.random() - 0.5) * 0.9;
-                    const dist = 50 + Math.random() * 90;
-                    p.style.setProperty('--px', Math.cos(angle) * dist + 'px');
-                    p.style.setProperty('--py', Math.sin(angle) * dist + 'px');
-                    const size = 3 + Math.random() * 6;
-                    p.style.width = size + 'px';
-                    p.style.height = size + 'px';
-                    p.style.animation = `fireballEmber ${450 + Math.random() * 350}ms ease-out forwards`;
-                    p.style.animationDelay = Math.random() * 100 + 'ms';
-                    container.appendChild(p);
-                }
-
-                // Green smoke wisps
-                for (let i = 0; i < 6; i++) {
-                    const w = document.createElement('div');
-                    w.className = 'weapon-particle';
-                    w.style.setProperty('--wx', (Math.random() - 0.5) * 70 + 'px');
-                    w.style.setProperty('--wy', -(20 + Math.random() * 50) + 'px');
-                    const ws = 12 + Math.random() * 14;
-                    w.style.width = ws + 'px';
-                    w.style.height = ws + 'px';
-                    w.style.animation = `fireballWisp ${500 + Math.random() * 400}ms ease-out forwards`;
-                    w.style.animationDelay = (100 + Math.random() * 200) + 'ms';
-                    container.appendChild(w);
+                    const p = document.createElement('div'); p.className = 'weapon-particle';
+                    const angle = (Math.PI*2*i/16)+(Math.random()-0.5)*0.9; const dist = 50+Math.random()*90;
+                    p.style.setProperty('--px', Math.cos(angle)*dist+'px'); p.style.setProperty('--py', Math.sin(angle)*dist+'px');
+                    const size = 3+Math.random()*6; p.style.width = size+'px'; p.style.height = size+'px';
+                    p.style.animation = 'fireballEmber '+(450+Math.random()*350)+'ms ease-out forwards'; p.style.animationDelay = Math.random()*100+'ms';
+                    c.appendChild(p);
                 }
             },
-
-            _spawnPlasma(container) {
-                // Core flash
-                const core = document.createElement('div');
-                core.className = 'weapon-core';
-                core.style.animation = 'plasmaCore 450ms ease-out forwards';
-                container.appendChild(core);
-
-                // Ripple rings
-                for (let r = 0; r < 3; r++) {
-                    const rp = document.createElement('div');
-                    rp.className = 'weapon-shockwave';
-                    rp.style.animation = 'plasmaRipple 400ms ease-out forwards';
-                    rp.style.animationDelay = r * 60 + 'ms';
-                    container.appendChild(rp);
-                }
-
-                // Electric arcs - more of them, varied
+            _spawnPlasma(c) {
+                const core = document.createElement('div'); core.className = 'weapon-core'; core.style.animation = 'plasmaCore 450ms ease-out forwards'; c.appendChild(core);
+                for (let r = 0; r < 3; r++) { const rp = document.createElement('div'); rp.className = 'weapon-shockwave'; rp.style.animation = 'plasmaRipple 400ms ease-out forwards'; rp.style.animationDelay = r*60+'ms'; c.appendChild(rp); }
                 for (let i = 0; i < 12; i++) {
-                    const arc = document.createElement('div');
-                    arc.style.position = 'absolute';
-                    arc.style.transformOrigin = '50% 0';
-                    const angle = (Math.PI * 2 * i / 12) + (Math.random() - 0.5) * 0.5;
-                    arc.style.transform = `translate(-50%, 0) rotate(${angle}rad)`;
-                    const len = 25 + Math.random() * 65;
-                    arc.style.setProperty('--arc-len', len + 'px');
-                    arc.style.animation = `plasmaArc ${250 + Math.random() * 250}ms ease-out forwards`;
-                    arc.style.animationDelay = Math.random() * 80 + 'ms';
-                    container.appendChild(arc);
+                    const arc = document.createElement('div'); arc.style.position = 'absolute'; arc.style.transformOrigin = '50% 0';
+                    const angle = (Math.PI*2*i/12)+(Math.random()-0.5)*0.5;
+                    arc.style.transform = 'translate(-50%, 0) rotate('+angle+'rad)';
+                    arc.style.setProperty('--arc-len', (25+Math.random()*65)+'px');
+                    arc.style.animation = 'plasmaArc '+(250+Math.random()*250)+'ms ease-out forwards'; arc.style.animationDelay = Math.random()*80+'ms';
+                    c.appendChild(arc);
                 }
-
-                // Crackling sparks - more
                 for (let i = 0; i < 18; i++) {
-                    const sp = document.createElement('div');
-                    sp.className = 'weapon-particle';
-                    const angle = Math.random() * Math.PI * 2;
-                    const dist = 15 + Math.random() * 60;
-                    sp.style.setProperty('--px', Math.cos(angle) * dist + 'px');
-                    sp.style.setProperty('--py', Math.sin(angle) * dist + 'px');
-                    const sz = 2 + Math.random() * 3;
-                    sp.style.width = sz + 'px';
-                    sp.style.height = sz + 'px';
-                    sp.style.animation = `plasmaSpark ${180 + Math.random() * 280}ms ease-out forwards`;
-                    sp.style.animationDelay = Math.random() * 120 + 'ms';
-                    container.appendChild(sp);
+                    const sp = document.createElement('div'); sp.className = 'weapon-particle';
+                    const angle = Math.random()*Math.PI*2; const dist = 15+Math.random()*60;
+                    sp.style.setProperty('--px', Math.cos(angle)*dist+'px'); sp.style.setProperty('--py', Math.sin(angle)*dist+'px');
+                    const sz = 2+Math.random()*3; sp.style.width = sz+'px'; sp.style.height = sz+'px';
+                    sp.style.animation = 'plasmaSpark '+(180+Math.random()*280)+'ms ease-out forwards'; sp.style.animationDelay = Math.random()*120+'ms';
+                    c.appendChild(sp);
                 }
             },
-
-            _spawnBfg(container) {
-                // Positioned screen flash
-                const flash = document.createElement('div');
-                flash.className = 'bfg-screen-flash';
-                const rect = container.getBoundingClientRect ? null : null;
-                flash.style.setProperty('--bfg-x', container.style.left);
-                flash.style.setProperty('--bfg-y', container.style.top);
-                document.body.appendChild(flash);
-                setTimeout(() => flash.remove(), 900);
-
-                // Massive core
-                const core = document.createElement('div');
-                core.className = 'weapon-core';
-                core.style.animation = 'bfgCore 1000ms ease-out forwards';
-                container.appendChild(core);
-
-                // Triple shockwave
-                for (let w = 0; w < 3; w++) {
-                    const wave = document.createElement('div');
-                    wave.className = 'weapon-shockwave';
-                    wave.style.animation = 'bfgShockwave 800ms ease-out forwards';
-                    wave.style.animationDelay = w * 120 + 'ms';
-                    container.appendChild(wave);
-                }
-
-                // Secondary explosions - more, varied distance
+            _spawnBfg(c) {
+                const flash = document.createElement('div'); flash.className = 'bfg-screen-flash';
+                flash.style.setProperty('--bfg-x', c.style.left); flash.style.setProperty('--bfg-y', c.style.top);
+                document.body.appendChild(flash); setTimeout(() => flash.remove(), 900);
+                const core = document.createElement('div'); core.className = 'weapon-core'; core.style.animation = 'bfgCore 1000ms ease-out forwards'; c.appendChild(core);
+                for (let w = 0; w < 3; w++) { const wave = document.createElement('div'); wave.className = 'weapon-shockwave'; wave.style.animation = 'bfgShockwave 800ms ease-out forwards'; wave.style.animationDelay = w*120+'ms'; c.appendChild(wave); }
                 for (let i = 0; i < 8; i++) {
-                    const sec = document.createElement('div');
-                    sec.className = 'weapon-core';
-                    const angle = (Math.PI * 2 * i / 8) + (Math.random() - 0.5) * 0.4;
-                    const dist = 50 + Math.random() * 70;
-                    sec.style.left = Math.cos(angle) * dist + 'px';
-                    sec.style.top = Math.sin(angle) * dist + 'px';
-                    sec.style.animation = `bfgSecondary ${400 + Math.random() * 400}ms ease-out forwards`;
-                    sec.style.animationDelay = (150 + Math.random() * 350) + 'ms';
-                    container.appendChild(sec);
+                    const sec = document.createElement('div'); sec.className = 'weapon-core';
+                    const angle = (Math.PI*2*i/8)+(Math.random()-0.5)*0.4; const dist = 50+Math.random()*70;
+                    sec.style.left = Math.cos(angle)*dist+'px'; sec.style.top = Math.sin(angle)*dist+'px';
+                    sec.style.animation = 'bfgSecondary '+(400+Math.random()*400)+'ms ease-out forwards'; sec.style.animationDelay = (150+Math.random()*350)+'ms';
+                    c.appendChild(sec);
                 }
-
-                // Energy tendrils radiating outward
                 for (let i = 0; i < 10; i++) {
-                    const t = document.createElement('div');
-                    t.style.position = 'absolute';
-                    t.style.transformOrigin = '50% 0';
-                    const angle = (Math.PI * 2 * i / 10) + (Math.random() - 0.5) * 0.3;
-                    t.style.transform = `translate(-50%, 0) rotate(${angle}rad)`;
-                    const len = 60 + Math.random() * 100;
-                    t.style.setProperty('--t-len', len + 'px');
-                    t.style.width = '2px';
-                    t.style.background = '#66ff66';
-                    t.style.boxShadow = '0 0 6px #00ff44';
-                    t.style.animation = `bfgTendril ${400 + Math.random() * 300}ms ease-out forwards`;
-                    t.style.animationDelay = (100 + Math.random() * 200) + 'ms';
-                    container.appendChild(t);
+                    const t = document.createElement('div'); t.style.position = 'absolute'; t.style.transformOrigin = '50% 0';
+                    const angle = (Math.PI*2*i/10)+(Math.random()-0.5)*0.3;
+                    t.style.transform = 'translate(-50%, 0) rotate('+angle+'rad)';
+                    t.style.setProperty('--t-len', (60+Math.random()*100)+'px');
+                    t.style.width = '2px'; t.style.background = '#66ff66'; t.style.boxShadow = '0 0 6px #00ff44';
+                    t.style.animation = 'bfgTendril '+(400+Math.random()*300)+'ms ease-out forwards'; t.style.animationDelay = (100+Math.random()*200)+'ms';
+                    c.appendChild(t);
                 }
-
-                // Green particles - more
                 for (let i = 0; i < 24; i++) {
-                    const p = document.createElement('div');
-                    p.className = 'weapon-particle';
-                    const angle = Math.random() * Math.PI * 2;
-                    const dist = 80 + Math.random() * 150;
-                    p.style.setProperty('--px', Math.cos(angle) * dist + 'px');
-                    p.style.setProperty('--py', Math.sin(angle) * dist + 'px');
-                    const sz = 3 + Math.random() * 7;
-                    p.style.width = sz + 'px';
-                    p.style.height = sz + 'px';
-                    p.style.background = Math.random() > 0.3 ? '#88ff88' : '#ccffcc';
-                    p.style.boxShadow = `0 0 ${6 + Math.random() * 10}px #00ff44`;
-                    p.style.animation = `rocketParticle ${500 + Math.random() * 500}ms ease-out forwards`;
-                    p.style.animationDelay = Math.random() * 200 + 'ms';
-                    container.appendChild(p);
+                    const p = document.createElement('div'); p.className = 'weapon-particle';
+                    const angle = Math.random()*Math.PI*2; const dist = 80+Math.random()*150;
+                    p.style.setProperty('--px', Math.cos(angle)*dist+'px'); p.style.setProperty('--py', Math.sin(angle)*dist+'px');
+                    const sz = 3+Math.random()*7; p.style.width = sz+'px'; p.style.height = sz+'px';
+                    p.style.background = Math.random()>0.3 ? '#88ff88' : '#ccffcc';
+                    p.style.boxShadow = '0 0 '+(6+Math.random()*10)+'px #00ff44';
+                    p.style.animation = 'rocketParticle '+(500+Math.random()*500)+'ms ease-out forwards'; p.style.animationDelay = Math.random()*200+'ms';
+                    c.appendChild(p);
                 }
             },
-
-            _spawnShotgun(container) {
-                // Bright muzzle flash
-                const flash = document.createElement('div');
-                flash.className = 'weapon-core';
-                flash.style.animation = 'shotgunFlash 300ms ease-out forwards';
-                container.appendChild(flash);
-
-                // Smoke ring
-                const smoke = document.createElement('div');
-                smoke.className = 'weapon-shockwave';
-                smoke.style.animation = 'shotgunSmokeRing 500ms ease-out forwards';
-                smoke.style.animationDelay = '50ms';
-                container.appendChild(smoke);
-
-                // Pellet spread - wider, more varied
+            _spawnShotgun(c) {
+                const flash = document.createElement('div'); flash.className = 'weapon-core'; flash.style.animation = 'shotgunFlash 300ms ease-out forwards'; c.appendChild(flash);
+                const smoke = document.createElement('div'); smoke.className = 'weapon-shockwave'; smoke.style.animation = 'shotgunSmokeRing 500ms ease-out forwards'; smoke.style.animationDelay = '50ms'; c.appendChild(smoke);
                 for (let i = 0; i < 30; i++) {
-                    const p = document.createElement('div');
-                    p.className = 'weapon-particle';
-                    const angle = (Math.random() - 0.5) * Math.PI * 1.4;
-                    const dist = 35 + Math.random() * 130;
-                    p.style.setProperty('--px', Math.cos(angle) * dist + 'px');
-                    p.style.setProperty('--py', Math.sin(angle) * dist + 'px');
-                    const size = 2 + Math.random() * 5;
-                    p.style.width = size + 'px';
-                    p.style.height = size + 'px';
-                    const pc = ['#fff', '#ffee88', '#ffcc00', '#ffaa00', '#ff8800'][Math.floor(Math.random() * 5)];
-                    p.style.setProperty('--pc', pc);
-                    p.style.background = pc;
-                    p.style.animation = `shotgunPellet ${180 + Math.random() * 280}ms ease-out forwards`;
-                    p.style.animationDelay = Math.random() * 40 + 'ms';
-                    container.appendChild(p);
+                    const p = document.createElement('div'); p.className = 'weapon-particle';
+                    const angle = (Math.random()-0.5)*Math.PI*1.4; const dist = 35+Math.random()*130;
+                    p.style.setProperty('--px', Math.cos(angle)*dist+'px'); p.style.setProperty('--py', Math.sin(angle)*dist+'px');
+                    const size = 2+Math.random()*5; p.style.width = size+'px'; p.style.height = size+'px';
+                    const pc = ['#fff','#ffee88','#ffcc00','#ffaa00','#ff8800'][Math.floor(Math.random()*5)];
+                    p.style.setProperty('--pc', pc); p.style.background = pc;
+                    p.style.animation = 'shotgunPellet '+(180+Math.random()*280)+'ms ease-out forwards'; p.style.animationDelay = Math.random()*40+'ms';
+                    c.appendChild(p);
                 }
             },
 
             playWeaponSound(type) {
                 if (!this.soundEnabled) return;
                 this.initAudio();
-                const ctx = this.audioContext;
-                if (!ctx) return;
+                const ctx = this.audioContext; if (!ctx) return;
                 const now = ctx.currentTime;
-
                 switch (type) {
                     case 'rocket': {
-                        // Heavy explosion: noise burst + filtered sub-bass + distorted mid
-                        this._createNoise(ctx, 0.5, 400, 'lowpass', 0.2, now);
-                        this._createNoise(ctx, 0.3, 2000, 'bandpass', 0.08, now);
-                        this._createDistortedOsc(ctx, 'sine', 50, 20, 0.5, 0.2, now);
-                        this._createDistortedOsc(ctx, 'sawtooth', 120, 30, 0.3, 0.08, now + 0.02);
-                        // Crackle tail
-                        this._createNoise(ctx, 0.4, 3000, 'highpass', 0.04, now + 0.1);
+                        // Sub-bass thump
+                        this._createDistortedOsc(ctx, 'sine', 40, 18, 0.6, 0.22, now);
+                        // Mid body - filtered noise
+                        const midNoise = this._createNoise(ctx, 0.5, 500, 'bandpass', 0.18, now);
+                        midNoise.flt.Q.setValueAtTime(2, now);
+                        // High crackle
+                        this._createNoise(ctx, 0.4, 5000, 'highpass', 0.05, now + 0.05);
+                        // Low rumble
+                        this._createNoise(ctx, 0.5, 300, 'lowpass', 0.15, now);
+                        // Reverb tail
+                        const tailSrc = ctx.createBufferSource(); tailSrc.buffer = this._noiseBuffer;
+                        const tailG = ctx.createGain(); tailG.gain.setValueAtTime(0.08, now + 0.1); tailG.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+                        tailSrc.connect(tailG);
+                        this._createReverbSend(ctx, tailG, 1.0, now + 0.1);
+                        tailG.connect(ctx.destination); tailSrc.start(now + 0.1); tailSrc.stop(now + 0.8);
+                        // Debris clicks
+                        for (let d = 0; d < 5; d++) {
+                            const dt = now + 0.2 + Math.random() * 0.4;
+                            const click = ctx.createOscillator(); const cg = ctx.createGain();
+                            click.type = 'square'; click.frequency.setValueAtTime(2000 + Math.random() * 3000, dt);
+                            cg.gain.setValueAtTime(0.03, dt); cg.gain.exponentialRampToValueAtTime(0.001, dt + 0.02);
+                            click.connect(cg); cg.connect(ctx.destination); click.start(dt); click.stop(dt + 0.02);
+                        }
                         break;
                     }
                     case 'fireball': {
-                        // Whoosh: filtered noise sweep + resonant tone
                         const n = this._createNoise(ctx, 0.4, 300, 'bandpass', 0.12, now);
                         n.flt.frequency.exponentialRampToValueAtTime(2000, now + 0.15);
                         n.flt.frequency.exponentialRampToValueAtTime(200, now + 0.4);
                         n.flt.Q.setValueAtTime(5, now);
                         this._createDistortedOsc(ctx, 'sawtooth', 100, 300, 0.2, 0.08, now);
-                        // Sizzle
                         this._createNoise(ctx, 0.3, 4000, 'highpass', 0.03, now + 0.05);
                         break;
                     }
                     case 'plasma': {
-                        // Electric zap: modulated noise + detuned oscillators
+                        // FM synthesis for electric buzz
                         this._createNoise(ctx, 0.2, 3000, 'bandpass', 0.1, now);
-                        // Rapidly modulated tone for electric feel
-                        const o = ctx.createOscillator();
-                        const lfo = ctx.createOscillator();
-                        const lfoGain = ctx.createGain();
-                        const flt = ctx.createBiquadFilter();
-                        flt.type = 'bandpass';
-                        flt.frequency.setValueAtTime(2000, now);
-                        flt.frequency.exponentialRampToValueAtTime(500, now + 0.2);
-                        flt.Q.setValueAtTime(8, now);
+                        const carrier = ctx.createOscillator();
+                        const modulator = ctx.createOscillator();
+                        const modGain = ctx.createGain();
+                        const ampMod = ctx.createOscillator();
+                        const ampModGain = ctx.createGain();
+                        const flt = ctx.createBiquadFilter(); flt.type = 'bandpass'; flt.frequency.setValueAtTime(2000, now); flt.frequency.exponentialRampToValueAtTime(500, now + 0.25); flt.Q.setValueAtTime(8, now);
                         const g = ctx.createGain();
-                        o.type = 'sawtooth';
-                        o.frequency.setValueAtTime(600, now);
-                        o.frequency.exponentialRampToValueAtTime(200, now + 0.2);
-                        lfo.type = 'square';
-                        lfo.frequency.setValueAtTime(40, now);
-                        lfoGain.gain.setValueAtTime(200, now);
-                        lfo.connect(lfoGain); lfoGain.connect(o.frequency);
-                        g.gain.setValueAtTime(0.06, now);
-                        g.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-                        o.connect(flt); flt.connect(g); g.connect(ctx.destination);
-                        o.start(now); o.stop(now + 0.2);
-                        lfo.start(now); lfo.stop(now + 0.2);
-                        // High crackle
+                        carrier.type = 'sawtooth'; carrier.frequency.setValueAtTime(600, now); carrier.frequency.exponentialRampToValueAtTime(200, now + 0.25);
+                        modulator.type = 'sine'; modulator.frequency.setValueAtTime(150, now);
+                        modGain.gain.setValueAtTime(300, now);
+                        modulator.connect(modGain); modGain.connect(carrier.frequency);
+                        // Amplitude modulation for buzzing
+                        ampMod.type = 'square'; ampMod.frequency.setValueAtTime(40, now);
+                        ampModGain.gain.setValueAtTime(0.03, now);
+                        ampMod.connect(ampModGain);
+                        g.gain.setValueAtTime(0.06, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+                        carrier.connect(flt); flt.connect(g); ampModGain.connect(g.gain); g.connect(ctx.destination);
+                        carrier.start(now); carrier.stop(now + 0.25);
+                        modulator.start(now); modulator.stop(now + 0.25);
+                        ampMod.start(now); ampMod.stop(now + 0.25);
+                        // Filtered noise sweep
+                        const nSweep = this._createNoise(ctx, 0.2, 1000, 'bandpass', 0.06, now);
+                        nSweep.flt.frequency.exponentialRampToValueAtTime(6000, now + 0.15);
                         this._createNoise(ctx, 0.15, 6000, 'highpass', 0.04, now + 0.02);
                         break;
                     }
                     case 'bfg': {
-                        // Massive: layered noise + sub bass chord + filtered sweep
+                        // Massive layered explosion
                         this._createNoise(ctx, 0.8, 300, 'lowpass', 0.22, now);
                         this._createNoise(ctx, 0.6, 1500, 'bandpass', 0.1, now);
                         this._createNoise(ctx, 0.5, 5000, 'highpass', 0.04, now + 0.1);
-                        // Sub bass chord
-                        [35, 52, 70].forEach(freq => {
-                            this._createDistortedOsc(ctx, 'sawtooth', freq, freq * 0.4, 0.7, 0.12, now);
-                        });
-                        // Rising then falling sweep
-                        const sw = ctx.createOscillator();
-                        const sf = ctx.createBiquadFilter();
-                        sf.type = 'lowpass';
-                        sf.frequency.setValueAtTime(500, now);
-                        sf.frequency.exponentialRampToValueAtTime(3000, now + 0.3);
-                        sf.frequency.exponentialRampToValueAtTime(100, now + 0.7);
-                        const sg = ctx.createGain();
-                        sw.type = 'sawtooth';
-                        sw.frequency.setValueAtTime(80, now);
-                        sw.frequency.exponentialRampToValueAtTime(200, now + 0.3);
-                        sw.frequency.exponentialRampToValueAtTime(40, now + 0.7);
-                        sg.gain.setValueAtTime(0.08, now);
-                        sg.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
-                        sw.connect(sf); sf.connect(sg); sg.connect(ctx.destination);
-                        sw.start(now); sw.stop(now + 0.7);
+                        [35, 52, 70].forEach(freq => this._createDistortedOsc(ctx, 'sawtooth', freq, freq * 0.4, 0.7, 0.12, now));
+                        // Rising sweep
+                        const sw = ctx.createOscillator(); const sf = ctx.createBiquadFilter(); sf.type = 'lowpass';
+                        sf.frequency.setValueAtTime(500, now); sf.frequency.exponentialRampToValueAtTime(3000, now + 0.3); sf.frequency.exponentialRampToValueAtTime(100, now + 0.7);
+                        const sg = ctx.createGain(); sw.type = 'sawtooth';
+                        sw.frequency.setValueAtTime(80, now); sw.frequency.exponentialRampToValueAtTime(200, now + 0.3); sw.frequency.exponentialRampToValueAtTime(40, now + 0.7);
+                        sg.gain.setValueAtTime(0.08, now); sg.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+                        sw.connect(sf); sf.connect(sg); sg.connect(ctx.destination); sw.start(now); sw.stop(now + 0.7);
+                        // Reverb tail
+                        const bfgTail = ctx.createBufferSource(); bfgTail.buffer = this._noiseBuffer;
+                        const bfgTG = ctx.createGain(); bfgTG.gain.setValueAtTime(0.1, now + 0.2); bfgTG.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+                        bfgTail.connect(bfgTG); this._createReverbSend(ctx, bfgTG, 1.5, now + 0.2);
+                        bfgTG.connect(ctx.destination); bfgTail.start(now + 0.2); bfgTail.stop(now + 1.2);
                         break;
                     }
                     case 'shotgun': {
-                        // Double-barrel blast: two noise bursts + sub thump
+                        // Mechanical click before blast
+                        const mechClick = ctx.createOscillator(); const mcg = ctx.createGain();
+                        mechClick.type = 'square'; mechClick.frequency.setValueAtTime(3000, now); mechClick.frequency.exponentialRampToValueAtTime(800, now + 0.01);
+                        mcg.gain.setValueAtTime(0.06, now); mcg.gain.exponentialRampToValueAtTime(0.001, now + 0.015);
+                        mechClick.connect(mcg); mcg.connect(ctx.destination); mechClick.start(now); mechClick.stop(now + 0.015);
+                        // Double transient blasts
                         for (let i = 0; i < 2; i++) {
-                            const t = now + i * 0.07;
+                            const t = now + 0.02 + i * 0.07;
                             this._createNoise(ctx, 0.15, 600, 'lowpass', 0.2, t);
                             this._createNoise(ctx, 0.1, 4000, 'highpass', 0.08, t);
                             this._createDistortedOsc(ctx, 'sine', 100, 25, 0.12, 0.15, t);
                         }
-                        // Ringing tail
                         this._createNoise(ctx, 0.3, 2000, 'bandpass', 0.03, now + 0.15);
                         break;
                     }
@@ -2643,56 +2626,29 @@
                 this.playSound('achievement');
                 setTimeout(() => {
                     const idx = this.toasts.findIndex(t => t.id === id);
-                    if (idx !== -1) {
-                        this.toasts[idx].exiting = true;
-                        setTimeout(() => {
-                            this.toasts = this.toasts.filter(t => t.id !== id);
-                        }, 300);
-                    }
+                    if (idx !== -1) { this.toasts[idx].exiting = true; setTimeout(() => { this.toasts = this.toasts.filter(t => t.id !== id); }, 300); }
                 }, 3000);
             },
 
             checkAchievements() {
                 const count = this.allResults.length;
                 const sourcesUp = this.sourceInfo.filter(s => s.count > 0).length;
-
-                if (!this.achievements.firstBlood) {
-                    this.achievements.firstBlood = true;
-                    this.showToast('FIRST BLOOD', 'The hunt begins...');
-                }
-                if (!this.achievements.godlike && count >= 50) {
-                    this.achievements.godlike = true;
-                    setTimeout(() => this.showToast('GODLIKE', 'The marketplace trembles'), 800);
-                } else if (!this.achievements.overkill && count >= 20) {
-                    this.achievements.overkill = true;
-                    setTimeout(() => this.showToast('OVERKILL', count + ' targets acquired'), 800);
-                }
-                if (!this.achievements.quadDamage && sourcesUp === 4) {
-                    this.achievements.quadDamage = true;
-                    setTimeout(() => this.showToast('QUAD DAMAGE', 'Full arsenal online'), 1600);
-                } else if (!this.achievements.multiKill && sourcesUp >= 3) {
-                    this.achievements.multiKill = true;
-                    setTimeout(() => this.showToast('MULTI KILL', sourcesUp + ' sources dominated'), 1600);
-                }
+                if (!this.achievements.firstBlood) { this.achievements.firstBlood = true; this.showToast('FIRST BLOOD', 'The hunt begins...'); }
+                if (!this.achievements.godlike && count >= 50) { this.achievements.godlike = true; setTimeout(() => this.showToast('GODLIKE', 'The marketplace trembles'), 800); }
+                else if (!this.achievements.overkill && count >= 20) { this.achievements.overkill = true; setTimeout(() => this.showToast('OVERKILL', count + ' targets acquired'), 800); }
+                if (!this.achievements.quadDamage && sourcesUp === 4) { this.achievements.quadDamage = true; setTimeout(() => this.showToast('QUAD DAMAGE', 'Full arsenal online'), 1600); }
+                else if (!this.achievements.multiKill && sourcesUp >= 3) { this.achievements.multiKill = true; setTimeout(() => this.showToast('MULTI KILL', sourcesUp + ' sources dominated'), 1600); }
                 if (!this.achievements.bargainHunter && count > 0) {
                     const cheapest = Math.min(...this.allResults.map(v => v.price));
-                    if (cheapest < 5000) {
-                        this.achievements.bargainHunter = true;
-                        setTimeout(() => this.showToast('BARGAIN HUNTER', 'Steal of the century'), 2400);
-                    }
+                    if (cheapest < 5000) { this.achievements.bargainHunter = true; setTimeout(() => this.showToast('BARGAIN HUNTER', 'Steal of the century'), 2400); }
                 }
                 if (!this.achievements.headshot && this.params.make && this.params.model && count > 0) {
                     const maxP = parseInt(this.params.max_price);
                     const match = this.allResults.find(v => {
                         const t = v.title.toLowerCase();
-                        return t.includes(this.params.make.toLowerCase()) &&
-                               t.includes(this.params.model.toLowerCase()) &&
-                               v.price <= maxP;
+                        return t.includes(this.params.make.toLowerCase()) && t.includes(this.params.model.toLowerCase()) && v.price <= maxP;
                     });
-                    if (match) {
-                        this.achievements.headshot = true;
-                        setTimeout(() => this.showToast('HEADSHOT', 'Precision strike'), 3200);
-                    }
+                    if (match) { this.achievements.headshot = true; setTimeout(() => this.showToast('HEADSHOT', 'Precision strike'), 3200); }
                 }
             },
 
@@ -2703,71 +2659,43 @@
                 this.searchCount++;
                 this.loadingKey++;
                 this.loadingComplete = { craigslist: false, cargurus: false, carscom: false, autotrader: false };
-
-                // Simulate platform completion
                 setTimeout(() => { this.loadingComplete.craigslist = true; }, 3000);
                 setTimeout(() => { this.loadingComplete.cargurus = true; }, 6000);
                 setTimeout(() => { this.loadingComplete.carscom = true; }, 9000);
                 setTimeout(() => { this.loadingComplete.autotrader = true; }, 11000);
 
-                this.loading = true;
-                this.searched = true;
-                this.error = null;
-                this.allResults = [];
-                this.filtered = [];
-                this.sourceInfo = [];
-                this.activeSource = 'all';
+                this.loading = true; this.searched = true; this.error = null;
+                this.allResults = []; this.filtered = []; this.sourceInfo = []; this.activeSource = 'all';
 
                 const body = {
-                    make: this.params.make,
-                    model: this.params.model,
-                    min_year: this.params.min_year || undefined,
-                    max_year: this.params.max_year || undefined,
-                    max_price: parseInt(this.params.max_price),
-                    max_mileage: parseInt(this.params.max_mileage),
-                    location: 'milwaukee',
-                    zip_code: this.params.zip_code || '53202',
+                    make: this.params.make, model: this.params.model,
+                    min_year: this.params.min_year || undefined, max_year: this.params.max_year || undefined,
+                    max_price: parseInt(this.params.max_price), max_mileage: parseInt(this.params.max_mileage),
+                    location: 'milwaukee', zip_code: this.params.zip_code || '53202',
                 };
 
                 try {
-                    const resp = await fetch('/api/search', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(body),
-                    });
+                    const resp = await fetch('/api/search', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
                     const data = await resp.json();
-
                     if (data.success) {
                         this.allResults = data.vehicles || [];
-                        this.sourceInfo = (data.sources || []).map(s => ({
-                            ...s,
-                            key: this.sourceKey(s.name),
-                        }));
+                        this.sourceInfo = (data.sources || []).map(s => ({ ...s, key: this.sourceKey(s.name) }));
                         this.applySort();
                         this.hudState = this.allResults.length > 0 ? 'results' : 'normal';
-                        if (this.allResults.length > 0) {
-                            this.playSound('pickup');
-                            this.triggerStatPop();
-                        }
+                        if (this.allResults.length > 0) { this.playSound('pickup'); this.triggerStatPop(); }
                         this.checkAchievements();
                     } else {
                         this.error = data.error || 'Search failed. Please try again.';
-                        this.hudState = 'error';
-                        this.triggerRedFlash();
-                        this.playSound('damage');
+                        this.hudState = 'error'; this.triggerRedFlash(); this.playSound('damage');
                     }
                 } catch (e) {
                     this.error = 'Could not connect to the search API. Please try again.';
-                    this.hudState = 'error';
-                    this.triggerRedFlash();
-                    this.playSound('damage');
+                    this.hudState = 'error'; this.triggerRedFlash(); this.playSound('damage');
                     console.error(e);
                 } finally {
                     this.loading = false;
                     this.loadingComplete = { craigslist: true, cargurus: true, carscom: true, autotrader: true };
-                    setTimeout(() => {
-                        if (this.hudState !== 'searching') this.hudState = 'normal';
-                    }, 3000);
+                    setTimeout(() => { if (this.hudState !== 'searching') this.hudState = 'normal'; }, 3000);
                 }
             },
 
@@ -2776,8 +2704,12 @@
                 this.modalImgIdx = 0;
                 this.extraDetails = {};
                 this.detailLoading = true;
+                this.modalTab = 'details';
+                this.currentReview = null;
+                this.reviewError = null;
+                this.currentSafety = null;
+                this.safetyError = null;
                 document.body.style.overflow = 'hidden';
-
                 this.modalImages = vehicle.image_url ? [vehicle.image_url] : [];
 
                 try {
@@ -2785,12 +2717,8 @@
                     const data = await resp.json();
                     if (data.success && data.details) {
                         const d = data.details;
-                        if (d.images && d.images.length > 0) {
-                            this.modalImages = d.images;
-                            this.modalImgIdx = 0;
-                        } else if (d.image_url && this.modalImages.length === 0) {
-                            this.modalImages = [d.image_url];
-                        }
+                        if (d.images && d.images.length > 0) { this.modalImages = d.images; this.modalImgIdx = 0; }
+                        else if (d.image_url && this.modalImages.length === 0) { this.modalImages = [d.image_url]; }
                         const extras = {};
                         if (d.condition) extras['Condition'] = d.condition;
                         if (d.transmission) extras['Transmission'] = d.transmission;
@@ -2806,18 +2734,13 @@
                         if (d.description) extras['description'] = d.description;
                         this.extraDetails = extras;
                     }
-                } catch (e) {
-                    console.error('Details fetch failed:', e);
-                } finally {
-                    this.detailLoading = false;
-                }
+                } catch (e) { console.error('Details fetch failed:', e); }
+                finally { this.detailLoading = false; }
             },
 
             closeModal() {
-                this.selected = null;
-                this.modalImages = [];
-                this.extraDetails = {};
-                this.descCollapsed = true;
+                this.selected = null; this.modalImages = []; this.extraDetails = {}; this.descCollapsed = true;
+                this.modalTab = 'details';
                 document.body.style.overflow = '';
             },
         };
