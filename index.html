@@ -1153,6 +1153,75 @@
             .toast-title { font-size: 1.1rem; }
             .toast-subtitle { font-size: 0.75rem; }
         }
+        /* ---- AI Chat Drawer ---- */
+        .chat-fab { position: fixed; bottom: 80px; right: 1.25rem; width: 52px; height: 52px; background: linear-gradient(135deg, oklch(0.55 0.22 27), oklch(0.40 0.18 20)); border: 2px solid oklch(0.65 0.25 35); border-radius: 50%; box-shadow: 0 0 18px oklch(0.5 0.2 27 / 0.5), 0 4px 12px rgba(0,0,0,0.4); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1050; transition: transform 0.2s, box-shadow 0.2s; }
+        .chat-fab:hover { transform: scale(1.1); box-shadow: 0 0 28px oklch(0.6 0.25 27 / 0.7); }
+        .chat-drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 420px; max-width: 100vw; background: var(--card); border-left: 2px solid var(--border); box-shadow: -8px 0 30px rgba(0,0,0,0.5); z-index: 1200; display: flex; flex-direction: column; transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .chat-drawer.open { transform: translateX(0); }
+        .chat-header { padding: 1rem 1.25rem; background: linear-gradient(135deg, oklch(0.30 0.08 27), oklch(0.22 0.04 20)); border-bottom: 2px solid oklch(0.45 0.15 27); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+        .chat-header h3 { font-size: 1rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: oklch(0.75 0.18 40); text-shadow: 0 0 10px oklch(0.6 0.2 27 / 0.5); }
+        .chat-close-btn { background: none; border: 1px solid oklch(0.45 0 0); color: var(--card-foreground); width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; }
+        .chat-messages { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.75rem; }
+        .chat-msg { max-width: 88%; padding: 0.7rem 0.9rem; font-size: 0.82rem; line-height: 1.6; border: 1px solid var(--border); word-wrap: break-word; }
+        .chat-msg.user { align-self: flex-end; background: oklch(0.35 0.10 27); color: oklch(0.9 0 0); border-color: oklch(0.45 0.12 27); }
+        .chat-msg.ai { align-self: flex-start; background: var(--background); color: var(--foreground); }
+        .chat-msg .ai-icon { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: oklch(0.65 0.18 27); margin-right: 0.3rem; }
+        .chat-typing { font-size: 0.75rem; color: var(--muted-foreground); font-family: "Source Code Pro", monospace; animation: doomPulseText 0.8s infinite; }
+        .chat-input-area { padding: 0.75rem 1rem; border-top: 1px solid var(--border); flex-shrink: 0; }
+        .chat-chips { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+        .chat-chip { padding: 0.25rem 0.5rem; font-family: "Oxanium", sans-serif; font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; border: 1px solid var(--border); background: var(--muted); color: var(--muted-foreground); cursor: pointer; transition: all 0.15s; }
+        .chat-chip:hover { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); }
+        .chat-input-row { display: flex; gap: 0.5rem; }
+        .chat-input { flex: 1; padding: 0.5rem 0.75rem; border: 1px solid var(--border); font-family: "Oxanium", sans-serif; font-size: 0.85rem; background: var(--background); color: var(--foreground); }
+        .chat-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px var(--ring); }
+        .chat-send { padding: 0.5rem 1rem; background: var(--primary); color: var(--primary-foreground); border: none; font-family: "Oxanium", sans-serif; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; cursor: pointer; }
+        .chat-send:hover { opacity: 0.85; }
+        .chat-send:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        /* ---- Modal Tabs ---- */
+        .modal-tabs { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 1rem; }
+        .modal-tab { padding: 0.5rem 1rem; font-family: "Oxanium", sans-serif; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; background: none; border: none; color: var(--muted-foreground); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.15s; }
+        .modal-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+        .modal-tab:hover { color: var(--foreground); }
+
+        /* ---- AI Intel ---- */
+        .ai-intel { padding: 0.5rem 0; }
+        .ai-scanning { text-align: center; padding: 2rem 0; }
+        .ai-scanning-text { font-family: "Source Code Pro", monospace; font-size: 0.85rem; color: oklch(0.65 0.25 27); animation: doomPulseText 1.2s ease-in-out infinite; text-transform: uppercase; letter-spacing: 0.1em; }
+        .ai-summary { background: var(--background); border: 1px solid var(--border); padding: 0.75rem; margin-bottom: 0.75rem; font-size: 0.8rem; line-height: 1.6; }
+        .ai-pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem; }
+        .ai-list { list-style: none; padding: 0; }
+        .ai-list li { font-size: 0.75rem; padding: 0.25rem 0 0.25rem 1rem; position: relative; }
+        .ai-list li::before { content: ''; position: absolute; left: 0; top: 0.55rem; width: 6px; height: 6px; border-radius: 50%; }
+        .ai-list.pros li::before { background: #16a34a; box-shadow: 0 0 4px #16a34a; }
+        .ai-list.cons li::before { background: #ea580c; box-shadow: 0 0 4px #ea580c; }
+        .ai-list-title { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted-foreground); margin-bottom: 0.4rem; }
+        .reliability-bar { height: 8px; background: var(--muted); border: 1px solid var(--border); overflow: hidden; margin-top: 0.3rem; }
+        .reliability-fill { height: 100%; transition: width 0.5s; }
+        .price-verdict { display: inline-block; padding: 0.2rem 0.6rem; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: #fff; margin-bottom: 0.75rem; }
+        .deal-great { background: oklch(0.55 0.2 145); box-shadow: 0 0 8px oklch(0.55 0.2 145 / 0.4); }
+        .deal-good { background: oklch(0.55 0.15 240); }
+        .deal-fair { background: oklch(0.45 0 0); }
+        .deal-above { background: oklch(0.6 0.18 60); color: #000; }
+        .deal-over { background: oklch(0.55 0.22 27); }
+        .ai-issues { margin-bottom: 0.75rem; }
+        .ai-issues summary { font-size: 0.75rem; font-weight: 700; cursor: pointer; color: var(--muted-foreground); text-transform: uppercase; }
+        .ai-issues ul { list-style: disc; padding-left: 1.2rem; margin-top: 0.4rem; }
+        .ai-issues li { font-size: 0.75rem; color: var(--muted-foreground); margin-bottom: 0.2rem; }
+
+        /* ---- Safety Intel ---- */
+        .safety-intel { padding: 0.5rem 0; }
+        .safety-stars { display: flex; gap: 0.2rem; margin: 0.3rem 0 0.5rem; }
+        .safety-star { width: 20px; height: 20px; }
+        .safety-stat { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border); font-size: 0.8rem; }
+        .safety-stat .s-label { color: var(--muted-foreground); text-transform: uppercase; font-size: 0.7rem; }
+        .safety-stat .s-val { font-weight: 700; }
+
+        @media (max-width: 640px) {
+            .chat-drawer { width: 100vw; }
+            .ai-pros-cons { grid-template-columns: 1fr; }
+            .chat-fab { bottom: 70px; right: 0.75rem; width: 44px; height: 44px; }
+        }
     </style>
 </head>
 <body x-data="app()" :class="{ dark: darkMode, shaking: isShaking }">
@@ -1480,6 +1549,40 @@
         </div>
     </div>
 
+    <!-- Chat FAB -->
+    <button class="chat-fab" @click="chatOpen = !chatOpen" title="AI Advisor">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    </button>
+
+    <!-- Chat Drawer -->
+    <div class="chat-drawer" :class="{ open: chatOpen }">
+        <div class="chat-header">
+            <h3>AI Advisor</h3>
+            <button class="chat-close-btn" @click="chatOpen = false">&times;</button>
+        </div>
+        <div class="chat-messages" x-ref="chatMessages">
+            <template x-for="(msg, i) in chatMessages" :key="i">
+                <div class="chat-msg" :class="msg.role">
+                    <template x-if="msg.role === 'ai'"><span class="ai-icon">AI</span></template>
+                    <span x-html="msg.role === 'ai' ? renderMarkdown(msg.text) : msg.text"></span>
+                </div>
+            </template>
+            <div class="chat-msg ai" x-show="chatTyping"><span class="ai-icon">AI</span> <span class="chat-typing">PROCESSING...</span></div>
+        </div>
+        <div class="chat-input-area">
+            <div class="chat-chips">
+                <button class="chat-chip" @click="sendChat('Is this a good deal?')">Is this a good deal?</button>
+                <button class="chat-chip" @click="sendChat('Known issues?')">Known issues?</button>
+                <button class="chat-chip" @click="sendChat('Reliability?')">Reliability?</button>
+                <button class="chat-chip" @click="sendChat('Maintenance costs?')">Maintenance costs?</button>
+            </div>
+            <div class="chat-input-row">
+                <input class="chat-input" type="text" x-model="chatInput" @keydown.enter="sendChat(chatInput)" placeholder="Ask about vehicles...">
+                <button class="chat-send" @click="sendChat(chatInput)" :disabled="chatTyping || !chatInput.trim()">Send</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal -->
     <template x-if="selected">
         <div class="modal-backdrop" @click.self="closeModal()" @keydown.escape.window="closeModal()">
@@ -1514,46 +1617,120 @@
                     <h2 x-text="selected.title"></h2>
                     <div class="price" x-text="'$' + selected.price.toLocaleString()"></div>
 
-                    <div class="modal-details">
-                        <div class="detail-item" x-show="selected.year">
-                            <div class="dl">Year</div>
-                            <div class="dv" x-text="selected.year"></div>
-                        </div>
-                        <div class="detail-item" x-show="selected.mileage">
-                            <div class="dl">Mileage</div>
-                            <div class="dv" x-text="selected.mileage ? selected.mileage.toLocaleString() + ' mi' : '-'"></div>
-                        </div>
-                        <div class="detail-item" x-show="selected.location">
-                            <div class="dl">Location</div>
-                            <div class="dv" x-text="selected.location"></div>
-                        </div>
-                        <div class="detail-item" x-show="selected.source">
-                            <div class="dl">Source</div>
-                            <div class="dv" x-text="selected.source"></div>
-                        </div>
-                        <template x-for="(val, key) in extraDetails" :key="key">
-                            <div class="detail-item" x-show="val && key !== 'description'">
-                                <div class="dl" x-text="key"></div>
-                                <div class="dv" x-text="val"></div>
+                    <!-- Modal Tabs -->
+                    <div class="modal-tabs">
+                        <button class="modal-tab" :class="{ active: modalTab === 'details' }" @click="modalTab = 'details'">Details</button>
+                        <button class="modal-tab" :class="{ active: modalTab === 'ai' }" @click="modalTab = 'ai'; fetchReview()">AI Intel</button>
+                        <button class="modal-tab" :class="{ active: modalTab === 'safety' }" @click="modalTab = 'safety'; fetchSafety()">Safety</button>
+                    </div>
+
+                    <!-- Details Tab -->
+                    <div x-show="modalTab === 'details'">
+                        <div class="modal-details">
+                            <div class="detail-item" x-show="selected.year">
+                                <div class="dl">Year</div>
+                                <div class="dv" x-text="selected.year"></div>
                             </div>
-                        </template>
+                            <div class="detail-item" x-show="selected.mileage">
+                                <div class="dl">Mileage</div>
+                                <div class="dv" x-text="selected.mileage ? selected.mileage.toLocaleString() + ' mi' : '-'"></div>
+                            </div>
+                            <div class="detail-item" x-show="selected.location">
+                                <div class="dl">Location</div>
+                                <div class="dv" x-text="selected.location"></div>
+                            </div>
+                            <div class="detail-item" x-show="selected.source">
+                                <div class="dl">Source</div>
+                                <div class="dv" x-text="selected.source"></div>
+                            </div>
+                            <template x-for="(val, key) in extraDetails" :key="key">
+                                <div class="detail-item" x-show="val && key !== 'description'">
+                                    <div class="dl" x-text="key"></div>
+                                    <div class="dv" x-text="val"></div>
+                                </div>
+                            </template>
+                        </div>
+
+                        <div class="detail-loading" x-show="detailLoading">Loading additional details...</div>
+
+                        <div x-show="extraDetails.description">
+                            <div class="modal-desc"
+                                 :class="{ 'collapsed': descCollapsed && extraDetails.description && extraDetails.description.length > 200 }"
+                                 x-html="formatDescription(extraDetails.description)"></div>
+                            <button x-show="extraDetails.description && extraDetails.description.length > 200"
+                                    class="desc-toggle"
+                                    @click="descCollapsed = !descCollapsed"
+                                    x-text="descCollapsed ? '[ Show Full Description ]' : '[ Collapse Description ]'"></button>
+                        </div>
+
+                        <a class="btn-listing" :href="selected.url" target="_blank" rel="noopener">
+                            View Full Listing &rarr;
+                        </a>
                     </div>
 
-                    <div class="detail-loading" x-show="detailLoading">Loading additional details...</div>
-
-                    <div x-show="extraDetails.description">
-                        <div class="modal-desc"
-                             :class="{ 'collapsed': descCollapsed && extraDetails.description && extraDetails.description.length > 200 }"
-                             x-html="formatDescription(extraDetails.description)"></div>
-                        <button x-show="extraDetails.description && extraDetails.description.length > 200"
-                                class="desc-toggle"
-                                @click="descCollapsed = !descCollapsed"
-                                x-text="descCollapsed ? '[ Show Full Description ]' : '[ Collapse Description ]'"></button>
+                    <!-- AI Intel Tab -->
+                    <div x-show="modalTab === 'ai'" class="ai-intel">
+                        <div class="ai-scanning" x-show="reviewLoading">
+                            <div class="ai-scanning-text">Scanning Target...</div>
+                        </div>
+                        <div x-show="!reviewLoading && currentReview">
+                            <div class="ai-summary" x-text="currentReview ? currentReview.summary : ''"></div>
+                            <template x-if="currentReview && currentReview.price_verdict">
+                                <span class="price-verdict" :class="'deal-' + (currentReview.price_verdict === 'great_deal' ? 'great' : currentReview.price_verdict === 'good_deal' ? 'good' : currentReview.price_verdict === 'fair' ? 'fair' : currentReview.price_verdict === 'above_market' ? 'above' : 'over')" x-text="(currentReview.price_verdict || '').replace(/_/g, ' ')"></span>
+                            </template>
+                            <div class="ai-pros-cons">
+                                <div>
+                                    <div class="ai-list-title">Pros</div>
+                                    <ul class="ai-list pros">
+                                        <template x-for="p in (currentReview ? currentReview.pros || [] : [])" :key="p"><li x-text="p"></li></template>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <div class="ai-list-title">Cons</div>
+                                    <ul class="ai-list cons">
+                                        <template x-for="c in (currentReview ? currentReview.cons || [] : [])" :key="c"><li x-text="c"></li></template>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div x-show="currentReview && currentReview.reliability_rating" style="margin-bottom:0.75rem;">
+                                <div class="ai-list-title">Reliability <span x-text="currentReview ? currentReview.reliability_rating + '/5' : ''"></span></div>
+                                <div class="reliability-bar"><div class="reliability-fill" :style="'width:' + (currentReview ? currentReview.reliability_rating * 20 : 0) + '%; background: linear-gradient(90deg, oklch(0.65 0.25 27), oklch(0.65 0.2 130));'"></div></div>
+                            </div>
+                            <div x-show="currentReview && currentReview.fair_price_assessment" style="font-size:0.8rem; line-height:1.6; margin-bottom:0.75rem; color:var(--muted-foreground);" x-text="currentReview ? currentReview.fair_price_assessment : ''"></div>
+                            <details class="ai-issues" x-show="currentReview && currentReview.known_issues && currentReview.known_issues.length > 0">
+                                <summary>Known Issues</summary>
+                                <ul><template x-for="issue in (currentReview ? currentReview.known_issues || [] : [])" :key="issue"><li x-text="issue"></li></template></ul>
+                            </details>
+                            <div x-show="currentReview && currentReview.cost_to_own_notes" style="font-size:0.75rem; line-height:1.5; color:var(--muted-foreground); margin-bottom:0.5rem;">
+                                <div class="ai-list-title">Cost to Own</div>
+                                <span x-text="currentReview ? currentReview.cost_to_own_notes : ''"></span>
+                            </div>
+                        </div>
+                        <div x-show="!reviewLoading && !currentReview && reviewError" style="text-align:center; padding:1rem; font-size:0.8rem; color:var(--muted-foreground);" x-text="reviewError"></div>
                     </div>
 
-                    <a class="btn-listing" :href="selected.url" target="_blank" rel="noopener">
-                        View Full Listing &rarr;
-                    </a>
+                    <!-- Safety Tab -->
+                    <div x-show="modalTab === 'safety'" class="safety-intel">
+                        <div class="ai-scanning" x-show="safetyLoading"><div class="ai-scanning-text">Scanning Safety Data...</div></div>
+                        <div x-show="!safetyLoading && currentSafety">
+                            <div class="ai-list-title">NHTSA Overall Rating</div>
+                            <div class="safety-stars">
+                                <template x-for="i in 5" :key="'star'+i">
+                                    <svg class="safety-star" viewBox="0 0 24 24" :fill="i <= (currentSafety ? parseInt(currentSafety.safety.overall_rating) || 0 : 0) ? '#ffaa00' : 'none'" stroke="#ffaa00" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                </template>
+                            </div>
+                            <div class="safety-stat"><span class="s-label">Recalls</span><span class="s-val" x-text="currentSafety ? currentSafety.recall_count : '-'"></span></div>
+                            <div class="safety-stat"><span class="s-label">Complaints</span><span class="s-val" x-text="currentSafety ? currentSafety.complaint_count : '-'"></span></div>
+                            <template x-if="currentSafety && currentSafety.recalls && currentSafety.recalls.length > 0">
+                                <details class="ai-issues" style="margin-top:0.75rem;">
+                                    <summary>Recall Details</summary>
+                                    <ul><template x-for="r in currentSafety.recalls" :key="r.summary"><li><strong x-text="r.component"></strong>: <span x-text="r.summary"></span></li></template></ul>
+                                </details>
+                            </template>
+                            <a x-show="currentSafety && currentSafety.nhtsa_url" :href="currentSafety ? currentSafety.nhtsa_url : '#'" target="_blank" rel="noopener" style="display:inline-block; margin-top:0.75rem; font-size:0.75rem; color:var(--primary);">View on NHTSA.gov</a>
+                        </div>
+                        <div x-show="!safetyLoading && !currentSafety && safetyError" style="text-align:center; padding:1rem; font-size:0.8rem; color:var(--muted-foreground);" x-text="safetyError"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1575,8 +1752,26 @@
             detailLoading: false,
             extraDetails: {},
             descCollapsed: true,
+            modalTab: 'details',
             sourceInfo: [],
             darkMode: false,
+
+            // AI features
+            reviewCache: {},
+            reviewLoading: false,
+            reviewError: null,
+            currentReview: null,
+            safetyCache: {},
+            safetyLoading: false,
+            safetyError: null,
+            currentSafety: null,
+
+            // Chat
+            chatOpen: false,
+            chatMessages: [],
+            chatInput: '',
+            chatTyping: false,
+            chatHistory: [],
 
             // Doom state
             isShaking: false,
@@ -1937,6 +2132,124 @@
                     'Cars.com': 'carscom',
                     'AutoTrader': 'autotrader',
                 }[name] || 'craigslist';
+            },
+
+            // --- AI Feature Methods ---
+
+            async fetchReview() {
+                if (!this.selected) return;
+                const v = this.selected;
+                const make = this.params.make || '';
+                const model = this.params.model || '';
+                const year = v.year || '';
+                const key = (make + '_' + model + '_' + year).toLowerCase();
+                if (this.reviewCache[key]) { this.currentReview = this.reviewCache[key]; return; }
+                this.reviewLoading = true; this.reviewError = null; this.currentReview = null;
+                try {
+                    const resp = await fetch('/api/review', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ make, model, year: parseInt(year), price: v.price, mileage: v.mileage || 0 })
+                    });
+                    const data = await resp.json();
+                    if (data.success !== false && data.review) {
+                        this.reviewCache[key] = data.review;
+                        this.currentReview = data.review;
+                    } else {
+                        this.reviewError = data.error || 'Could not load AI review.';
+                    }
+                } catch(e) { this.reviewError = 'AI review service unavailable.'; }
+                finally { this.reviewLoading = false; }
+            },
+
+            async fetchSafety() {
+                if (!this.selected) return;
+                const v = this.selected;
+                const make = this.params.make || '';
+                const model = this.params.model || '';
+                const year = v.year || '';
+                const key = (make + '_' + model + '_' + year).toLowerCase();
+                if (this.safetyCache[key]) { this.currentSafety = this.safetyCache[key]; return; }
+                this.safetyLoading = true; this.safetyError = null; this.currentSafety = null;
+                try {
+                    const resp = await fetch('/api/safety?make=' + encodeURIComponent(make) + '&model=' + encodeURIComponent(model) + '&year=' + encodeURIComponent(year));
+                    const data = await resp.json();
+                    if (data.success !== false) {
+                        this.safetyCache[key] = data;
+                        this.currentSafety = data;
+                    } else {
+                        this.safetyError = data.error || 'Could not load safety data.';
+                    }
+                } catch(e) { this.safetyError = 'Safety data service unavailable.'; }
+                finally { this.safetyLoading = false; }
+            },
+
+            async sendChat(text) {
+                if (!text || !text.trim()) return;
+                const msg = text.trim();
+                this.chatInput = '';
+                this.chatMessages.push({ role: 'user', text: msg });
+                this.chatTyping = true;
+                this.$nextTick(() => { if (this.$refs.chatMessages) this.$refs.chatMessages.scrollTop = this.$refs.chatMessages.scrollHeight; });
+
+                // Build messages array and context for the backend API
+                this.chatHistory.push({ role: 'user', content: msg });
+                const context = {};
+                if (this.selected) {
+                    context.current_vehicle = {
+                        title: this.selected.title,
+                        price: this.selected.price,
+                        year: this.selected.year,
+                        mileage: this.selected.mileage,
+                        source: this.selected.source,
+                        make: this.params.make,
+                        model: this.params.model,
+                    };
+                }
+                if (this.allResults.length > 0) {
+                    context.search_results_summary = {
+                        total: this.allResults.length,
+                        avg_price: this.avgPrice,
+                        min_price: this.minPrice,
+                        make: this.params.make,
+                        model: this.params.model,
+                    };
+                }
+
+                try {
+                    const resp = await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ messages: this.chatHistory, context })
+                    });
+                    const data = await resp.json();
+                    const fullText = data.response || data.message || 'No response received.';
+                    this.chatTyping = false;
+                    this.chatHistory.push({ role: 'assistant', content: fullText });
+                    this.chatMessages.push({ role: 'ai', text: '' });
+                    const idx = this.chatMessages.length - 1;
+                    for (let i = 0; i < fullText.length; i++) {
+                        await new Promise(r => setTimeout(r, 15));
+                        this.chatMessages[idx].text = fullText.substring(0, i + 1);
+                        if (i % 10 === 0 && this.$refs.chatMessages) this.$refs.chatMessages.scrollTop = this.$refs.chatMessages.scrollHeight;
+                    }
+                } catch(e) {
+                    this.chatTyping = false;
+                    this.chatMessages.push({ role: 'ai', text: 'Chat service unavailable. Please try again.' });
+                }
+                if (this.$refs.chatMessages) this.$refs.chatMessages.scrollTop = this.$refs.chatMessages.scrollHeight;
+            },
+
+            renderMarkdown(text) {
+                if (!text) return '';
+                let s = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                s = s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+                s = s.replace(/\*(.+?)\*/g, '<em>$1</em>');
+                s = s.replace(/^[-*] (.+)$/gm, '<li>$1</li>');
+                s = s.replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>');
+                s = s.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank" rel="noopener" style="color:var(--primary);">$1</a>');
+                s = s.replace(/\n/g, '<br>');
+                return s;
             },
 
             formatDescription(text) {
@@ -2776,6 +3089,11 @@
                 this.modalImgIdx = 0;
                 this.extraDetails = {};
                 this.detailLoading = true;
+                this.modalTab = 'details';
+                this.currentReview = null;
+                this.reviewError = null;
+                this.currentSafety = null;
+                this.safetyError = null;
                 document.body.style.overflow = 'hidden';
 
                 this.modalImages = vehicle.image_url ? [vehicle.image_url] : [];
@@ -2818,6 +3136,7 @@
                 this.modalImages = [];
                 this.extraDetails = {};
                 this.descCollapsed = true;
+                this.modalTab = 'details';
                 document.body.style.overflow = '';
             },
         };
