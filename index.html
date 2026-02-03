@@ -1810,7 +1810,7 @@
                         </div>
 
                         <!-- Ask AI Button -->
-                        <button x-show="!reviewLoading && !safetyLoading" @click="chatOpen = true; sendChat('Tell me about this ' + (selected ? selected.title : 'vehicle'))" style="display:block; width:100%; margin-top:1rem; padding:0.6rem; background:linear-gradient(135deg, oklch(0.55 0.22 27), oklch(0.40 0.18 20)); color:#fff; border:1px solid oklch(0.65 0.25 35); font-family:'Oxanium',sans-serif; font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; cursor:pointer;">
+                        <button x-show="!reviewLoading && !safetyLoading" @click="if (!chatTyping) { chatOpen = true; $nextTick(() => sendChat('Tell me everything about this ' + (selected ? selected.title.replace(/\*/g, ' ').trim() : 'vehicle') + ' — is it a good deal?')); }" style="display:block; width:100%; margin-top:1rem; padding:0.6rem; background:linear-gradient(135deg, oklch(0.55 0.22 27), oklch(0.40 0.18 20)); color:#fff; border:1px solid oklch(0.65 0.25 35); font-family:'Oxanium',sans-serif; font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; cursor:pointer;">
                             Ask AI About This Car
                         </button>
                     </div>
@@ -2230,6 +2230,61 @@
                 }[name] || 'craigslist';
             },
 
+            // --- Vehicle info parser ---
+
+            _parseVehicleInfo(v) {
+                // Try search params first, then parse from title
+                let make = this.params.make || '';
+                let model = this.params.model || '';
+                let year = v.year || '';
+
+                // If make/model missing from params, try to parse from title
+                if ((!make || !model) && v.title) {
+                    const title = v.title.replace(/\*/g, ' ').replace(/[^a-zA-Z0-9\s-]/g, ' ').replace(/\s+/g, ' ').trim();
+                    const words = title.split(' ');
+
+                    // Find year (4-digit number between 1990-2030)
+                    if (!year) {
+                        for (const w of words) {
+                            const n = parseInt(w);
+                            if (n >= 1990 && n <= 2030) { year = String(n); break; }
+                        }
+                    }
+
+                    // Try to match make from our known makes list
+                    if (!make) {
+                        for (const m of this.makes) {
+                            if (title.toLowerCase().includes(m.toLowerCase())) {
+                                make = m;
+                                break;
+                            }
+                        }
+                    }
+
+                    // Try to find model after the make
+                    if (make && !model) {
+                        const makeIdx = title.toLowerCase().indexOf(make.toLowerCase());
+                        if (makeIdx >= 0) {
+                            const afterMake = title.substring(makeIdx + make.length).trim();
+                            const modelWords = afterMake.split(/[\s*,]+/);
+                            if (modelWords[0] && modelWords[0].length > 1) {
+                                // Check known models first
+                                const knownModels = this.modelsByMake[make] || [];
+                                let foundModel = '';
+                                for (const km of knownModels) {
+                                    if (afterMake.toLowerCase().startsWith(km.toLowerCase())) {
+                                        foundModel = km;
+                                        break;
+                                    }
+                                }
+                                model = foundModel || modelWords[0];
+                            }
+                        }
+                    }
+                }
+                return { make, model, year };
+            },
+
             // --- AI Feature Methods ---
 
             _cacheGet(key) {
@@ -2254,9 +2309,11 @@
             async fetchReview() {
                 if (!this.selected) return;
                 const v = this.selected;
-                const make = this.params.make || '';
-                const model = this.params.model || '';
-                const year = v.year || '';
+                const info = this._parseVehicleInfo(v);
+                const make = info.make;
+                const model = info.model;
+                const year = info.year;
+                if (!make || !model || !year) { this.reviewError = 'Could not identify vehicle make, model, or year.'; return; }
                 const key = 'review_' + (make + '_' + model + '_' + year).toLowerCase();
                 if (this.reviewCache[key]) { this.currentReview = this.reviewCache[key]; return; }
                 const cached = this._cacheGet(key);
@@ -2283,9 +2340,11 @@
             async fetchSafety() {
                 if (!this.selected) return;
                 const v = this.selected;
-                const make = this.params.make || '';
-                const model = this.params.model || '';
-                const year = v.year || '';
+                const info = this._parseVehicleInfo(v);
+                const make = info.make;
+                const model = info.model;
+                const year = info.year;
+                if (!make || !model || !year) { this.safetyError = 'Could not identify vehicle make, model, or year.'; return; }
                 const key = 'safety_' + (make + '_' + model + '_' + year).toLowerCase();
                 if (this.safetyCache[key]) { this.currentSafety = this.safetyCache[key]; return; }
                 const cached = this._cacheGet(key);
@@ -2327,14 +2386,15 @@
                 this.chatHistory.push({ role: 'user', content: msg });
                 const context = {};
                 if (this.selected) {
+                    const vInfo = this._parseVehicleInfo(this.selected);
                     context.current_vehicle = {
                         title: this.selected.title,
                         price: this.selected.price,
                         year: this.selected.year,
                         mileage: this.selected.mileage,
                         source: this.selected.source,
-                        make: this.params.make,
-                        model: this.params.model,
+                        make: vInfo.make,
+                        model: vInfo.model,
                     };
                 }
                 if (this.allResults.length > 0) {
@@ -2342,19 +2402,19 @@
                         total: this.allResults.length,
                         avg_price: this.avgPrice,
                         min_price: this.bestDeal,
-                        make: this.params.make,
-                        model: this.params.model,
+                        make: this.params.make || '',
+                        model: this.params.model || '',
                     };
                     context.top_vehicles = this.filtered.slice(0, 5).map(v => ({
                         title: v.title, price: v.price, year: v.year, mileage: v.mileage, source: v.source
                     }));
                 }
 
-                // 15-second timeout
+                // 45-second timeout (Gemini can be slow on cold starts)
                 const controller = new AbortController();
                 this.chatTimeout = setTimeout(() => {
                     controller.abort();
-                }, 15000);
+                }, 45000);
 
                 try {
                     const resp = await fetch('/api/chat', {
@@ -2397,7 +2457,7 @@
                     clearTimeout(this.chatTimeout);
                     this.chatTyping = false;
                     if (e.name === 'AbortError') {
-                        this.chatMessages.push({ role: 'ai', text: 'Request timed out after 15 seconds. The AI service may be busy. Please try again.', isError: true });
+                        this.chatMessages.push({ role: 'ai', text: 'Request timed out. The AI service may be loading. Please try again in a moment.', isError: true });
                     } else {
                         this.chatMessages.push({ role: 'ai', text: 'Chat service unavailable. Please try again.', isError: true });
                     }
@@ -3352,9 +3412,11 @@
                 for (const v of top) {
                     if (this.dealBadges[v.id]) continue;
                     try {
-                        const make = this.params.make || '';
-                        const model = this.params.model || '';
-                        const year = v.year || '';
+                        const info = this._parseVehicleInfo(v);
+                        const make = info.make;
+                        const model = info.model;
+                        const year = info.year;
+                        if (!make || !model || !year) continue;
                         const key = 'review_' + (make + '_' + model + '_' + year).toLowerCase();
                         let review = this.reviewCache[key] || this._cacheGet(key);
                         if (!review) {
