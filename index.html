@@ -2339,12 +2339,16 @@
                 const cached = this._cacheGet(key);
                 if (cached) { this.reviewCache[key] = cached; this.currentReview = cached; return; }
                 this.reviewLoading = true; this.reviewError = null; this.currentReview = null;
+                const reviewController = new AbortController();
+                const reviewTimeout = setTimeout(() => reviewController.abort(), 20000);
                 try {
                     const resp = await fetch('/api/review', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ make, model, year: parseInt(year), price: v.price, mileage: v.mileage || 0 })
+                        body: JSON.stringify({ make, model, year: parseInt(year), price: v.price, mileage: v.mileage || 0 }),
+                        signal: reviewController.signal
                     });
+                    clearTimeout(reviewTimeout);
                     const data = await resp.json();
                     if (data.success !== false && data.review) {
                         this.reviewCache[key] = data.review;
@@ -2353,7 +2357,13 @@
                     } else {
                         this.reviewError = data.error || 'Could not load AI review.';
                     }
-                } catch(e) { this.reviewError = 'AI review service unavailable.'; }
+                } catch(e) {
+                    if (e.name === 'AbortError') {
+                        this.reviewError = 'Review request timed out.';
+                    } else {
+                        this.reviewError = 'AI review service unavailable.';
+                    }
+                }
                 finally { this.reviewLoading = false; }
             },
 
@@ -2370,8 +2380,13 @@
                 const cached = this._cacheGet(key);
                 if (cached) { this.safetyCache[key] = cached; this.currentSafety = cached; return; }
                 this.safetyLoading = true; this.safetyError = null; this.currentSafety = null;
+                const safetyController = new AbortController();
+                const safetyTimeout = setTimeout(() => safetyController.abort(), 15000);
                 try {
-                    const resp = await fetch('/api/safety?make=' + encodeURIComponent(make) + '&model=' + encodeURIComponent(model) + '&year=' + encodeURIComponent(year));
+                    const resp = await fetch('/api/safety?make=' + encodeURIComponent(make) + '&model=' + encodeURIComponent(model) + '&year=' + encodeURIComponent(year), {
+                        signal: safetyController.signal
+                    });
+                    clearTimeout(safetyTimeout);
                     const data = await resp.json();
                     if (data.success !== false) {
                         this.safetyCache[key] = data;
@@ -2380,7 +2395,13 @@
                     } else {
                         this.safetyError = data.error || 'Could not load safety data.';
                     }
-                } catch(e) { this.safetyError = 'Safety data service unavailable.'; }
+                } catch(e) {
+                    if (e.name === 'AbortError') {
+                        this.safetyError = 'Safety request timed out.';
+                    } else {
+                        this.safetyError = 'Safety data service unavailable.';
+                    }
+                }
                 finally { this.safetyLoading = false; }
             },
 
@@ -2395,6 +2416,7 @@
             },
 
             async sendChat(text) {
+                if (this.chatTyping) return;
                 if (!text || !text.trim()) return;
                 const msg = text.trim();
                 this.chatInput = '';
@@ -3256,6 +3278,7 @@
             },
 
             async search() {
+                if (this.loading) return;
                 this.playSound('fire');
                 this.triggerShake();
                 this.hudState = 'searching';
@@ -3354,8 +3377,13 @@
 
                 this.modalImages = vehicle.image_url ? [vehicle.image_url] : [];
 
+                const detailController = new AbortController();
+                const detailTimeout = setTimeout(() => detailController.abort(), 15000);
                 try {
-                    const resp = await fetch('/api/details?url=' + encodeURIComponent(vehicle.url));
+                    const resp = await fetch('/api/details?url=' + encodeURIComponent(vehicle.url), {
+                        signal: detailController.signal
+                    });
+                    clearTimeout(detailTimeout);
                     const data = await resp.json();
                     if (data.success && data.details) {
                         const d = data.details;
@@ -3381,7 +3409,11 @@
                         this.extraDetails = extras;
                     }
                 } catch (e) {
-                    console.error('Details fetch failed:', e);
+                    if (e.name === 'AbortError') {
+                        console.error('Details fetch timed out');
+                    } else {
+                        console.error('Details fetch failed:', e);
+                    }
                 } finally {
                     this.detailLoading = false;
                 }

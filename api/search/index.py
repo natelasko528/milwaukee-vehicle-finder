@@ -13,6 +13,24 @@ from datetime import datetime
 from urllib.parse import quote_plus
 import re
 import hashlib
+import time
+
+
+_rate_limit_store = {}
+_RATE_LIMIT = 10  # requests per minute
+_RATE_WINDOW = 60  # seconds
+
+def _check_rate_limit(ip):
+    """Returns True if rate limit exceeded."""
+    now = time.time()
+    if ip not in _rate_limit_store:
+        _rate_limit_store[ip] = []
+    # Clean old entries
+    _rate_limit_store[ip] = [t for t in _rate_limit_store[ip] if now - t < _RATE_WINDOW]
+    if len(_rate_limit_store[ip]) >= _RATE_LIMIT:
+        return True
+    _rate_limit_store[ip].append(now)
+    return False
 
 
 USER_AGENT = (
@@ -531,6 +549,18 @@ class handler(BaseHTTPRequestHandler):
         })
 
     def do_POST(self):
+        # Get client IP
+        client_ip = self.headers.get('X-Forwarded-For', self.client_address[0] if self.client_address else 'unknown')
+        if isinstance(client_ip, str) and ',' in client_ip:
+            client_ip = client_ip.split(',')[0].strip()
+
+        if _check_rate_limit(client_ip):
+            self._json_response(429, {
+                "success": False,
+                "error": "Rate limit exceeded. Please wait before searching again.",
+            })
+            return
+
         try:
             length = int(self.headers.get("Content-Length", 0))
             body = self.rfile.read(length).decode("utf-8") if length > 0 else "{}"
