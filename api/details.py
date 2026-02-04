@@ -10,6 +10,62 @@ import aiohttp
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse, parse_qs, urljoin
 import re
+import ipaddress
+import socket
+
+ALLOWED_DOMAINS = {
+    'craigslist.org',
+    'cargurus.com',
+    'cars.com',
+    'autotrader.com',
+}
+
+
+def _is_url_allowed(url):
+    """Validate that a URL points to an allowed domain and not a private IP."""
+    try:
+        parsed = urlparse(url)
+    except Exception:
+        return False
+
+    # Check scheme
+    if parsed.scheme not in ('http', 'https'):
+        return False
+
+    hostname = parsed.hostname
+    if not hostname:
+        return False
+
+    # Only allow http for craigslist; all others must be https
+    if parsed.scheme == 'http':
+        if not hostname.endswith('craigslist.org'):
+            return False
+
+    # Check hostname against allowed domains (supports subdomains)
+    domain_ok = any(
+        hostname == domain or hostname.endswith('.' + domain)
+        for domain in ALLOWED_DOMAINS
+    )
+    if not domain_ok:
+        return False
+
+    # Block private/internal IPs
+    try:
+        addr = ipaddress.ip_address(hostname)
+        if addr.is_private or addr.is_loopback or addr.is_reserved:
+            return False
+    except ValueError:
+        # hostname is not a raw IP, resolve it
+        try:
+            resolved = socket.getaddrinfo(hostname, None)
+            for entry in resolved:
+                addr = ipaddress.ip_address(entry[4][0])
+                if addr.is_private or addr.is_loopback or addr.is_reserved:
+                    return False
+        except socket.gaierror:
+            return False
+
+    return True
 
 class DetailsFetcher:
     """Fetch detailed vehicle information from listing URLs"""
@@ -310,7 +366,18 @@ class handler(BaseHTTPRequestHandler):
                     'error': 'Missing url parameter'
                 }).encode())
                 return
-            
+
+            # SSRF protection: validate URL before fetching
+            if not _is_url_allowed(url):
+                self.send_response(400)
+                self.send_header('Content-type', 'application/json')
+                self.send_header('Access-Control-Allow-Origin', '*')
+                self.end_headers()
+                self.wfile.write(json.dumps({
+                    'error': 'URL not allowed. Only Craigslist, CarGurus, Cars.com, and AutoTrader URLs are supported.'
+                }).encode())
+                return
+
             # Fetch details
             fetcher = DetailsFetcher()
             loop = asyncio.new_event_loop()

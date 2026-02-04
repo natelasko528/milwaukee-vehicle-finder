@@ -17,18 +17,18 @@
             --foreground: oklch(0.2393 0 0);
             --card: oklch(0.7572 0 0);
             --card-foreground: oklch(0.2393 0 0);
-            --primary: oklch(0.5016 0.1887 27.4816);
+            --primary: oklch(0.40 0.19 27);
             --primary-foreground: oklch(1.0000 0 0);
             --secondary: oklch(0.4955 0.0896 126.1858);
             --secondary-foreground: oklch(1.0000 0 0);
             --muted: oklch(0.7826 0 0);
-            --muted-foreground: oklch(0.4091 0 0);
+            --muted-foreground: oklch(0.35 0 0);
             --accent: oklch(0.5880 0.0993 245.7394);
             --accent-foreground: oklch(1.0000 0 0);
             --destructive: oklch(0.7076 0.1975 46.4558);
             --border: oklch(0.4313 0 0);
             --input: oklch(0.4313 0 0);
-            --ring: oklch(0.5016 0.1887 27.4816);
+            --ring: oklch(0.40 0.19 27);
             --radius: 0px;
             --shadow-sm: 0px 2px 4px 0px hsl(0 0% 0% / 0.40), 0px 1px 2px -1px hsl(0 0% 0% / 0.40);
             --shadow: 0px 2px 4px 0px hsl(0 0% 0% / 0.40), 0px 1px 2px -1px hsl(0 0% 0% / 0.40);
@@ -42,23 +42,36 @@
             --foreground: oklch(0.9067 0 0);
             --card: oklch(0.2850 0 0);
             --card-foreground: oklch(0.9067 0 0);
-            --primary: oklch(0.6083 0.2090 27.0276);
+            --primary: oklch(0.65 0.21 27);
             --primary-foreground: oklch(1.0000 0 0);
             --secondary: oklch(0.6423 0.1467 133.0145);
             --secondary-foreground: oklch(0 0 0);
             --muted: oklch(0.2645 0 0);
-            --muted-foreground: oklch(0.7058 0 0);
+            --muted-foreground: oklch(0.75 0 0);
             --accent: oklch(0.7482 0.1235 244.7492);
             --accent-foreground: oklch(0 0 0);
             --destructive: oklch(0.7839 0.1719 68.0943);
             --border: oklch(0.4091 0 0);
             --input: oklch(0.4091 0 0);
-            --ring: oklch(0.6083 0.2090 27.0276);
+            --ring: oklch(0.65 0.21 27);
             --shadow-sm: 0px 2px 5px 0px hsl(0 0% 0% / 0.60), 0px 1px 2px -1px hsl(0 0% 0% / 0.60);
             --shadow: 0px 2px 5px 0px hsl(0 0% 0% / 0.60), 0px 1px 2px -1px hsl(0 0% 0% / 0.60);
             --shadow-md: 0px 2px 5px 0px hsl(0 0% 0% / 0.60), 0px 2px 4px -1px hsl(0 0% 0% / 0.60);
             --shadow-lg: 0px 2px 5px 0px hsl(0 0% 0% / 0.60), 0px 4px 6px -1px hsl(0 0% 0% / 0.60);
             --shadow-xl: 0px 2px 5px 0px hsl(0 0% 0% / 0.60), 0px 8px 10px -1px hsl(0 0% 0% / 0.60);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+            .scanlines,
+            .scanlines::before,
+            .scanlines::after {
+                display: none !important;
+            }
         }
 
         body {
@@ -1275,11 +1288,11 @@
                 <p>Search used cars across Craigslist, CarGurus, Cars.com &amp; AutoTrader</p>
             </div>
             <div class="header-buttons">
-                <button class="sound-toggle" @click="toggleSound()" :title="soundEnabled ? 'Mute sounds' : 'Enable sounds'">
+                <button class="sound-toggle" @click="toggleSound()" :title="soundEnabled ? 'Mute sounds' : 'Enable sounds'" aria-label="Toggle sound">
                     <svg x-show="soundEnabled" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
                     <svg x-show="!soundEnabled" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
                 </button>
-                <button class="theme-toggle" @click="toggleDark()" :title="darkMode ? 'Light mode' : 'Dark mode'">
+                <button class="theme-toggle" @click="toggleDark()" :title="darkMode ? 'Light mode' : 'Dark mode'" aria-label="Toggle theme">
                     <svg x-show="!darkMode" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
                     <svg x-show="darkMode" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
                 </button>
@@ -1612,7 +1625,7 @@
     </div>
 
     <!-- Chat FAB -->
-    <button class="chat-fab" @click="chatOpen = !chatOpen" title="AI Advisor">
+    <button class="chat-fab" @click="chatOpen = !chatOpen" title="AI Advisor" aria-label="Open AI chat">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
     </button>
 
@@ -1620,7 +1633,7 @@
     <div class="chat-drawer" :class="{ open: chatOpen }">
         <div class="chat-header">
             <h3>AI Advisor</h3>
-            <button class="chat-close-btn" @click="chatOpen = false">&times;</button>
+            <button class="chat-close-btn" @click="chatOpen = false" aria-label="Close chat">&times;</button>
         </div>
         <div class="chat-messages" x-ref="chatMessages">
             <template x-for="(msg, i) in chatMessages" :key="i">
@@ -1647,8 +1660,8 @@
     <!-- Modal -->
     <template x-if="selected">
         <div class="modal-backdrop" @click.self="closeModal()" @keydown.escape.window="closeModal()">
-            <div class="modal" @click.stop>
-                <button class="modal-close" @click="closeModal()">&times;</button>
+            <div class="modal" @click.stop role="dialog" aria-modal="true" aria-labelledby="modal-title">
+                <button class="modal-close" @click="closeModal()" aria-label="Close modal">&times;</button>
 
                 <div class="modal-image">
                     <template x-if="modalImages.length > 0">
@@ -1675,7 +1688,7 @@
 
                 <div class="modal-body">
                     <span class="source-tag" :class="'badge-' + sourceKey(selected.source)" x-text="selected.source"></span>
-                    <h2 x-text="selected.title"></h2>
+                    <h2 id="modal-title" x-text="selected.title"></h2>
                     <div class="price" x-text="'$' + selected.price.toLocaleString()"></div>
 
                     <!-- Modal Tabs -->

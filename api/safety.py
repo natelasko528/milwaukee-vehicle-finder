@@ -165,7 +165,33 @@ class handler(BaseHTTPRequestHandler):
                 }).encode())
                 return
 
-            year = str(int(year))  # validate numeric
+            try:
+                year_int = int(year)
+            except (ValueError, TypeError):
+                self.send_response(400)
+                self.send_header("Content-type", "application/json")
+                for k, v in _cors_headers().items():
+                    self.send_header(k, v)
+                self.end_headers()
+                self.wfile.write(json.dumps({
+                    "success": False,
+                    "error": "Invalid year value. Must be a number.",
+                }).encode())
+                return
+
+            if year_int < 1990 or year_int > 2030:
+                self.send_response(400)
+                self.send_header("Content-type", "application/json")
+                for k, v in _cors_headers().items():
+                    self.send_header(k, v)
+                self.end_headers()
+                self.wfile.write(json.dumps({
+                    "success": False,
+                    "error": "Invalid year value. Must be between 1990 and 2030.",
+                }).encode())
+                return
+
+            year = str(year_int)
 
             # Check cache
             cache_key = f"{make.lower()}_{model.lower()}_{year}"

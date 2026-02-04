@@ -211,7 +211,22 @@ class handler(BaseHTTPRequestHandler):
                 })
                 return
 
-            year = int(year)
+            try:
+                year = int(year)
+            except (ValueError, TypeError):
+                self._json_response(400, {
+                    "success": False,
+                    "error": "Invalid year value. Must be a number.",
+                })
+                return
+
+            if year < 1990 or year > 2030:
+                self._json_response(400, {
+                    "success": False,
+                    "error": "Invalid year value. Must be between 1990 and 2030.",
+                })
+                return
+
             price = int(price) if price else 0
             mileage = int(mileage) if mileage else 0
 
