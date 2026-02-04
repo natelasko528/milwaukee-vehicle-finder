@@ -13,6 +13,24 @@ from datetime import datetime
 from urllib.parse import quote_plus
 import re
 import hashlib
+import time
+
+
+_rate_limit_store = {}
+_RATE_LIMIT = 10  # requests per minute
+_RATE_WINDOW = 60  # seconds
+
+def _check_rate_limit(ip):
+    """Returns True if rate limit exceeded."""
+    now = time.time()
+    if ip not in _rate_limit_store:
+        _rate_limit_store[ip] = []
+    # Clean old entries
+    _rate_limit_store[ip] = [t for t in _rate_limit_store[ip] if now - t < _RATE_WINDOW]
+    if len(_rate_limit_store[ip]) >= _RATE_LIMIT:
+        return True
+    _rate_limit_store[ip].append(now)
+    return False
 
 
 USER_AGENT = (
@@ -391,15 +409,83 @@ async def scrape_autotrader(session, make, model, max_price, max_mileage, min_ye
     return results
 
 
+def validate_params(params):
+    """Validate search parameters. Returns (cleaned_params, error_message).
+    If error_message is not None, validation failed."""
+    errors = []
+
+    # --- int conversions with try/except ---
+    try:
+        max_price = int(params.get("max_price", 30000))
+    except (ValueError, TypeError):
+        errors.append("max_price must be a valid integer")
+        max_price = None
+
+    try:
+        max_mileage = int(params.get("max_mileage", 200000))
+    except (ValueError, TypeError):
+        errors.append("max_mileage must be a valid integer")
+        max_mileage = None
+
+    min_year = None
+    if params.get("min_year"):
+        try:
+            min_year = int(params["min_year"])
+        except (ValueError, TypeError):
+            errors.append("min_year must be a valid integer")
+
+    max_year = None
+    if params.get("max_year"):
+        try:
+            max_year = int(params["max_year"])
+        except (ValueError, TypeError):
+            errors.append("max_year must be a valid integer")
+
+    # --- Negative value checks ---
+    if max_price is not None and max_price < 0:
+        errors.append("max_price cannot be negative")
+    if max_mileage is not None and max_mileage < 0:
+        errors.append("max_mileage cannot be negative")
+
+    # --- Year range checks ---
+    if min_year is not None and (min_year < 1990 or min_year > 2030):
+        errors.append("min_year must be between 1990 and 2030")
+    if max_year is not None and (max_year < 1990 or max_year > 2030):
+        errors.append("max_year must be between 1990 and 2030")
+
+    # --- ZIP code validation ---
+    zip_code = str(params.get("zip_code", "53202")).strip()
+    if not zip_code.isdigit():
+        errors.append("zip_code must be numeric")
+
+    if errors:
+        return None, "; ".join(errors)
+
+    return {
+        "make": params.get("make", "").strip(),
+        "model": params.get("model", "").strip(),
+        "max_price": max_price,
+        "max_mileage": max_mileage,
+        "min_year": min_year,
+        "max_year": max_year,
+        "location": params.get("location", "milwaukee"),
+        "zip_code": zip_code,
+    }, None
+
+
 async def search_all(params):
-    make = params.get("make", "").strip()
-    model = params.get("model", "").strip()
-    max_price = int(params.get("max_price", 30000))
-    max_mileage = int(params.get("max_mileage", 200000))
-    min_year = int(params["min_year"]) if params.get("min_year") else None
-    max_year = int(params["max_year"]) if params.get("max_year") else None
-    location = params.get("location", "milwaukee")
-    zip_code = params.get("zip_code", "53202")
+    validated, error = validate_params(params)
+    if error:
+        raise ValueError(error)
+
+    make = validated["make"]
+    model = validated["model"]
+    max_price = validated["max_price"]
+    max_mileage = validated["max_mileage"]
+    min_year = validated["min_year"]
+    max_year = validated["max_year"]
+    location = validated["location"]
+    zip_code = validated["zip_code"]
 
     async with aiohttp.ClientSession() as session:
         tasks = [
@@ -463,6 +549,18 @@ class handler(BaseHTTPRequestHandler):
         })
 
     def do_POST(self):
+        # Get client IP
+        client_ip = self.headers.get('X-Forwarded-For', self.client_address[0] if self.client_address else 'unknown')
+        if isinstance(client_ip, str) and ',' in client_ip:
+            client_ip = client_ip.split(',')[0].strip()
+
+        if _check_rate_limit(client_ip):
+            self._json_response(429, {
+                "success": False,
+                "error": "Rate limit exceeded. Please wait before searching again.",
+            })
+            return
+
         try:
             length = int(self.headers.get("Content-Length", 0))
             body = self.rfile.read(length).decode("utf-8") if length > 0 else "{}"
@@ -489,6 +587,12 @@ class handler(BaseHTTPRequestHandler):
                     "max_price": max(prices) if prices else 0,
                 },
                 "search_params": data,
+                "timestamp": datetime.now().isoformat(),
+            })
+        except ValueError as e:
+            self._json_response(400, {
+                "success": False,
+                "error": str(e),
                 "timestamp": datetime.now().isoformat(),
             })
         except Exception as e:
