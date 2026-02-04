@@ -1,3 +1,11 @@
 {
-  "version": 2
+  "version": 2,
+  "functions": {
+    "api/chat.py": { "maxDuration": 60 },
+    "api/review.py": { "maxDuration": 60 },
+    "api/analyze.py": { "maxDuration": 60 },
+    "api/safety.py": { "maxDuration": 30 },
+    "api/search/index.py": { "maxDuration": 60 },
+    "api/details.py": { "maxDuration": 30 }
+  }
 }

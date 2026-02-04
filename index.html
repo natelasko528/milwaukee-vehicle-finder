@@ -1153,6 +1153,104 @@
             .toast-title { font-size: 1.1rem; }
             .toast-subtitle { font-size: 0.75rem; }
         }
+        /* ---- AI Chat Drawer ---- */
+        .chat-fab { position: fixed; bottom: 80px; right: 1.25rem; width: 52px; height: 52px; background: linear-gradient(135deg, oklch(0.55 0.22 27), oklch(0.40 0.18 20)); border: 2px solid oklch(0.65 0.25 35); border-radius: 50%; box-shadow: 0 0 18px oklch(0.5 0.2 27 / 0.5), 0 4px 12px rgba(0,0,0,0.4); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1050; transition: transform 0.2s, box-shadow 0.2s; }
+        .chat-fab:hover { transform: scale(1.1); box-shadow: 0 0 28px oklch(0.6 0.25 27 / 0.7); }
+        .chat-drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 420px; max-width: 100vw; background: var(--card); border-left: 2px solid var(--border); box-shadow: -8px 0 30px rgba(0,0,0,0.5); z-index: 1200; display: flex; flex-direction: column; transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .chat-drawer.open { transform: translateX(0); }
+        .chat-header { padding: 1rem 1.25rem; background: linear-gradient(135deg, oklch(0.30 0.08 27), oklch(0.22 0.04 20)); border-bottom: 2px solid oklch(0.45 0.15 27); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+        .chat-header h3 { font-size: 1rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: oklch(0.75 0.18 40); text-shadow: 0 0 10px oklch(0.6 0.2 27 / 0.5); }
+        .chat-close-btn { background: none; border: 1px solid oklch(0.45 0 0); color: var(--card-foreground); width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; }
+        .chat-messages { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.75rem; }
+        .chat-msg { max-width: 88%; padding: 0.7rem 0.9rem; font-size: 0.82rem; line-height: 1.6; border: 1px solid var(--border); word-wrap: break-word; }
+        .chat-msg.user { align-self: flex-end; background: oklch(0.35 0.10 27); color: oklch(0.9 0 0); border-color: oklch(0.45 0.12 27); }
+        .chat-msg.ai { align-self: flex-start; background: var(--background); color: var(--foreground); }
+        .chat-msg .ai-icon { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: oklch(0.65 0.18 27); margin-right: 0.3rem; }
+        .chat-typing { font-size: 0.75rem; color: var(--muted-foreground); font-family: "Source Code Pro", monospace; animation: doomPulseText 0.8s infinite; }
+        .chat-input-area { padding: 0.75rem 1rem; border-top: 1px solid var(--border); flex-shrink: 0; }
+        .chat-chips { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+        .chat-chip { padding: 0.25rem 0.5rem; font-family: "Oxanium", sans-serif; font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; border: 1px solid var(--border); background: var(--muted); color: var(--muted-foreground); cursor: pointer; transition: all 0.15s; }
+        .chat-chip:hover { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); }
+        .chat-input-row { display: flex; gap: 0.5rem; }
+        .chat-input { flex: 1; padding: 0.5rem 0.75rem; border: 1px solid var(--border); font-family: "Oxanium", sans-serif; font-size: 0.85rem; background: var(--background); color: var(--foreground); }
+        .chat-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px var(--ring); }
+        .chat-send { padding: 0.5rem 1rem; background: var(--primary); color: var(--primary-foreground); border: none; font-family: "Oxanium", sans-serif; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; cursor: pointer; }
+        .chat-send:hover { opacity: 0.85; }
+        .chat-send:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        /* ---- Modal Tabs ---- */
+        .modal-tabs { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 1rem; }
+        .modal-tab { padding: 0.5rem 1rem; font-family: "Oxanium", sans-serif; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; background: none; border: none; color: var(--muted-foreground); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.15s; }
+        .modal-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+        .modal-tab:hover { color: var(--foreground); }
+
+        /* ---- AI Intel ---- */
+        .ai-intel { padding: 0.5rem 0; }
+        .ai-scanning { text-align: center; padding: 2rem 0; }
+        .ai-scanning-text { font-family: "Source Code Pro", monospace; font-size: 0.85rem; color: oklch(0.65 0.25 27); animation: doomPulseText 1.2s ease-in-out infinite; text-transform: uppercase; letter-spacing: 0.1em; }
+        .ai-summary { background: var(--background); border: 1px solid var(--border); padding: 0.75rem; margin-bottom: 0.75rem; font-size: 0.8rem; line-height: 1.6; }
+        .ai-pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem; }
+        .ai-list { list-style: none; padding: 0; }
+        .ai-list li { font-size: 0.75rem; padding: 0.25rem 0 0.25rem 1rem; position: relative; }
+        .ai-list li::before { content: ''; position: absolute; left: 0; top: 0.55rem; width: 6px; height: 6px; border-radius: 50%; }
+        .ai-list.pros li::before { background: #16a34a; box-shadow: 0 0 4px #16a34a; }
+        .ai-list.cons li::before { background: #ea580c; box-shadow: 0 0 4px #ea580c; }
+        .ai-list-title { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted-foreground); margin-bottom: 0.4rem; }
+        .reliability-bar { height: 8px; background: var(--muted); border: 1px solid var(--border); overflow: hidden; margin-top: 0.3rem; }
+        .reliability-fill { height: 100%; transition: width 0.5s; }
+        .price-verdict { display: inline-block; padding: 0.2rem 0.6rem; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: #fff; margin-bottom: 0.75rem; }
+        .deal-great { background: oklch(0.55 0.2 145); box-shadow: 0 0 8px oklch(0.55 0.2 145 / 0.4); }
+        .deal-good { background: oklch(0.55 0.15 240); }
+        .deal-fair { background: oklch(0.45 0 0); }
+        .deal-above { background: oklch(0.6 0.18 60); color: #000; }
+        .deal-over { background: oklch(0.55 0.22 27); }
+        .ai-issues { margin-bottom: 0.75rem; }
+        .ai-issues summary { font-size: 0.75rem; font-weight: 700; cursor: pointer; color: var(--muted-foreground); text-transform: uppercase; }
+        .ai-issues ul { list-style: disc; padding-left: 1.2rem; margin-top: 0.4rem; }
+        .ai-issues li { font-size: 0.75rem; color: var(--muted-foreground); margin-bottom: 0.2rem; }
+
+        /* ---- Safety Intel ---- */
+        .safety-intel { padding: 0.5rem 0; }
+        .safety-stars { display: flex; gap: 0.2rem; margin: 0.3rem 0 0.5rem; }
+        .safety-star { width: 20px; height: 20px; }
+        .safety-stat { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border); font-size: 0.8rem; }
+        .safety-stat .s-label { color: var(--muted-foreground); text-transform: uppercase; font-size: 0.7rem; }
+        .safety-stat .s-val { font-weight: 700; }
+
+        @media (max-width: 640px) {
+            .chat-drawer { width: 100vw; }
+            .ai-pros-cons { grid-template-columns: 1fr; }
+            .chat-fab { bottom: 70px; right: 0.75rem; width: 44px; height: 44px; }
+        }
+
+        /* ---- Chat Error Messages ---- */
+        .chat-msg.error { border-color: oklch(0.55 0.22 27); background: oklch(0.25 0.06 27); }
+        .chat-msg.error .ai-icon { color: oklch(0.7 0.25 27); }
+
+        /* ---- Research Links ---- */
+        .research-link { display:block; font-size:0.72rem; color:var(--primary); text-decoration:none; padding:0.2rem 0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .research-link:hover { text-decoration:underline; opacity:0.85; }
+
+        /* ---- Deal Badge on Cards ---- */
+        .deal-badge { flex-shrink:0; padding:0.15rem 0.4rem; font-size:0.55rem; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; color:#fff; white-space:nowrap; }
+        .deal-badge-great-deal { background:oklch(0.55 0.2 145); box-shadow:0 0 6px oklch(0.55 0.2 145 / 0.4); }
+        .deal-badge-good-deal { background:oklch(0.55 0.15 240); }
+        .deal-badge-fair { background:oklch(0.45 0 0); }
+        .deal-badge-above-market { background:oklch(0.6 0.18 60); color:#000; }
+        .deal-badge-overpriced { background:oklch(0.55 0.22 27); }
+
+        /* ---- Deal Badge Shimmer ---- */
+        @keyframes shimmer {
+            0% { background-position: -100px 0; }
+            100% { background-position: 100px 0; }
+        }
+        .deal-badge-shimmer {
+            flex-shrink:0;
+            width:52px; height:16px;
+            background: linear-gradient(90deg, var(--muted) 25%, oklch(0.6 0 0 / 0.3) 50%, var(--muted) 75%);
+            background-size: 200px 100%;
+            animation: shimmer 1.5s infinite;
+        }
     </style>
 </head>
 <body x-data="app()" :class="{ dark: darkMode, shaking: isShaking }">
@@ -1336,6 +1434,35 @@
                 </div>
             </div>
 
+            <!-- AI Market Summary -->
+            <div x-show="marketSummary || marketLoading" class="market-summary" style="margin-bottom:1rem;">
+                <div class="market-header" @click="marketExpanded = !marketExpanded" style="display:flex; align-items:center; justify-content:space-between; padding:0.75rem 1rem; background:linear-gradient(135deg, oklch(0.30 0.08 27), oklch(0.22 0.04 20)); border:1px solid oklch(0.45 0.15 27); cursor:pointer; user-select:none;">
+                    <span style="font-size:0.75rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; color:oklch(0.75 0.18 40); text-shadow:0 0 10px oklch(0.6 0.2 27 / 0.5);">AI Market Intel</span>
+                    <span style="color:oklch(0.65 0 0); font-size:0.8rem;" x-text="marketExpanded ? '[-]' : '[+]'"></span>
+                </div>
+                <div x-show="marketExpanded" style="background:var(--card); border:1px solid var(--border); border-top:none; padding:1rem;">
+                    <div x-show="marketLoading" style="text-align:center; padding:1rem;">
+                        <div class="ai-scanning-text" style="font-size:0.75rem;">Analyzing market data...</div>
+                    </div>
+                    <div x-show="!marketLoading && marketSummary">
+                        <div x-show="marketSummary && marketSummary.summary" style="font-size:0.82rem; line-height:1.7; margin-bottom:0.75rem; color:var(--foreground);" x-html="renderMarkdown(marketSummary ? marketSummary.summary : '')"></div>
+                        <div x-show="marketSummary && marketSummary.best_deals && marketSummary.best_deals.length > 0" style="margin-bottom:0.75rem;">
+                            <div class="ai-list-title" style="color:oklch(0.65 0.2 130);">Best Deals</div>
+                            <ul class="ai-list pros">
+                                <template x-for="d in (marketSummary ? marketSummary.best_deals || [] : [])" :key="d.title"><li><strong x-text="d.title"></strong> <span style="color:var(--muted-foreground);" x-text="'— ' + d.reason"></span></li></template>
+                            </ul>
+                        </div>
+                        <div x-show="marketSummary && marketSummary.overpriced && marketSummary.overpriced.length > 0" style="margin-bottom:0.75rem;">
+                            <div class="ai-list-title" style="color:oklch(0.65 0.25 27);">Overpriced Warnings</div>
+                            <ul class="ai-list cons">
+                                <template x-for="o in (marketSummary ? marketSummary.overpriced || [] : [])" :key="o.title"><li><strong x-text="o.title"></strong> <span style="color:var(--muted-foreground);" x-text="'— ' + o.reason"></span></li></template>
+                            </ul>
+                        </div>
+                        <div x-show="marketSummary && marketSummary.recommendations" style="font-size:0.8rem; line-height:1.6; color:var(--muted-foreground);" x-html="renderMarkdown(marketSummary ? marketSummary.recommendations : '')"></div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Source Chips + Sort -->
             <div class="toolbar" x-show="allResults.length > 0">
                 <div class="sources-bar">
@@ -1383,7 +1510,11 @@
                             <span class="card-source" :class="'badge-' + sourceKey(v.source)" x-text="v.source"></span>
                         </div>
                         <div class="card-body">
-                            <div class="card-title" x-text="v.title"></div>
+                            <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:0.4rem;">
+                                <div class="card-title" x-text="v.title"></div>
+                                <span x-show="dealBadges[v.id]" class="deal-badge" :class="'deal-badge-' + (dealBadges[v.id] || '').toLowerCase().replace(/\s+/g, '-')" x-text="dealBadges[v.id]"></span>
+                                <span x-show="!dealBadges[v.id] && idx < 6" class="deal-badge-shimmer"></span>
+                            </div>
                             <div class="card-price" x-text="'$' + v.price.toLocaleString()"></div>
                             <div class="card-meta">
                                 <span x-show="v.year">
@@ -1480,6 +1611,39 @@
         </div>
     </div>
 
+    <!-- Chat FAB -->
+    <button class="chat-fab" @click="chatOpen = !chatOpen" title="AI Advisor">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    </button>
+
+    <!-- Chat Drawer -->
+    <div class="chat-drawer" :class="{ open: chatOpen }">
+        <div class="chat-header">
+            <h3>AI Advisor</h3>
+            <button class="chat-close-btn" @click="chatOpen = false">&times;</button>
+        </div>
+        <div class="chat-messages" x-ref="chatMessages">
+            <template x-for="(msg, i) in chatMessages" :key="i">
+                <div class="chat-msg" :class="[msg.role, msg.isError ? 'error' : '']">
+                    <template x-if="msg.role === 'ai'"><span class="ai-icon" x-text="msg.isError ? '!!' : 'AI'"></span></template>
+                    <span x-html="msg.role === 'ai' ? renderMarkdown(msg.text) : msg.text"></span>
+                </div>
+            </template>
+            <div class="chat-msg ai" x-show="chatTyping"><span class="ai-icon">AI</span> <span class="chat-typing">PROCESSING...</span></div>
+        </div>
+        <div class="chat-input-area">
+            <div class="chat-chips">
+                <template x-for="chip in chatChips" :key="chip">
+                    <button class="chat-chip" @click="sendChat(chip)" x-text="chip"></button>
+                </template>
+            </div>
+            <div class="chat-input-row">
+                <input class="chat-input" type="text" x-model="chatInput" @keydown.enter="sendChat(chatInput)" placeholder="Ask about vehicles...">
+                <button class="chat-send" @click="sendChat(chatInput)" :disabled="chatTyping || !chatInput.trim()">Send</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal -->
     <template x-if="selected">
         <div class="modal-backdrop" @click.self="closeModal()" @keydown.escape.window="closeModal()">
@@ -1514,46 +1678,142 @@
                     <h2 x-text="selected.title"></h2>
                     <div class="price" x-text="'$' + selected.price.toLocaleString()"></div>
 
-                    <div class="modal-details">
-                        <div class="detail-item" x-show="selected.year">
-                            <div class="dl">Year</div>
-                            <div class="dv" x-text="selected.year"></div>
-                        </div>
-                        <div class="detail-item" x-show="selected.mileage">
-                            <div class="dl">Mileage</div>
-                            <div class="dv" x-text="selected.mileage ? selected.mileage.toLocaleString() + ' mi' : '-'"></div>
-                        </div>
-                        <div class="detail-item" x-show="selected.location">
-                            <div class="dl">Location</div>
-                            <div class="dv" x-text="selected.location"></div>
-                        </div>
-                        <div class="detail-item" x-show="selected.source">
-                            <div class="dl">Source</div>
-                            <div class="dv" x-text="selected.source"></div>
-                        </div>
-                        <template x-for="(val, key) in extraDetails" :key="key">
-                            <div class="detail-item" x-show="val && key !== 'description'">
-                                <div class="dl" x-text="key"></div>
-                                <div class="dv" x-text="val"></div>
+                    <!-- Modal Tabs -->
+                    <div class="modal-tabs">
+                        <button class="modal-tab" :class="{ active: modalTab === 'details' }" @click="modalTab = 'details'">Details</button>
+                        <button class="modal-tab" :class="{ active: modalTab === 'report' }" @click="modalTab = 'report'">AI Report</button>
+                    </div>
+
+                    <!-- Details Tab -->
+                    <div x-show="modalTab === 'details'">
+                        <div class="modal-details">
+                            <div class="detail-item" x-show="selected.year">
+                                <div class="dl">Year</div>
+                                <div class="dv" x-text="selected.year"></div>
                             </div>
-                        </template>
+                            <div class="detail-item" x-show="selected.mileage">
+                                <div class="dl">Mileage</div>
+                                <div class="dv" x-text="selected.mileage ? selected.mileage.toLocaleString() + ' mi' : '-'"></div>
+                            </div>
+                            <div class="detail-item" x-show="selected.location">
+                                <div class="dl">Location</div>
+                                <div class="dv" x-text="selected.location"></div>
+                            </div>
+                            <div class="detail-item" x-show="selected.source">
+                                <div class="dl">Source</div>
+                                <div class="dv" x-text="selected.source"></div>
+                            </div>
+                            <template x-for="(val, key) in extraDetails" :key="key">
+                                <div class="detail-item" x-show="val && key !== 'description'">
+                                    <div class="dl" x-text="key"></div>
+                                    <div class="dv" x-text="val"></div>
+                                </div>
+                            </template>
+                        </div>
+
+                        <div class="detail-loading" x-show="detailLoading">Loading additional details...</div>
+
+                        <div x-show="extraDetails.description">
+                            <div class="modal-desc"
+                                 :class="{ 'collapsed': descCollapsed && extraDetails.description && extraDetails.description.length > 200 }"
+                                 x-html="formatDescription(extraDetails.description)"></div>
+                            <button x-show="extraDetails.description && extraDetails.description.length > 200"
+                                    class="desc-toggle"
+                                    @click="descCollapsed = !descCollapsed"
+                                    x-text="descCollapsed ? '[ Show Full Description ]' : '[ Collapse Description ]'"></button>
+                        </div>
+
+                        <a class="btn-listing" :href="selected.url" target="_blank" rel="noopener">
+                            View Full Listing &rarr;
+                        </a>
                     </div>
 
-                    <div class="detail-loading" x-show="detailLoading">Loading additional details...</div>
+                    <!-- AI Report Tab (Unified) -->
+                    <div x-show="modalTab === 'report'" class="ai-intel">
+                        <!-- Loading state -->
+                        <div class="ai-scanning" x-show="reviewLoading && safetyLoading">
+                            <div class="ai-scanning-text">Scanning Target...</div>
+                        </div>
 
-                    <div x-show="extraDetails.description">
-                        <div class="modal-desc"
-                             :class="{ 'collapsed': descCollapsed && extraDetails.description && extraDetails.description.length > 200 }"
-                             x-html="formatDescription(extraDetails.description)"></div>
-                        <button x-show="extraDetails.description && extraDetails.description.length > 200"
-                                class="desc-toggle"
-                                @click="descCollapsed = !descCollapsed"
-                                x-text="descCollapsed ? '[ Show Full Description ]' : '[ Collapse Description ]'"></button>
+                        <!-- AI Review Section -->
+                        <div x-show="!reviewLoading">
+                            <div x-show="currentReview">
+                                <div class="ai-summary" x-text="currentReview ? currentReview.summary : ''"></div>
+                                <template x-if="currentReview && currentReview.price_verdict">
+                                    <span class="price-verdict" :class="'deal-' + (currentReview.price_verdict === 'great_deal' ? 'great' : currentReview.price_verdict === 'good_deal' ? 'good' : currentReview.price_verdict === 'fair' ? 'fair' : currentReview.price_verdict === 'above_market' ? 'above' : 'over')" x-text="(currentReview.price_verdict || '').replace(/_/g, ' ')"></span>
+                                </template>
+                                <div class="ai-pros-cons">
+                                    <div>
+                                        <div class="ai-list-title">Pros</div>
+                                        <ul class="ai-list pros">
+                                            <template x-for="p in (currentReview ? currentReview.pros || [] : [])" :key="p"><li x-text="p"></li></template>
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <div class="ai-list-title">Cons</div>
+                                        <ul class="ai-list cons">
+                                            <template x-for="c in (currentReview ? currentReview.cons || [] : [])" :key="c"><li x-text="c"></li></template>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div x-show="currentReview && currentReview.reliability_rating" style="margin-bottom:0.75rem;">
+                                    <div class="ai-list-title">Reliability <span x-text="currentReview ? currentReview.reliability_rating + '/5' : ''"></span></div>
+                                    <div class="reliability-bar"><div class="reliability-fill" :style="'width:' + (currentReview ? currentReview.reliability_rating * 20 : 0) + '%; background: linear-gradient(90deg, oklch(0.65 0.25 27), oklch(0.65 0.2 130));'"></div></div>
+                                </div>
+                                <div x-show="currentReview && currentReview.fair_price_assessment" style="font-size:0.8rem; line-height:1.6; margin-bottom:0.75rem; color:var(--muted-foreground);" x-text="currentReview ? currentReview.fair_price_assessment : ''"></div>
+                                <details class="ai-issues" x-show="currentReview && currentReview.known_issues && currentReview.known_issues.length > 0">
+                                    <summary>Known Issues</summary>
+                                    <ul><template x-for="issue in (currentReview ? currentReview.known_issues || [] : [])" :key="issue"><li x-text="issue"></li></template></ul>
+                                </details>
+                                <div x-show="currentReview && currentReview.cost_to_own_notes" style="font-size:0.75rem; line-height:1.5; color:var(--muted-foreground); margin-bottom:0.75rem;">
+                                    <div class="ai-list-title">Cost to Own</div>
+                                    <span x-text="currentReview ? currentReview.cost_to_own_notes : ''"></span>
+                                </div>
+                                <!-- Research Links -->
+                                <div x-show="currentReview && currentReview.sources && currentReview.sources.length > 0" style="margin-bottom:0.75rem;">
+                                    <div class="ai-list-title">Research Links</div>
+                                    <div style="display:flex; flex-direction:column; gap:0.3rem;">
+                                        <template x-for="src in (currentReview ? currentReview.sources || [] : [])" :key="src.url || src">
+                                            <a :href="src.url || src" target="_blank" rel="noopener" class="research-link" x-text="src.title || src.url || src"></a>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                            <div x-show="!currentReview && reviewError" style="text-align:center; padding:1rem; font-size:0.8rem; color:var(--muted-foreground);" x-text="reviewError"></div>
+                            <div x-show="reviewLoading && !safetyLoading" class="ai-scanning"><div class="ai-scanning-text">Loading AI Review...</div></div>
+                        </div>
+
+                        <!-- Divider -->
+                        <div x-show="(currentReview || reviewError) && !safetyLoading" style="border-top:1px solid var(--border); margin:0.75rem 0;"></div>
+
+                        <!-- NHTSA Safety Section -->
+                        <div x-show="safetyLoading && !reviewLoading" class="ai-scanning"><div class="ai-scanning-text">Loading Safety Data...</div></div>
+                        <div x-show="!safetyLoading">
+                            <div x-show="currentSafety">
+                                <div class="ai-list-title">NHTSA Safety Rating</div>
+                                <div class="safety-stars">
+                                    <template x-for="i in 5" :key="'star'+i">
+                                        <svg class="safety-star" viewBox="0 0 24 24" :fill="i <= (currentSafety && currentSafety.safety ? parseInt(currentSafety.safety.overall_rating) || 0 : 0) ? '#ffaa00' : 'none'" stroke="#ffaa00" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                    </template>
+                                </div>
+                                <div class="safety-stat"><span class="s-label">Recalls</span><span class="s-val" x-text="currentSafety ? currentSafety.recall_count : '-'"></span></div>
+                                <div class="safety-stat"><span class="s-label">Complaints</span><span class="s-val" x-text="currentSafety ? currentSafety.complaint_count : '-'"></span></div>
+                                <template x-if="currentSafety && currentSafety.recalls && currentSafety.recalls.length > 0">
+                                    <details class="ai-issues" style="margin-top:0.75rem;">
+                                        <summary>Recall Details</summary>
+                                        <ul><template x-for="r in currentSafety.recalls" :key="r.summary"><li><strong x-text="r.component"></strong>: <span x-text="r.summary"></span></li></template></ul>
+                                    </details>
+                                </template>
+                                <a x-show="currentSafety && currentSafety.nhtsa_url" :href="currentSafety ? currentSafety.nhtsa_url : '#'" target="_blank" rel="noopener" style="display:inline-block; margin-top:0.5rem; font-size:0.75rem; color:var(--primary);">View on NHTSA.gov</a>
+                            </div>
+                            <div x-show="!currentSafety && safetyError" style="text-align:center; padding:0.75rem; font-size:0.8rem; color:var(--muted-foreground);" x-text="safetyError"></div>
+                        </div>
+
+                        <!-- Ask AI Button -->
+                        <button x-show="!reviewLoading && !safetyLoading" @click="if (!chatTyping) { chatOpen = true; $nextTick(() => sendChat('Tell me everything about this ' + (selected ? selected.title.replace(/\*/g, ' ').trim() : 'vehicle') + ' — is it a good deal?')); }" style="display:block; width:100%; margin-top:1rem; padding:0.6rem; background:linear-gradient(135deg, oklch(0.55 0.22 27), oklch(0.40 0.18 20)); color:#fff; border:1px solid oklch(0.65 0.25 35); font-family:'Oxanium',sans-serif; font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; cursor:pointer;">
+                            Ask AI About This Car
+                        </button>
                     </div>
-
-                    <a class="btn-listing" :href="selected.url" target="_blank" rel="noopener">
-                        View Full Listing &rarr;
-                    </a>
                 </div>
             </div>
         </div>
@@ -1575,8 +1835,35 @@
             detailLoading: false,
             extraDetails: {},
             descCollapsed: true,
+            modalTab: 'details',
             sourceInfo: [],
             darkMode: false,
+
+            // AI features
+            reviewCache: {},
+            reviewLoading: false,
+            reviewError: null,
+            currentReview: null,
+            safetyCache: {},
+            safetyLoading: false,
+            safetyError: null,
+            currentSafety: null,
+
+            // Chat
+            chatOpen: false,
+            chatMessages: [],
+            chatInput: '',
+            chatTyping: false,
+            chatHistory: [],
+            chatTimeout: null,
+
+            // Market analysis
+            marketSummary: null,
+            marketLoading: false,
+            marketExpanded: false,
+
+            // Deal badges
+            dealBadges: {},
 
             // Doom state
             isShaking: false,
@@ -1673,6 +1960,10 @@
                 if (localStorage.getItem('mvf-sound') === '0') {
                     this.soundEnabled = false;
                 }
+
+                // Welcome message in chat
+                this.chatMessages.push({ role: 'ai', text: 'Welcome to the AI Advisor. I can help you find the best deals, compare vehicles, check reliability, and answer any car-buying questions. Search for vehicles or ask me anything to get started.' });
+
                 const priceMap = { '50000': 'easy', '20000': 'medium', '10000': 'hard', '5000': 'nightmare' };
                 this.selectedDifficulty = priceMap[this.params.max_price] || 'medium';
 
@@ -1937,6 +2228,254 @@
                     'Cars.com': 'carscom',
                     'AutoTrader': 'autotrader',
                 }[name] || 'craigslist';
+            },
+
+            // --- Vehicle info parser ---
+
+            _parseVehicleInfo(v) {
+                // Try search params first, then parse from title
+                let make = this.params.make || '';
+                let model = this.params.model || '';
+                let year = v.year || '';
+
+                // If make/model missing from params, try to parse from title
+                if ((!make || !model) && v.title) {
+                    const title = v.title.replace(/\*/g, ' ').replace(/[^a-zA-Z0-9\s-]/g, ' ').replace(/\s+/g, ' ').trim();
+                    const words = title.split(' ');
+
+                    // Find year (4-digit number between 1990-2030)
+                    if (!year) {
+                        for (const w of words) {
+                            const n = parseInt(w);
+                            if (n >= 1990 && n <= 2030) { year = String(n); break; }
+                        }
+                    }
+
+                    // Try to match make from our known makes list
+                    if (!make) {
+                        for (const m of this.makes) {
+                            if (title.toLowerCase().includes(m.toLowerCase())) {
+                                make = m;
+                                break;
+                            }
+                        }
+                    }
+
+                    // Try to find model after the make
+                    if (make && !model) {
+                        const makeIdx = title.toLowerCase().indexOf(make.toLowerCase());
+                        if (makeIdx >= 0) {
+                            const afterMake = title.substring(makeIdx + make.length).trim();
+                            const modelWords = afterMake.split(/[\s*,]+/);
+                            if (modelWords[0] && modelWords[0].length > 1) {
+                                // Check known models first
+                                const knownModels = this.modelsByMake[make] || [];
+                                let foundModel = '';
+                                for (const km of knownModels) {
+                                    if (afterMake.toLowerCase().startsWith(km.toLowerCase())) {
+                                        foundModel = km;
+                                        break;
+                                    }
+                                }
+                                model = foundModel || modelWords[0];
+                            }
+                        }
+                    }
+                }
+                return { make, model, year };
+            },
+
+            // --- AI Feature Methods ---
+
+            _cacheGet(key) {
+                try {
+                    const raw = localStorage.getItem('mvf-' + key);
+                    if (!raw) return null;
+                    const entry = JSON.parse(raw);
+                    if (Date.now() - entry.ts > 24 * 60 * 60 * 1000) {
+                        localStorage.removeItem('mvf-' + key);
+                        return null;
+                    }
+                    return entry.data;
+                } catch (e) { return null; }
+            },
+
+            _cacheSet(key, data) {
+                try {
+                    localStorage.setItem('mvf-' + key, JSON.stringify({ ts: Date.now(), data }));
+                } catch (e) { /* quota exceeded, ignore */ }
+            },
+
+            async fetchReview() {
+                if (!this.selected) return;
+                const v = this.selected;
+                const info = this._parseVehicleInfo(v);
+                const make = info.make;
+                const model = info.model;
+                const year = info.year;
+                if (!make || !model || !year) { this.reviewError = 'Could not identify vehicle make, model, or year.'; return; }
+                const key = 'review_' + (make + '_' + model + '_' + year).toLowerCase();
+                if (this.reviewCache[key]) { this.currentReview = this.reviewCache[key]; return; }
+                const cached = this._cacheGet(key);
+                if (cached) { this.reviewCache[key] = cached; this.currentReview = cached; return; }
+                this.reviewLoading = true; this.reviewError = null; this.currentReview = null;
+                try {
+                    const resp = await fetch('/api/review', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ make, model, year: parseInt(year), price: v.price, mileage: v.mileage || 0 })
+                    });
+                    const data = await resp.json();
+                    if (data.success !== false && data.review) {
+                        this.reviewCache[key] = data.review;
+                        this._cacheSet(key, data.review);
+                        this.currentReview = data.review;
+                    } else {
+                        this.reviewError = data.error || 'Could not load AI review.';
+                    }
+                } catch(e) { this.reviewError = 'AI review service unavailable.'; }
+                finally { this.reviewLoading = false; }
+            },
+
+            async fetchSafety() {
+                if (!this.selected) return;
+                const v = this.selected;
+                const info = this._parseVehicleInfo(v);
+                const make = info.make;
+                const model = info.model;
+                const year = info.year;
+                if (!make || !model || !year) { this.safetyError = 'Could not identify vehicle make, model, or year.'; return; }
+                const key = 'safety_' + (make + '_' + model + '_' + year).toLowerCase();
+                if (this.safetyCache[key]) { this.currentSafety = this.safetyCache[key]; return; }
+                const cached = this._cacheGet(key);
+                if (cached) { this.safetyCache[key] = cached; this.currentSafety = cached; return; }
+                this.safetyLoading = true; this.safetyError = null; this.currentSafety = null;
+                try {
+                    const resp = await fetch('/api/safety?make=' + encodeURIComponent(make) + '&model=' + encodeURIComponent(model) + '&year=' + encodeURIComponent(year));
+                    const data = await resp.json();
+                    if (data.success !== false) {
+                        this.safetyCache[key] = data;
+                        this._cacheSet(key, data);
+                        this.currentSafety = data;
+                    } else {
+                        this.safetyError = data.error || 'Could not load safety data.';
+                    }
+                } catch(e) { this.safetyError = 'Safety data service unavailable.'; }
+                finally { this.safetyLoading = false; }
+            },
+
+            get chatChips() {
+                if (this.selected) {
+                    return ['Is this a good deal?', 'Known issues?', 'Negotiate tips', 'Similar alternatives?'];
+                }
+                if (this.allResults.length > 0) {
+                    return ['Which is the best deal?', 'Compare top 3', 'Any red flags?', 'Best value pick?'];
+                }
+                return ['Reliable SUVs under $20k?', 'Best value sedans?', 'What should I look for?', 'Milwaukee market tips?'];
+            },
+
+            async sendChat(text) {
+                if (!text || !text.trim()) return;
+                const msg = text.trim();
+                this.chatInput = '';
+                this.chatMessages.push({ role: 'user', text: msg });
+                this.chatTyping = true;
+                this.$nextTick(() => { if (this.$refs.chatMessages) this.$refs.chatMessages.scrollTop = this.$refs.chatMessages.scrollHeight; });
+
+                // Build messages array and context for the backend API
+                this.chatHistory.push({ role: 'user', content: msg });
+                const context = {};
+                if (this.selected) {
+                    const vInfo = this._parseVehicleInfo(this.selected);
+                    context.current_vehicle = {
+                        title: this.selected.title,
+                        price: this.selected.price,
+                        year: this.selected.year,
+                        mileage: this.selected.mileage,
+                        source: this.selected.source,
+                        make: vInfo.make,
+                        model: vInfo.model,
+                    };
+                }
+                if (this.allResults.length > 0) {
+                    context.search_results_summary = {
+                        total: this.allResults.length,
+                        avg_price: this.avgPrice,
+                        min_price: this.bestDeal,
+                        make: this.params.make || '',
+                        model: this.params.model || '',
+                    };
+                    context.top_vehicles = this.filtered.slice(0, 5).map(v => ({
+                        title: v.title, price: v.price, year: v.year, mileage: v.mileage, source: v.source
+                    }));
+                }
+
+                // 45-second timeout (Gemini can be slow on cold starts)
+                const controller = new AbortController();
+                this.chatTimeout = setTimeout(() => {
+                    controller.abort();
+                }, 45000);
+
+                try {
+                    const resp = await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ messages: this.chatHistory, context }),
+                        signal: controller.signal
+                    });
+                    clearTimeout(this.chatTimeout);
+                    if (resp.status === 429) {
+                        this.chatTyping = false;
+                        this.chatMessages.push({ role: 'ai', text: 'Rate limit reached. Please wait a moment before sending another message.', isError: true });
+                        this.chatHistory.pop();
+                        return;
+                    }
+                    if (resp.status === 401 || resp.status === 403) {
+                        this.chatTyping = false;
+                        this.chatMessages.push({ role: 'ai', text: 'AI chat is not configured. The API key may be missing. Basic vehicle search still works.', isError: true });
+                        this.chatHistory.pop();
+                        return;
+                    }
+                    const data = await resp.json();
+                    if (data.error) {
+                        this.chatTyping = false;
+                        this.chatMessages.push({ role: 'ai', text: data.error, isError: true });
+                        this.chatHistory.pop();
+                        return;
+                    }
+                    const fullText = data.response || data.message || 'No response received.';
+                    this.chatTyping = false;
+                    this.chatHistory.push({ role: 'assistant', content: fullText });
+                    this.chatMessages.push({ role: 'ai', text: '' });
+                    const idx = this.chatMessages.length - 1;
+                    for (let i = 0; i < fullText.length; i++) {
+                        await new Promise(r => setTimeout(r, 15));
+                        this.chatMessages[idx].text = fullText.substring(0, i + 1);
+                        if (i % 10 === 0 && this.$refs.chatMessages) this.$refs.chatMessages.scrollTop = this.$refs.chatMessages.scrollHeight;
+                    }
+                } catch(e) {
+                    clearTimeout(this.chatTimeout);
+                    this.chatTyping = false;
+                    if (e.name === 'AbortError') {
+                        this.chatMessages.push({ role: 'ai', text: 'Request timed out. The AI service may be loading. Please try again in a moment.', isError: true });
+                    } else {
+                        this.chatMessages.push({ role: 'ai', text: 'Chat service unavailable. Please try again.', isError: true });
+                    }
+                    this.chatHistory.pop();
+                }
+                if (this.$refs.chatMessages) this.$refs.chatMessages.scrollTop = this.$refs.chatMessages.scrollHeight;
+            },
+
+            renderMarkdown(text) {
+                if (!text) return '';
+                let s = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                s = s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+                s = s.replace(/\*(.+?)\*/g, '<em>$1</em>');
+                s = s.replace(/^[-*] (.+)$/gm, '<li>$1</li>');
+                s = s.replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>');
+                s = s.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank" rel="noopener" style="color:var(--primary);">$1</a>');
+                s = s.replace(/\n/g, '<br>');
+                return s;
             },
 
             formatDescription(text) {
@@ -2717,6 +3256,9 @@
                 this.filtered = [];
                 this.sourceInfo = [];
                 this.activeSource = 'all';
+                this.marketSummary = null;
+                this.marketLoading = false;
+                this.dealBadges = {};
 
                 const body = {
                     make: this.params.make,
@@ -2750,6 +3292,9 @@
                             this.triggerStatPop();
                         }
                         this.checkAchievements();
+                        // Trigger AI market analysis and deal badges
+                        this.fetchMarketSummary();
+                        this.$nextTick(() => this.fetchDealBadges());
                     } else {
                         this.error = data.error || 'Search failed. Please try again.';
                         this.hudState = 'error';
@@ -2776,7 +3321,16 @@
                 this.modalImgIdx = 0;
                 this.extraDetails = {};
                 this.detailLoading = true;
+                this.modalTab = 'details';
+                this.currentReview = null;
+                this.reviewError = null;
+                this.currentSafety = null;
+                this.safetyError = null;
                 document.body.style.overflow = 'hidden';
+
+                // Auto-fetch AI review and safety data in background
+                this.fetchReview();
+                this.fetchSafety();
 
                 this.modalImages = vehicle.image_url ? [vehicle.image_url] : [];
 
@@ -2818,7 +3372,80 @@
                 this.modalImages = [];
                 this.extraDetails = {};
                 this.descCollapsed = true;
+                this.modalTab = 'details';
                 document.body.style.overflow = '';
+            },
+
+            async fetchMarketSummary() {
+                if (this.allResults.length === 0) return;
+                this.marketLoading = true;
+                this.marketExpanded = true;
+                try {
+                    const resp = await fetch('/api/analyze', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            vehicles: this.allResults.slice(0, 20).map(v => ({
+                                title: v.title, price: v.price, year: v.year, mileage: v.mileage, source: v.source
+                            })),
+                            make: this.params.make,
+                            model: this.params.model,
+                            total_count: this.allResults.length
+                        })
+                    });
+                    if (resp.ok) {
+                        const data = await resp.json();
+                        if (data && data.analysis) {
+                            this.marketSummary = data.analysis;
+                        }
+                    }
+                } catch (e) {
+                    console.error('Market analysis failed:', e);
+                } finally {
+                    this.marketLoading = false;
+                }
+            },
+
+            async fetchDealBadges() {
+                if (this.allResults.length === 0) return;
+                const top = this.filtered.slice(0, 6);
+                for (const v of top) {
+                    if (this.dealBadges[v.id]) continue;
+                    try {
+                        const info = this._parseVehicleInfo(v);
+                        const make = info.make;
+                        const model = info.model;
+                        const year = info.year;
+                        if (!make || !model || !year) continue;
+                        const key = 'review_' + (make + '_' + model + '_' + year).toLowerCase();
+                        let review = this.reviewCache[key] || this._cacheGet(key);
+                        if (!review) {
+                            const resp = await fetch('/api/review', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ make, model, year: parseInt(year), price: v.price, mileage: v.mileage || 0 })
+                            });
+                            const data = await resp.json();
+                            if (data.success !== false && data.review) {
+                                review = data.review;
+                                this.reviewCache[key] = review;
+                                this._cacheSet(key, review);
+                            }
+                        }
+                        if (review && review.price_verdict) {
+                            const verdictMap = {
+                                'great_deal': 'Great Deal',
+                                'good_deal': 'Good Deal',
+                                'fair': 'Fair',
+                                'above_market': 'Above Market',
+                                'overpriced': 'Overpriced'
+                            };
+                            this.dealBadges[v.id] = verdictMap[review.price_verdict] || review.price_verdict.replace(/_/g, ' ');
+                        }
+                    } catch (e) {
+                        // Skip failed badge fetches silently
+                    }
+                }
             },
         };
     }
