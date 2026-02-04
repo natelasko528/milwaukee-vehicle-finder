@@ -1690,6 +1690,10 @@
                     <span class="source-tag" :class="'badge-' + sourceKey(selected.source)" x-text="selected.source"></span>
                     <h2 id="modal-title" x-text="selected.title"></h2>
                     <div class="price" x-text="'$' + selected.price.toLocaleString()"></div>
+                    <button class="ask-car-btn" @click="chatOpen = true; sendChat('Tell me about this ' + selected.title + ' listed at $' + selected.price.toLocaleString())" style="display:inline-flex;align-items:center;gap:0.4rem;margin:0.5rem 0;padding:0.4rem 0.8rem;background:var(--primary);color:var(--primary-foreground);border:none;border-radius:4px;cursor:pointer;font-size:0.8rem;font-family:inherit;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        Ask AI about this car
+                    </button>
 
                     <!-- Modal Tabs -->
                     <div class="modal-tabs">
@@ -1783,11 +1787,13 @@
                                     <span x-text="currentReview ? currentReview.cost_to_own_notes : ''"></span>
                                 </div>
                                 <!-- Research Links -->
-                                <div x-show="currentReview && currentReview.sources && currentReview.sources.length > 0" style="margin-bottom:0.75rem;">
-                                    <div class="ai-list-title">Research Links</div>
-                                    <div style="display:flex; flex-direction:column; gap:0.3rem;">
-                                        <template x-for="src in (currentReview ? currentReview.sources || [] : [])" :key="src.url || src">
-                                            <a :href="src.url || src" target="_blank" rel="noopener" class="research-link" x-text="src.title || src.url || src"></a>
+                                <div x-show="currentReview && currentReview.sources && currentReview.sources.length > 0" style="margin-top:1rem;padding-top:0.75rem;border-top:1px solid var(--border);">
+                                    <h4 style="font-size:0.85rem;margin-bottom:0.5rem;color:var(--muted-foreground);">Research Links</h4>
+                                    <div style="display:flex;flex-wrap:wrap;gap:0.4rem;">
+                                        <template x-for="src in (currentReview ? currentReview.sources || [] : [])" :key="src.url">
+                                            <a :href="src.url" target="_blank" rel="noopener noreferrer"
+                                               style="display:inline-flex;align-items:center;gap:0.3rem;padding:0.25rem 0.6rem;background:var(--muted);color:var(--foreground);border-radius:4px;font-size:0.75rem;text-decoration:none;"
+                                               x-text="src.name || src.url.split('/')[2]"></a>
                                         </template>
                                     </div>
                                 </div>
@@ -1873,6 +1879,7 @@
             // Market analysis
             marketSummary: null,
             marketLoading: false,
+            marketError: null,
             marketExpanded: false,
 
             // Deal badges
@@ -3391,12 +3398,16 @@
 
             async fetchMarketSummary() {
                 if (this.allResults.length === 0) return;
+                this.marketError = null;
                 this.marketLoading = true;
                 this.marketExpanded = true;
+                const controller = new AbortController();
+                const timeout = setTimeout(() => controller.abort(), 30000);
                 try {
                     const resp = await fetch('/api/analyze', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
+                        signal: controller.signal,
                         body: JSON.stringify({
                             vehicles: this.allResults.slice(0, 20).map(v => ({
                                 title: v.title, price: v.price, year: v.year, mileage: v.mileage, source: v.source
@@ -3406,6 +3417,7 @@
                             total_count: this.allResults.length
                         })
                     });
+                    clearTimeout(timeout);
                     if (resp.ok) {
                         const data = await resp.json();
                         if (data && data.analysis) {
@@ -3413,6 +3425,11 @@
                         }
                     }
                 } catch (e) {
+                    if (e.name === 'AbortError') {
+                        this.marketError = 'Market analysis timed out. Try again later.';
+                    } else {
+                        this.marketError = 'Market analysis unavailable.';
+                    }
                     console.error('Market analysis failed:', e);
                 } finally {
                     this.marketLoading = false;
@@ -3421,43 +3438,55 @@
 
             async fetchDealBadges() {
                 if (this.allResults.length === 0) return;
-                const top = this.filtered.slice(0, 6);
-                for (const v of top) {
-                    if (this.dealBadges[v.id]) continue;
-                    try {
-                        const info = this._parseVehicleInfo(v);
-                        const make = info.make;
-                        const model = info.model;
-                        const year = info.year;
-                        if (!make || !model || !year) continue;
-                        const key = 'review_' + (make + '_' + model + '_' + year).toLowerCase();
-                        let review = this.reviewCache[key] || this._cacheGet(key);
-                        if (!review) {
-                            const resp = await fetch('/api/review', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ make, model, year: parseInt(year), price: v.price, mileage: v.mileage || 0 })
-                            });
-                            const data = await resp.json();
-                            if (data.success !== false && data.review) {
-                                review = data.review;
-                                this.reviewCache[key] = review;
-                                this._cacheSet(key, review);
-                            }
-                        }
-                        if (review && review.price_verdict) {
-                            const verdictMap = {
-                                'great_deal': 'Great Deal',
-                                'good_deal': 'Good Deal',
-                                'fair': 'Fair',
-                                'above_market': 'Above Market',
-                                'overpriced': 'Overpriced'
-                            };
-                            this.dealBadges[v.id] = verdictMap[review.price_verdict] || review.price_verdict.replace(/_/g, ' ');
-                        }
-                    } catch (e) {
-                        // Skip failed badge fetches silently
+                const sorted = [...this.filtered].sort((a, b) => a.price - b.price);
+                const top = sorted.slice(0, 10);
+
+                // Process in batches of 3
+                for (let i = 0; i < top.length; i += 3) {
+                    const batch = top.slice(i, i + 3);
+                    await Promise.all(batch.map(v => this._fetchSingleBadge(v)));
+                    // Delay between batches (not after last)
+                    if (i + 3 < top.length) {
+                        await new Promise(r => setTimeout(r, 1000));
                     }
+                }
+            },
+
+            async _fetchSingleBadge(v) {
+                if (this.dealBadges[v.id]) return;
+                try {
+                    const info = this._parseVehicleInfo(v);
+                    const make = info.make;
+                    const model = info.model;
+                    const year = info.year;
+                    if (!make || !model || !year) return;
+                    const key = 'review_' + (make + '_' + model + '_' + year).toLowerCase();
+                    let review = this.reviewCache[key] || this._cacheGet(key);
+                    if (!review) {
+                        const resp = await fetch('/api/review', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ make, model, year: parseInt(year), price: v.price, mileage: v.mileage || 0 })
+                        });
+                        const data = await resp.json();
+                        if (data.success !== false && data.review) {
+                            review = data.review;
+                            this.reviewCache[key] = review;
+                            this._cacheSet(key, review);
+                        }
+                    }
+                    if (review && review.price_verdict) {
+                        const verdictMap = {
+                            'great_deal': 'Great Deal',
+                            'good_deal': 'Good Deal',
+                            'fair': 'Fair',
+                            'above_market': 'Above Market',
+                            'overpriced': 'Overpriced'
+                        };
+                        this.dealBadges[v.id] = verdictMap[review.price_verdict] || review.price_verdict.replace(/_/g, ' ');
+                    }
+                } catch (e) {
+                    // Skip failed badge fetches silently
                 }
             },
         };
