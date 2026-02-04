@@ -1,0 +1,369 @@
+{
+  "project": "Milwaukee Vehicle Finder - Production Readiness",
+  "branchName": "feature/production-readiness",
+  "description": "Take the app from MVP (54% PRD compliance) to production-ready with security fixes, AI wiring, testing, and performance improvements.",
+  "tasks": [
+    {
+      "id": "TASK-001",
+      "title": "Add input validation to search endpoint",
+      "description": "Wrap all int() conversions in api/search/index.py lines 397-400 with try/except. Validate year range (1990-2030), reject negative prices/mileage, return HTTP 400 on invalid input.",
+      "acceptanceCriteria": [
+        "int() conversions for max_price, max_mileage, min_year, max_year wrapped in try/except",
+        "Invalid types return HTTP 400 with descriptive error message",
+        "Year range validated: 1990-2030",
+        "Negative price/mileage rejected",
+        "Non-numeric ZIP code returns 400",
+        "Tests pass"
+      ],
+      "priority": 1,
+      "status": "pending",
+      "phase": "Phase 1: Security & Stability",
+      "notes": "Critical: unvalidated int() can crash handler with ValueError"
+    },
+    {
+      "id": "TASK-002",
+      "title": "Add input validation to review and safety endpoints",
+      "description": "Wrap int() conversion in api/review.py line 214 and api/safety.py line 168 with try/except. Return HTTP 400 for invalid year values.",
+      "acceptanceCriteria": [
+        "review.py int(year) wrapped in try/except with 400 response",
+        "safety.py int(year) wrapped in try/except with 400 response",
+        "Invalid year returns descriptive error message",
+        "Tests pass"
+      ],
+      "priority": 2,
+      "status": "pending",
+      "phase": "Phase 1: Security & Stability",
+      "notes": "Same pattern as TASK-001 applied to other endpoints"
+    },
+    {
+      "id": "TASK-003",
+      "title": "Add SSRF protection to details endpoint",
+      "description": "Add URL domain whitelist to api/details.py lines 282-290. Only allow craigslist.org, cargurus.com, cars.com, autotrader.com. Restrict to https:// scheme. Block private IP ranges.",
+      "acceptanceCriteria": [
+        "Domain whitelist enforced: only 4 automotive domains allowed",
+        "Scheme restricted to https:// only",
+        "Invalid URLs return HTTP 400 with 'URL not allowed' message",
+        "Private/internal IP ranges blocked",
+        "Tests pass"
+      ],
+      "priority": 3,
+      "status": "pending",
+      "phase": "Phase 1: Security & Stability",
+      "notes": "SSRF vulnerability allows attackers to use endpoint as proxy"
+    },
+    {
+      "id": "TASK-004",
+      "title": "Fix accessibility: color contrast",
+      "description": "Update CSS variables in index.html lines 15-62 to achieve WCAG AA 4.5:1 contrast ratio on all interactive elements. Update primary button colors (line 430), form labels (line 517-521), and muted text colors.",
+      "acceptanceCriteria": [
+        "Primary color updated to achieve 4.5:1 contrast on backgrounds",
+        "Muted foreground text achieves 4.5:1 contrast",
+        "Form labels achieve 4.5:1 contrast",
+        "Button text on primary background achieves 4.5:1 contrast",
+        "Dark mode colors also meet 4.5:1 contrast",
+        "Verify in browser with axe DevTools"
+      ],
+      "priority": 4,
+      "status": "pending",
+      "phase": "Phase 1: Security & Stability",
+      "notes": "WCAG AA compliance is a legal requirement"
+    },
+    {
+      "id": "TASK-005",
+      "title": "Fix accessibility: ARIA labels and modal",
+      "description": "Add aria-label to all icon buttons (sound toggle, theme toggle, close buttons, chat FAB). Add role=dialog, aria-labelledby, and focus trap to vehicle modal. Add for attributes to form labels.",
+      "acceptanceCriteria": [
+        "aria-label on sound toggle (line 1278), theme toggle (line 1282), chat FAB (line 1615), close buttons",
+        "Modal has role='dialog' and aria-labelledby (line 1650)",
+        "Focus trapped inside modal when open",
+        "Form labels have 'for' attributes linked to input IDs (lines 1315-1379)",
+        "Verify in browser with screen reader or axe DevTools"
+      ],
+      "priority": 5,
+      "status": "pending",
+      "phase": "Phase 1: Security & Stability",
+      "notes": "Depends on TASK-004 for contrast; can be done in parallel"
+    },
+    {
+      "id": "TASK-006",
+      "title": "Add prefers-reduced-motion media query",
+      "description": "Add CSS media query to disable all animations (screenShake, redFlash, glitch, scanlines) when user has prefers-reduced-motion enabled.",
+      "acceptanceCriteria": [
+        "@media (prefers-reduced-motion: reduce) added near line 12 in index.html",
+        "All animation-duration set to 0.01ms in reduced motion",
+        "Scanlines overlay hidden in reduced motion",
+        "Screen shake disabled in reduced motion",
+        "Verify in browser with reduced motion enabled"
+      ],
+      "priority": 6,
+      "status": "pending",
+      "phase": "Phase 1: Security & Stability",
+      "notes": "Motion hazard for vestibular disorders and photosensitive epilepsy"
+    },
+    {
+      "id": "TASK-007",
+      "title": "Auto-trigger market analysis after search",
+      "description": "Add call to fetchMarketSummary() in the search() method after results load. Add 30-second timeout. Show error state if analysis fails instead of infinite spinner.",
+      "acceptanceCriteria": [
+        "fetchMarketSummary() called automatically after search results populate",
+        "30-second AbortController timeout on the fetch",
+        "Loading state shows 'Analyzing market...'",
+        "Timeout shows 'Analysis timed out' message",
+        "API failure shows 'Analysis unavailable' (not empty panel)",
+        "Verify in browser"
+      ],
+      "priority": 7,
+      "status": "pending",
+      "phase": "Phase 2: AI Feature Wiring",
+      "notes": "Market panel is currently always empty because endpoint is never called"
+    },
+    {
+      "id": "TASK-008",
+      "title": "Auto-fetch review and safety on modal open",
+      "description": "Move fetchReview() and fetchSafety() calls from tab click handlers into openModal(). Data should begin loading immediately when modal opens, not when user clicks AI Intel tab.",
+      "acceptanceCriteria": [
+        "fetchReview() called in openModal() after vehicle data set",
+        "fetchSafety() called in openModal() after vehicle data set",
+        "Loading indicators visible in AI Intel tab while fetching",
+        "If either fails, error message shown in respective section",
+        "Tab still works to switch view (data already loaded or loading)",
+        "Verify in browser"
+      ],
+      "priority": 8,
+      "status": "pending",
+      "phase": "Phase 2: AI Feature Wiring",
+      "notes": "Currently requires manual tab click; PRD requires auto-fetch"
+    },
+    {
+      "id": "TASK-009",
+      "title": "Background deal badge generation",
+      "description": "After search completes, batch-fetch reviews for top 10 vehicles (by lowest price). Fetch in batches of 3 with 1-second delay between batches. Map price_verdict to deal badges on cards.",
+      "acceptanceCriteria": [
+        "After search, top 10 vehicles by price queued for review",
+        "Reviews fetched in batches of 3 with 1s delay between batches",
+        "Deal badges appear on vehicle cards as reviews complete",
+        "Shimmer loading state on cards while badges generating",
+        "If badge fetch fails for a vehicle, no badge shown (silent failure)",
+        "Verify in browser"
+      ],
+      "priority": 9,
+      "status": "pending",
+      "phase": "Phase 2: AI Feature Wiring",
+      "notes": "Depends on review endpoint working; badges are currently never auto-generated"
+    },
+    {
+      "id": "TASK-010",
+      "title": "Dynamic chat chips based on app state",
+      "description": "Replace hardcoded chatChips with computed property. Landing state: general car advice chips. Results state: comparison/deal chips. Modal state: vehicle-specific chips. Auto-inject search context and current vehicle into chat.",
+      "acceptanceCriteria": [
+        "Chat chips change when app is on landing page (no search yet)",
+        "Chat chips change when search results are displayed",
+        "Chat chips change when vehicle modal is open",
+        "Search results summary injected into chat context after search",
+        "Current vehicle context injected when modal open",
+        "Verify in browser"
+      ],
+      "priority": 10,
+      "status": "pending",
+      "phase": "Phase 2: AI Feature Wiring",
+      "notes": "Currently chips are static regardless of state"
+    },
+    {
+      "id": "TASK-011",
+      "title": "Add 'Ask about this car' button to modal",
+      "description": "Add button in vehicle modal that opens chat drawer and pre-fills context with current vehicle details.",
+      "acceptanceCriteria": [
+        "Button visible in modal (near title or in action bar)",
+        "Clicking opens chat drawer",
+        "Current vehicle auto-set as chat context",
+        "Chat chips update to vehicle-specific options",
+        "Verify in browser"
+      ],
+      "priority": 11,
+      "status": "pending",
+      "phase": "Phase 2: AI Feature Wiring",
+      "notes": "Quick win for connecting modal and chat features"
+    },
+    {
+      "id": "TASK-012",
+      "title": "Display research links in AI review tab",
+      "description": "Render the 'sources' array from /api/review response in the modal AI Intel tab. Show links to Edmunds, KBB, NHTSA, Consumer Reports, Reddit.",
+      "acceptanceCriteria": [
+        "Sources section rendered below review content in AI tab",
+        "Each link shows site name and opens in new tab",
+        "Long URLs truncated with tooltip",
+        "Section hidden if no sources returned",
+        "Verify in browser"
+      ],
+      "priority": 12,
+      "status": "pending",
+      "phase": "Phase 2: AI Feature Wiring",
+      "notes": "Links already generated server-side but never displayed"
+    },
+    {
+      "id": "TASK-013",
+      "title": "Add request guards and timeouts to all frontend API calls",
+      "description": "Add duplicate request prevention to search(), sendChat(), openModal(). Add AbortController timeouts to fetchMarketSummary (30s), details fetch (15s), fetchReview (20s), fetchSafety (15s).",
+      "acceptanceCriteria": [
+        "search() returns early if this.loading is true",
+        "sendChat() returns early if this.chatTyping is true",
+        "Market analysis has 30s timeout with error message",
+        "Details fetch has 15s timeout with error message",
+        "Review fetch has 20s timeout with error message",
+        "Safety fetch has 15s timeout with error message"
+      ],
+      "priority": 13,
+      "status": "pending",
+      "phase": "Phase 3: Reliability",
+      "notes": "Chat already has 45s timeout; other endpoints have none"
+    },
+    {
+      "id": "TASK-014",
+      "title": "Add rate limiting to search endpoint",
+      "description": "Add in-memory rate limiting to api/search/index.py: 10 searches/minute per IP. Return HTTP 429 with Retry-After header when exceeded.",
+      "acceptanceCriteria": [
+        "Rate limit store tracks requests per IP",
+        "Limit: 10 requests per minute per IP",
+        "HTTP 429 returned with Retry-After header when exceeded",
+        "Rate limit check runs before scraper execution",
+        "Tests pass"
+      ],
+      "priority": 14,
+      "status": "pending",
+      "phase": "Phase 3: Reliability",
+      "notes": "Search endpoint currently has no rate limiting; each search hits 4 external sites"
+    },
+    {
+      "id": "TASK-015",
+      "title": "Expand .gitignore",
+      "description": "Replace minimal .gitignore with comprehensive version covering Python artifacts, IDE files, OS files, env files, test artifacts.",
+      "acceptanceCriteria": [
+        ".env, .env.local, .env.* patterns added",
+        ".vscode/, .idea/ added",
+        "*.pyc, *.pyo, __pycache__/ covered",
+        ".DS_Store, Thumbs.db added",
+        ".pytest_cache/, .coverage, htmlcov/ added",
+        "venv/, .venv/ added"
+      ],
+      "priority": 15,
+      "status": "pending",
+      "phase": "Phase 4: DevOps",
+      "notes": "Current .gitignore only has __pycache__/"
+    },
+    {
+      "id": "TASK-016",
+      "title": "Pin dependencies and add .env.example",
+      "description": "Pin google-generativeai to exact version in requirements.txt. Create .env.example documenting GOOGLE_API_KEY requirement.",
+      "acceptanceCriteria": [
+        "google-generativeai pinned to exact version (e.g., ==0.8.1)",
+        "All other packages verified at current pinned versions",
+        ".env.example created with GOOGLE_API_KEY=your_key_here",
+        "README updated to reference .env.example"
+      ],
+      "priority": 16,
+      "status": "pending",
+      "phase": "Phase 4: DevOps",
+      "notes": "Loose version pin (>=0.8.0) risks breaking changes"
+    },
+    {
+      "id": "TASK-017",
+      "title": "Add backend unit tests",
+      "description": "Add pytest to dev dependencies. Write tests for _extract_price(), _extract_mileage(), _extract_year(), _year_ok(), input validation, CORS headers, URL whitelist.",
+      "acceptanceCriteria": [
+        "pytest listed in requirements-dev.txt or requirements.txt",
+        "Tests for _extract_price() with valid, invalid, edge case inputs",
+        "Tests for _extract_mileage() with valid, invalid, edge case inputs",
+        "Tests for _extract_year() with valid, invalid, edge case inputs",
+        "Tests for _year_ok() with boundary values",
+        "Tests for input validation (invalid types return 400)",
+        "Tests for URL whitelist (SSRF protection)",
+        "All tests pass"
+      ],
+      "priority": 17,
+      "status": "pending",
+      "phase": "Phase 4: DevOps",
+      "notes": "Currently zero test coverage; focus on critical paths first"
+    },
+    {
+      "id": "TASK-018",
+      "title": "Add CI/CD pipeline",
+      "description": "Create .github/workflows/ci.yml that runs flake8 linting and pytest on push/PR events.",
+      "acceptanceCriteria": [
+        ".github/workflows/ci.yml created",
+        "Runs flake8 on api/ with max-line-length=120",
+        "Runs pytest test suite",
+        "Triggered on push and pull_request events",
+        "Pipeline passes on current codebase"
+      ],
+      "priority": 18,
+      "status": "pending",
+      "phase": "Phase 4: DevOps",
+      "notes": "Depends on TASK-017 for tests to exist"
+    },
+    {
+      "id": "TASK-019",
+      "title": "Defer Three.js initialization",
+      "description": "Move Three.js renderer creation from page load to first weapon fire event. Pause requestAnimationFrame loop when no active particles.",
+      "acceptanceCriteria": [
+        "Three.js renderers not created on page load",
+        "Renderers initialized on first weapon fire",
+        "requestAnimationFrame loop pauses when no active particles",
+        "No visual regression when weapons fire",
+        "Verify in browser"
+      ],
+      "priority": 19,
+      "status": "pending",
+      "phase": "Phase 5: Performance",
+      "notes": "Currently 2 WebGL contexts run continuously, ~60% CPU on mid-range devices"
+    },
+    {
+      "id": "TASK-020",
+      "title": "Batch DOM operations for particle effects",
+      "description": "Use DocumentFragment for particle creation in weapon spawn functions. Reduces reflows from 30-42 per weapon fire to 1.",
+      "acceptanceCriteria": [
+        "Rocket particles use DocumentFragment (lines 2826-2873)",
+        "BFG particles use DocumentFragment (lines 3025-3040)",
+        "All weapon spawn functions batch appendChild calls",
+        "No visual regression in weapon effects",
+        "Verify in browser"
+      ],
+      "priority": 20,
+      "status": "pending",
+      "phase": "Phase 5: Performance",
+      "notes": "Currently each particle is individual appendChild = individual reflow"
+    },
+    {
+      "id": "TASK-021",
+      "title": "Add tablet breakpoint and fix mobile HUD",
+      "description": "Add CSS breakpoint for 768px-1024px. Vehicle grid 2 columns on tablet. Fix HUD label minimum font-size to 0.7rem on mobile.",
+      "acceptanceCriteria": [
+        "@media (min-width: 641px) and (max-width: 1024px) breakpoint added",
+        "Vehicle grid: 2 columns on tablet",
+        "Form: 3 columns on tablet",
+        "HUD label minimum 0.7rem on mobile (was 0.55rem)",
+        "HUD values minimum 1.1rem on mobile",
+        "Verify in browser at iPad (820px) and iPhone (390px) dimensions"
+      ],
+      "priority": 21,
+      "status": "pending",
+      "phase": "Phase 5: Performance",
+      "notes": "Currently single breakpoint at 640px; tablet gets cramped desktop layout"
+    },
+    {
+      "id": "TASK-022",
+      "title": "Fix scrollable modal content",
+      "description": "Add max-height and overflow-y:auto to modal body. Lock background scroll when modal open. Fix description expansion layout shift.",
+      "acceptanceCriteria": [
+        "Modal body has max-height: 85vh and overflow-y: auto",
+        "Background scroll locked when modal open (body overflow hidden)",
+        "Long descriptions scrollable within modal",
+        "Description expansion doesn't cause layout shift",
+        "Verify in browser"
+      ],
+      "priority": 22,
+      "status": "pending",
+      "phase": "Phase 5: Performance",
+      "notes": "Currently modal can overflow viewport with no scroll"
+    }
+  ]
+}
