@@ -805,6 +805,9 @@
             border: 2px solid var(--border);
             max-width: 580px;
             width: 100%;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
             flex-shrink: 0;
             margin-top: auto;
             margin-bottom: auto;
@@ -890,7 +893,7 @@
             font-size: 0.65rem;
             padding: 0.15rem 0.5rem;
         }
-        .modal-body { padding: 1.25rem; }
+        .modal-body { padding: 1.25rem; overflow-y: auto; flex: 1; }
         .modal-body .source-tag {
             display: inline-block;
             padding: 0.15rem 0.5rem;
@@ -1146,6 +1149,14 @@
         }
 
         /* ---- Responsive ---- */
+        @media (min-width: 641px) and (max-width: 1024px) {
+            .results-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+            .search-form-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+            }
+        }
         @media (max-width: 640px) {
             .header h1 { font-size: 1.25rem; }
             .header-inner { flex-direction: row; }
@@ -1159,7 +1170,7 @@
             .doom-hud-section:nth-child(3),
             .doom-hud-section:nth-child(4) { display: none; }
             .doom-value { font-size: 1.2rem; }
-            .doom-label { font-size: 0.55rem; }
+            .doom-label { font-size: 0.7rem; }
             .doom-face { width: 50px; height: 50px; font-size: 1.3rem; }
             .toast-container { top: 60px; left: 0; padding: 0.5rem; }
             .achievement-toast { min-width: unset; width: 100%; border-right: 3px solid #ff4400; }
@@ -1899,6 +1910,7 @@
             loadingKey: 0,
             // Three.js state
             threeInitialized: false,
+            _threeAnimating: false,
             weaponScene: null,
             weaponCamera: null,
             weaponRenderer: null,
@@ -1987,12 +1999,11 @@
                 const priceMap = { '50000': 'easy', '20000': 'medium', '10000': 'hard', '5000': 'nightmare' };
                 this.selectedDifficulty = priceMap[this.params.max_price] || 'medium';
 
-                // Initialize Three.js after a tick to ensure DOM is ready
-                this.$nextTick(() => this.initThreeJS());
+                // Three.js is lazily initialized on first weapon fire (see _ensureThreeInit)
             },
 
-            initThreeJS() {
-                if (typeof THREE === 'undefined' || this.threeInitialized) return;
+            _ensureThreeInit() {
+                if (this.threeInitialized || typeof THREE === 'undefined') return;
                 this.threeInitialized = true;
 
                 // Weapon effects canvas (transparent overlay)
@@ -2034,8 +2045,7 @@
                     this.bgRenderer.setSize(w, h);
                 });
 
-                // Start render loop
-                this._animateThree();
+                // Render loop is started on-demand by spawnWeaponEffect
             },
 
             _createBgEmbers() {
@@ -2091,7 +2101,14 @@
 
             _animateThree() {
                 if (!this.threeInitialized) return;
-                requestAnimationFrame(() => this._animateThree());
+
+                // Only continue the animation loop if there are active weapon particles
+                const hasActiveParticles = this.particleSystems.length > 0;
+                if (hasActiveParticles) {
+                    requestAnimationFrame(() => this._animateThree());
+                } else {
+                    this._threeAnimating = false;
+                }
 
                 const time = performance.now() * 0.001;
 
@@ -2824,9 +2841,17 @@
             },
 
             spawnWeaponEffect(type, x, y) {
+                // Lazily initialize Three.js on first weapon fire
+                this._ensureThreeInit();
+
                 // Spawn 3D WebGL particles (real depth + glow)
                 if (this.threeInitialized) {
                     this._spawnThreeExplosion(type, x, y);
+                    // Restart animation loop if it's not already running
+                    if (!this._threeAnimating) {
+                        this._threeAnimating = true;
+                        requestAnimationFrame(() => this._animateThree());
+                    }
                 }
 
                 // Also spawn DOM effects for the 2D overlay (shockwaves, etc.)
@@ -2849,11 +2874,13 @@
             },
 
             _spawnRocket(container) {
+                const frag = document.createDocumentFragment();
+
                 // Core explosion with radial gradient
                 const core = document.createElement('div');
                 core.className = 'weapon-core';
                 core.style.animation = 'rocketCore 700ms ease-out forwards';
-                container.appendChild(core);
+                frag.appendChild(core);
 
                 // Double shockwave rings
                 for (let w = 0; w < 2; w++) {
@@ -2861,7 +2888,7 @@
                     wave.className = 'weapon-shockwave';
                     wave.style.animation = 'rocketShockwave 600ms ease-out forwards';
                     wave.style.animationDelay = w * 80 + 'ms';
-                    container.appendChild(wave);
+                    frag.appendChild(wave);
                 }
 
                 // Hot debris particles with glow trails
@@ -2880,7 +2907,7 @@
                     p.style.boxShadow = `0 0 ${4 + Math.random() * 8}px ${p.style.background}`;
                     p.style.animation = `rocketParticle ${450 + Math.random() * 350}ms ease-out forwards`;
                     p.style.animationDelay = Math.random() * 60 + 'ms';
-                    container.appendChild(p);
+                    frag.appendChild(p);
                 }
 
                 // Glowing ember trails
@@ -2897,7 +2924,7 @@
                     e.style.background = ec;
                     e.style.animation = `rocketEmber ${600 + Math.random() * 400}ms ease-out forwards`;
                     e.style.animationDelay = (50 + Math.random() * 150) + 'ms';
-                    container.appendChild(e);
+                    frag.appendChild(e);
                 }
 
                 // Thick smoke plumes
@@ -2911,16 +2938,20 @@
                     s.style.height = smokeSize + 'px';
                     s.style.animation = `rocketSmoke ${600 + Math.random() * 500}ms ease-out forwards`;
                     s.style.animationDelay = (80 + Math.random() * 250) + 'ms';
-                    container.appendChild(s);
+                    frag.appendChild(s);
                 }
+
+                container.appendChild(frag);
             },
 
             _spawnFireball(container) {
+                const frag = document.createDocumentFragment();
+
                 // Core with inner glow
                 const core = document.createElement('div');
                 core.className = 'weapon-core';
                 core.style.animation = 'fireballCore 650ms ease-out forwards';
-                container.appendChild(core);
+                frag.appendChild(core);
 
                 // Double expanding ring
                 for (let r = 0; r < 2; r++) {
@@ -2928,7 +2959,7 @@
                     ring.className = 'weapon-shockwave';
                     ring.style.animation = 'fireballRing 550ms ease-out forwards';
                     ring.style.animationDelay = r * 100 + 'ms';
-                    container.appendChild(ring);
+                    frag.appendChild(ring);
                 }
 
                 // Many ember particles with varied sizes
@@ -2944,7 +2975,7 @@
                     p.style.height = size + 'px';
                     p.style.animation = `fireballEmber ${450 + Math.random() * 350}ms ease-out forwards`;
                     p.style.animationDelay = Math.random() * 100 + 'ms';
-                    container.appendChild(p);
+                    frag.appendChild(p);
                 }
 
                 // Green smoke wisps
@@ -2958,16 +2989,20 @@
                     w.style.height = ws + 'px';
                     w.style.animation = `fireballWisp ${500 + Math.random() * 400}ms ease-out forwards`;
                     w.style.animationDelay = (100 + Math.random() * 200) + 'ms';
-                    container.appendChild(w);
+                    frag.appendChild(w);
                 }
+
+                container.appendChild(frag);
             },
 
             _spawnPlasma(container) {
+                const frag = document.createDocumentFragment();
+
                 // Core flash
                 const core = document.createElement('div');
                 core.className = 'weapon-core';
                 core.style.animation = 'plasmaCore 450ms ease-out forwards';
-                container.appendChild(core);
+                frag.appendChild(core);
 
                 // Ripple rings
                 for (let r = 0; r < 3; r++) {
@@ -2975,7 +3010,7 @@
                     rp.className = 'weapon-shockwave';
                     rp.style.animation = 'plasmaRipple 400ms ease-out forwards';
                     rp.style.animationDelay = r * 60 + 'ms';
-                    container.appendChild(rp);
+                    frag.appendChild(rp);
                 }
 
                 // Electric arcs - more of them, varied
@@ -2989,7 +3024,7 @@
                     arc.style.setProperty('--arc-len', len + 'px');
                     arc.style.animation = `plasmaArc ${250 + Math.random() * 250}ms ease-out forwards`;
                     arc.style.animationDelay = Math.random() * 80 + 'ms';
-                    container.appendChild(arc);
+                    frag.appendChild(arc);
                 }
 
                 // Crackling sparks - more
@@ -3005,12 +3040,14 @@
                     sp.style.height = sz + 'px';
                     sp.style.animation = `plasmaSpark ${180 + Math.random() * 280}ms ease-out forwards`;
                     sp.style.animationDelay = Math.random() * 120 + 'ms';
-                    container.appendChild(sp);
+                    frag.appendChild(sp);
                 }
+
+                container.appendChild(frag);
             },
 
             _spawnBfg(container) {
-                // Positioned screen flash
+                // Positioned screen flash (appended to body, not container)
                 const flash = document.createElement('div');
                 flash.className = 'bfg-screen-flash';
                 const rect = container.getBoundingClientRect ? null : null;
@@ -3019,11 +3056,13 @@
                 document.body.appendChild(flash);
                 setTimeout(() => flash.remove(), 900);
 
+                const frag = document.createDocumentFragment();
+
                 // Massive core
                 const core = document.createElement('div');
                 core.className = 'weapon-core';
                 core.style.animation = 'bfgCore 1000ms ease-out forwards';
-                container.appendChild(core);
+                frag.appendChild(core);
 
                 // Triple shockwave
                 for (let w = 0; w < 3; w++) {
@@ -3031,7 +3070,7 @@
                     wave.className = 'weapon-shockwave';
                     wave.style.animation = 'bfgShockwave 800ms ease-out forwards';
                     wave.style.animationDelay = w * 120 + 'ms';
-                    container.appendChild(wave);
+                    frag.appendChild(wave);
                 }
 
                 // Secondary explosions - more, varied distance
@@ -3044,7 +3083,7 @@
                     sec.style.top = Math.sin(angle) * dist + 'px';
                     sec.style.animation = `bfgSecondary ${400 + Math.random() * 400}ms ease-out forwards`;
                     sec.style.animationDelay = (150 + Math.random() * 350) + 'ms';
-                    container.appendChild(sec);
+                    frag.appendChild(sec);
                 }
 
                 // Energy tendrils radiating outward
@@ -3061,7 +3100,7 @@
                     t.style.boxShadow = '0 0 6px #00ff44';
                     t.style.animation = `bfgTendril ${400 + Math.random() * 300}ms ease-out forwards`;
                     t.style.animationDelay = (100 + Math.random() * 200) + 'ms';
-                    container.appendChild(t);
+                    frag.appendChild(t);
                 }
 
                 // Green particles - more
@@ -3079,23 +3118,27 @@
                     p.style.boxShadow = `0 0 ${6 + Math.random() * 10}px #00ff44`;
                     p.style.animation = `rocketParticle ${500 + Math.random() * 500}ms ease-out forwards`;
                     p.style.animationDelay = Math.random() * 200 + 'ms';
-                    container.appendChild(p);
+                    frag.appendChild(p);
                 }
+
+                container.appendChild(frag);
             },
 
             _spawnShotgun(container) {
+                const frag = document.createDocumentFragment();
+
                 // Bright muzzle flash
                 const flash = document.createElement('div');
                 flash.className = 'weapon-core';
                 flash.style.animation = 'shotgunFlash 300ms ease-out forwards';
-                container.appendChild(flash);
+                frag.appendChild(flash);
 
                 // Smoke ring
                 const smoke = document.createElement('div');
                 smoke.className = 'weapon-shockwave';
                 smoke.style.animation = 'shotgunSmokeRing 500ms ease-out forwards';
                 smoke.style.animationDelay = '50ms';
-                container.appendChild(smoke);
+                frag.appendChild(smoke);
 
                 // Pellet spread - wider, more varied
                 for (let i = 0; i < 30; i++) {
@@ -3113,8 +3156,10 @@
                     p.style.background = pc;
                     p.style.animation = `shotgunPellet ${180 + Math.random() * 280}ms ease-out forwards`;
                     p.style.animationDelay = Math.random() * 40 + 'ms';
-                    container.appendChild(p);
+                    frag.appendChild(p);
                 }
+
+                container.appendChild(frag);
             },
 
             playWeaponSound(type) {
