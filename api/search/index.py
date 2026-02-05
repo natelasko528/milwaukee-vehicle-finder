@@ -13,24 +13,12 @@ from datetime import datetime
 from urllib.parse import quote_plus
 import re
 import hashlib
-import time
+
+from api.utils.response import send_json, send_options
+from api.utils.rate_limit import RateLimiter
 
 
-_rate_limit_store = {}
-_RATE_LIMIT = 10  # requests per minute
-_RATE_WINDOW = 60  # seconds
-
-def _check_rate_limit(ip):
-    """Returns True if rate limit exceeded."""
-    now = time.time()
-    if ip not in _rate_limit_store:
-        _rate_limit_store[ip] = []
-    # Clean old entries
-    _rate_limit_store[ip] = [t for t in _rate_limit_store[ip] if now - t < _RATE_WINDOW]
-    if len(_rate_limit_store[ip]) >= _RATE_LIMIT:
-        return True
-    _rate_limit_store[ip].append(now)
-    return False
+_limiter = RateLimiter(max_requests=10, window_seconds=60)
 
 
 USER_AGENT = (
@@ -520,25 +508,11 @@ async def search_all(params):
 # ---------------------------------------------------------------------------
 
 class handler(BaseHTTPRequestHandler):
-    def _cors_headers(self):
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
-
-    def _json_response(self, status, data):
-        self.send_response(status)
-        self.send_header("Content-Type", "application/json")
-        self._cors_headers()
-        self.end_headers()
-        self.wfile.write(json.dumps(data).encode())
-
     def do_OPTIONS(self):
-        self.send_response(200)
-        self._cors_headers()
-        self.end_headers()
+        send_options(self)
 
     def do_GET(self):
-        self._json_response(200, {
+        send_json(self, 200, {
             "success": True,
             "message": "Milwaukee Vehicle Finder API v4.0",
             "status": "operational",
@@ -549,13 +523,11 @@ class handler(BaseHTTPRequestHandler):
         })
 
     def do_POST(self):
-        # Get client IP
-        client_ip = self.headers.get('X-Forwarded-For', self.client_address[0] if self.client_address else 'unknown')
-        if isinstance(client_ip, str) and ',' in client_ip:
-            client_ip = client_ip.split(',')[0].strip()
+        # Get client IP using shared utility
+        client_ip = _limiter.get_client_ip(self)
 
-        if _check_rate_limit(client_ip):
-            self._json_response(429, {
+        if _limiter.is_limited(client_ip):
+            send_json(self, 429, {
                 "success": False,
                 "error": "Rate limit exceeded. Please wait before searching again.",
             })
@@ -575,7 +547,7 @@ class handler(BaseHTTPRequestHandler):
             avg_price = round(sum(v["price"] for v in vehicles) / total, 2) if total else 0
             prices = [v["price"] for v in vehicles]
 
-            self._json_response(200, {
+            send_json(self, 200, {
                 "success": True,
                 "count": total,
                 "vehicles": vehicles,
@@ -590,13 +562,13 @@ class handler(BaseHTTPRequestHandler):
                 "timestamp": datetime.now().isoformat(),
             })
         except ValueError as e:
-            self._json_response(400, {
+            send_json(self, 400, {
                 "success": False,
                 "error": str(e),
                 "timestamp": datetime.now().isoformat(),
             })
         except Exception as e:
-            self._json_response(500, {
+            send_json(self, 500, {
                 "success": False,
                 "error": str(e),
                 "timestamp": datetime.now().isoformat(),

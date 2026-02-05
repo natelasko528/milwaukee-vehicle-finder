@@ -1407,6 +1407,22 @@
                 <span x-show="!loading">Rip and Tear</span>
                 <span x-show="loading">Ripping...</span>
             </button>
+            <button @click="saveCurrentSearch()" style="padding:0.5rem 0.8rem;background:var(--secondary);color:var(--secondary-foreground);border:none;border-radius:4px;cursor:pointer;font-size:0.75rem;font-family:inherit;margin-left:0.5rem;" title="Save this search">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:0.3rem;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>Save
+            </button>
+            <div x-show="savedSearches.length > 0" style="margin-top:0.5rem;">
+                <button @click="showSavedSearches = !showSavedSearches" style="font-size:0.75rem;background:none;border:none;color:var(--muted-foreground);cursor:pointer;text-decoration:underline;font-family:inherit;">
+                    Saved Searches (<span x-text="savedSearches.length"></span>)
+                </button>
+                <div x-show="showSavedSearches" x-transition style="margin-top:0.5rem;display:flex;flex-wrap:wrap;gap:0.4rem;">
+                    <template x-for="s in savedSearches" :key="s.id">
+                        <div style="display:inline-flex;align-items:center;gap:0.3rem;padding:0.25rem 0.6rem;background:var(--muted);border-radius:4px;font-size:0.75rem;">
+                            <span @click="loadSavedSearch(s)" style="cursor:pointer;" x-text="s.label"></span>
+                            <button @click="deleteSavedSearch(s.id)" style="background:none;border:none;color:var(--muted-foreground);cursor:pointer;font-size:0.9rem;padding:0;line-height:1;">&times;</button>
+                        </div>
+                    </template>
+                </div>
+            </div>
         </div>
 
         <!-- Doom Loading -->
@@ -1532,6 +1548,9 @@
                                 </svg>
                             </div>
                             <span class="card-source" :class="'badge-' + sourceKey(v.source)" x-text="v.source"></span>
+                            <button @click.stop="toggleFavorite(v)" :title="isFavorite(v.id) ? 'Remove from favorites' : 'Add to favorites'" style="position:absolute;top:0.5rem;right:0.5rem;background:rgba(0,0,0,0.5);border:none;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" :fill="isFavorite(v.id) ? '#ff4444' : 'none'" stroke="#ff4444" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                            </button>
                         </div>
                         <div class="card-body">
                             <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:0.4rem;">
@@ -1704,6 +1723,10 @@
                     <button class="ask-car-btn" @click="chatOpen = true; sendChat('Tell me about this ' + selected.title + ' listed at $' + selected.price.toLocaleString())" style="display:inline-flex;align-items:center;gap:0.4rem;margin:0.5rem 0;padding:0.4rem 0.8rem;background:var(--primary);color:var(--primary-foreground);border:none;border-radius:4px;cursor:pointer;font-size:0.8rem;font-family:inherit;">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                         Ask AI about this car
+                    </button>
+                    <button @click="shareListing(selected)" style="display:inline-flex;align-items:center;gap:0.4rem;margin:0.5rem 0 0.5rem 0.5rem;padding:0.4rem 0.8rem;background:var(--muted);color:var(--foreground);border:none;border-radius:4px;cursor:pointer;font-size:0.8rem;font-family:inherit;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                        Share
                     </button>
 
                     <!-- Modal Tabs -->
@@ -1930,6 +1953,11 @@
                 headshot: false,
             },
 
+            // Saved searches and favorites
+            savedSearches: JSON.parse(localStorage.getItem('mvf-saved-searches') || '[]'),
+            favorites: JSON.parse(localStorage.getItem('mvf-favorites') || '[]'),
+            showSavedSearches: false,
+
             params: {
                 make: '',
                 model: '',
@@ -1984,6 +2012,9 @@
                 const cur = new Date().getFullYear() + 1;
                 for (let y = cur; y >= 1990; y--) this.years.push(y);
                 this.$watch('activeSource', () => this.applySort());
+                this.$watch('sortBy', (val) => {
+                    localStorage.setItem('mvf-sort', val);
+                });
 
                 if (localStorage.getItem('mvf-dark') === '1' ||
                     (!localStorage.getItem('mvf-dark') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -1992,6 +2023,8 @@
                 if (localStorage.getItem('mvf-sound') === '0') {
                     this.soundEnabled = false;
                 }
+                const savedSort = localStorage.getItem('mvf-sort');
+                if (savedSort) this.sortBy = savedSort;
 
                 // Welcome message in chat
                 this.chatMessages.push({ role: 'ai', text: 'Welcome to the AI Advisor. I can help you find the best deals, compare vehicles, check reliability, and answer any car-buying questions. Search for vehicles or ask me anything to get started.' });
@@ -3471,6 +3504,52 @@
                 this.descCollapsed = true;
                 this.modalTab = 'details';
                 document.body.style.overflow = '';
+            },
+
+            saveCurrentSearch() {
+                if (!this.params.make && !this.params.model) return;
+                const search = {
+                    id: Date.now(),
+                    params: { ...this.params },
+                    label: [this.params.make, this.params.model, this.params.min_year ? this.params.min_year + '+' : ''].filter(Boolean).join(' '),
+                    savedAt: new Date().toISOString()
+                };
+                this.savedSearches = [search, ...this.savedSearches.slice(0, 9)];
+                localStorage.setItem('mvf-saved-searches', JSON.stringify(this.savedSearches));
+            },
+
+            loadSavedSearch(search) {
+                this.params = { ...search.params };
+                this.showSavedSearches = false;
+                this.search();
+            },
+
+            deleteSavedSearch(id) {
+                this.savedSearches = this.savedSearches.filter(s => s.id !== id);
+                localStorage.setItem('mvf-saved-searches', JSON.stringify(this.savedSearches));
+            },
+
+            toggleFavorite(vehicle) {
+                const idx = this.favorites.findIndex(f => f.id === vehicle.id);
+                if (idx >= 0) {
+                    this.favorites.splice(idx, 1);
+                } else {
+                    this.favorites = [...this.favorites, { ...vehicle, favoritedAt: new Date().toISOString() }];
+                }
+                localStorage.setItem('mvf-favorites', JSON.stringify(this.favorites));
+            },
+
+            isFavorite(vehicleId) {
+                return this.favorites.some(f => f.id === vehicleId);
+            },
+
+            shareListing(vehicle) {
+                const text = vehicle.title + ' - $' + vehicle.price.toLocaleString() + '\n' + vehicle.url;
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(text);
+                    this.toasts = [...this.toasts, { id: Date.now(), text: 'Link copied!', type: 'success' }];
+                    setTimeout(() => this.toasts = this.toasts.slice(1), 3000);
+                }
             },
 
             async fetchMarketSummary() {

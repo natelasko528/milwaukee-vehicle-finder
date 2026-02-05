@@ -132,24 +132,53 @@ def _parse_gemini_response(text):
 
 
 def _call_gemini(prompt, api_key):
-    """Call Gemini API with model fallback and return parsed JSON review.
+    """Call Gemini REST API with model fallback and return parsed JSON review.
 
-    Tries the primary model first. If it fails for any reason (model
-    unavailable, quota, transient error), falls back to the secondary model.
+    Uses direct HTTP requests (no SDK dependency). Tries the primary model
+    first. If it fails, falls back to the secondary model.
     """
-    import google.generativeai as genai
+    import urllib.request
+    import urllib.error
 
-    genai.configure(api_key=api_key)
-
-    # Try primary model, then fallback
     models_to_try = [PRIMARY_MODEL, FALLBACK_MODEL]
     last_exception = None
 
     for model_name in models_to_try:
+        url = (
+            f"https://generativelanguage.googleapis.com/v1beta/"
+            f"models/{model_name}:generateContent?key={api_key}"
+        )
+        payload = json.dumps({
+            "contents": [{"parts": [{"text": prompt}]}],
+            "generationConfig": {
+                "temperature": 0.7,
+                "maxOutputTokens": 4096,
+            },
+        }).encode()
+
+        req = urllib.request.Request(
+            url,
+            data=payload,
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+
         try:
-            model = genai.GenerativeModel(model_name)
-            response = model.generate_content(prompt)
-            return _parse_gemini_response(response.text)
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                body = json.loads(resp.read().decode())
+
+            text = (
+                body.get("candidates", [{}])[0]
+                .get("content", {})
+                .get("parts", [{}])[0]
+                .get("text", "")
+            )
+
+            if not text:
+                last_exception = ValueError(f"Empty response from {model_name}")
+                continue
+
+            return _parse_gemini_response(text)
         except Exception as e:
             last_exception = e
             continue
