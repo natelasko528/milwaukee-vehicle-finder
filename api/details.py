@@ -4,7 +4,6 @@ Fetches full details from original listing including all photos
 """
 
 from http.server import BaseHTTPRequestHandler
-import json
 import asyncio
 import aiohttp
 from bs4 import BeautifulSoup
@@ -12,6 +11,8 @@ from urllib.parse import urlparse, parse_qs, urljoin
 import re
 import ipaddress
 import socket
+
+from api.utils.response import cors_headers, send_json, send_options, error_response
 
 ALLOWED_DOMAINS = {
     'craigslist.org',
@@ -357,25 +358,12 @@ class handler(BaseHTTPRequestHandler):
             url = params.get('url', [None])[0]
             
             if not url:
-                self.send_response(400)
-                self.send_header('Content-type', 'application/json')
-                self.send_header('Access-Control-Allow-Origin', '*')
-                self.end_headers()
-                self.wfile.write(json.dumps({
-                    'success': False,
-                    'error': 'Missing url parameter'
-                }).encode())
+                send_json(self, 400, error_response('Missing url parameter'))
                 return
 
             # SSRF protection: validate URL before fetching
             if not _is_url_allowed(url):
-                self.send_response(400)
-                self.send_header('Content-type', 'application/json')
-                self.send_header('Access-Control-Allow-Origin', '*')
-                self.end_headers()
-                self.wfile.write(json.dumps({
-                    'error': 'URL not allowed. Only Craigslist, CarGurus, Cars.com, and AutoTrader URLs are supported.'
-                }).encode())
+                send_json(self, 400, error_response('URL not allowed. Only Craigslist, CarGurus, Cars.com, and AutoTrader URLs are supported.'))
                 return
 
             # Fetch details
@@ -386,30 +374,16 @@ class handler(BaseHTTPRequestHandler):
             loop.close()
             
             if details:
-                self.send_response(200)
-                self.send_header('Content-type', 'application/json')
-                self.send_header('Access-Control-Allow-Origin', '*')
-                self.end_headers()
-                self.wfile.write(json.dumps({
+                send_json(self, 200, {
                     'success': True,
                     'details': details
-                }).encode())
+                })
             else:
-                self.send_response(500)
-                self.send_header('Content-type', 'application/json')
-                self.send_header('Access-Control-Allow-Origin', '*')
-                self.end_headers()
-                self.wfile.write(json.dumps({
-                    'success': False,
-                    'error': 'Failed to fetch details'
-                }).encode())
+                send_json(self, 500, error_response('Failed to fetch details'))
                 
         except Exception as e:
-            self.send_response(500)
-            self.send_header('Content-type', 'application/json')
-            self.send_header('Access-Control-Allow-Origin', '*')
-            self.end_headers()
-            self.wfile.write(json.dumps({
-                'success': False,
-                'error': str(e)
-            }).encode())
+            send_json(self, 500, error_response(str(e)))
+
+    def do_OPTIONS(self):
+        """Handle CORS preflight requests."""
+        send_options(self)
