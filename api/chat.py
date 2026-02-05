@@ -45,7 +45,7 @@ def _check_rate_limit(ip):
 # ---------------------------------------------------------------------------
 
 _PRIMARY_MODEL = "gemini-2.5-flash"
-_FALLBACK_MODEL = "gemini-2.0-flash"
+_FALLBACK_MODEL = "gemini-2.5-flash-lite"  # 2.0-flash deprecated March 2026
 
 # ---------------------------------------------------------------------------
 # System prompt
@@ -210,8 +210,23 @@ def _try_gemini_model(model_name, api_key, history, latest_text):
         method="POST",
     )
 
-    with urllib.request.urlopen(req, timeout=45) as resp:
-        body = json.loads(resp.read().decode())
+    try:
+        with urllib.request.urlopen(req, timeout=45) as resp:
+            body = json.loads(resp.read().decode())
+    except urllib.error.HTTPError as e:
+        error_body = ""
+        try:
+            error_body = e.read().decode()
+        except Exception:
+            pass
+        raise ValueError(f"HTTP {e.code} from {model_name}: {error_body[:500]}")
+    except urllib.error.URLError as e:
+        raise ValueError(f"Network error calling {model_name}: {str(e.reason)}")
+
+    # Check for blocked content or other issues
+    if "candidates" not in body or not body["candidates"]:
+        block_reason = body.get("promptFeedback", {}).get("blockReason", "unknown")
+        raise ValueError(f"No candidates from {model_name}, blockReason={block_reason}")
 
     text = (
         body.get("candidates", [{}])[0]
@@ -221,7 +236,8 @@ def _try_gemini_model(model_name, api_key, history, latest_text):
     )
 
     if not text:
-        raise ValueError(f"Empty response from {model_name}")
+        finish_reason = body.get("candidates", [{}])[0].get("finishReason", "unknown")
+        raise ValueError(f"Empty response from {model_name}, finishReason={finish_reason}")
 
     return text
 

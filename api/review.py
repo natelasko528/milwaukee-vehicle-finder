@@ -16,7 +16,7 @@ import re
 _review_cache = {}
 
 PRIMARY_MODEL = "gemini-2.5-flash"
-FALLBACK_MODEL = "gemini-2.0-flash"
+FALLBACK_MODEL = "gemini-2.5-flash-lite"  # 2.0-flash deprecated March 2026
 
 
 def _build_prompt(make, model, year, price, mileage, source=None):
