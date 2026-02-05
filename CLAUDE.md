@@ -37,7 +37,7 @@ Milwaukee Vehicle Finder is a DOOM-themed web app that searches for used vehicle
 │   └── skills/
 │       └── agent-main.md      # Custom orchestration skill (ULTRATHINK, PRD generation)
 ├── .github/workflows/ci.yml   # CI: flake8 lint + pytest on push/PR
-├── requirements.txt           # Production deps (aiohttp, bs4, lxml, google-generativeai)
+├── requirements.txt           # Production deps (aiohttp, bs4, lxml)
 ├── requirements-dev.txt       # Dev deps (pytest, flake8, playwright)
 ├── .env.example               # Documents GOOGLE_API_KEY requirement
 ├── .gitignore                 # Comprehensive (Python, IDE, OS, env, test artifacts)
@@ -49,7 +49,7 @@ Milwaukee Vehicle Finder is a DOOM-themed web app that searches for used vehicle
 ## Tech Stack
 
 - **Frontend**: HTML5, CSS3, JavaScript, Alpine.js v3
-- **Backend**: Python 3, aiohttp, BeautifulSoup4, lxml, google-generativeai
+- **Backend**: Python 3, aiohttp, BeautifulSoup4, lxml (Gemini via REST API, no SDK)
 - **AI**: Google Gemini (market analysis, vehicle reviews, safety data, chat)
 - **Testing**: pytest + Playwright (unit + E2E)
 - **CI/CD**: GitHub Actions (flake8 + pytest)

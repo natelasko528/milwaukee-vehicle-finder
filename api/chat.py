@@ -163,18 +163,67 @@ def _convert_messages(messages, context):
     return gemini_history, latest_text
 
 
-def _try_gemini_model(genai, model_name, history, latest_text):
+def _try_gemini_model(model_name, api_key, history, latest_text):
     """
-    Attempt to chat with a specific Gemini model.
-    Returns the response object on success, raises on failure.
+    Attempt to chat with a specific Gemini model via REST API.
+    Returns the response text on success, raises on failure.
     """
-    model = genai.GenerativeModel(
-        model_name=model_name,
-        system_instruction=SYSTEM_PROMPT,
+    import urllib.request
+    import urllib.error
+
+    url = (
+        f"https://generativelanguage.googleapis.com/v1beta/"
+        f"models/{model_name}:generateContent?key={api_key}"
     )
-    chat = model.start_chat(history=history)
-    response = chat.send_message(latest_text)
-    return response
+
+    # Build contents array: system instruction + history + latest message
+    contents = []
+
+    # Add conversation history
+    for entry in history:
+        contents.append({
+            "role": entry["role"],
+            "parts": [{"text": entry["parts"][0]}],
+        })
+
+    # Add the latest user message
+    contents.append({
+        "role": "user",
+        "parts": [{"text": latest_text}],
+    })
+
+    payload = json.dumps({
+        "system_instruction": {
+            "parts": [{"text": SYSTEM_PROMPT}]
+        },
+        "contents": contents,
+        "generationConfig": {
+            "temperature": 0.8,
+            "maxOutputTokens": 2048,
+        },
+    }).encode()
+
+    req = urllib.request.Request(
+        url,
+        data=payload,
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+
+    with urllib.request.urlopen(req, timeout=45) as resp:
+        body = json.loads(resp.read().decode())
+
+    text = (
+        body.get("candidates", [{}])[0]
+        .get("content", {})
+        .get("parts", [{}])[0]
+        .get("text", "")
+    )
+
+    if not text:
+        raise ValueError(f"Empty response from {model_name}")
+
+    return text
 
 
 # ---------------------------------------------------------------------------
@@ -260,22 +309,19 @@ class handler(BaseHTTPRequestHandler):
 
         # Call Gemini with model fallback
         try:
-            import google.generativeai as genai
-
-            genai.configure(api_key=api_key)
             history, latest_text = _convert_messages(messages, context)
 
             # Try primary model first, fall back to secondary on failure
             used_model = _PRIMARY_MODEL
             primary_error = None
             try:
-                response = _try_gemini_model(genai, _PRIMARY_MODEL, history, latest_text)
+                response_text = _try_gemini_model(_PRIMARY_MODEL, api_key, history, latest_text)
             except Exception as primary_exc:
                 primary_error = str(primary_exc)
                 print(f"[chat] Primary model {_PRIMARY_MODEL} failed: {primary_error}")
                 print(f"[chat] Falling back to {_FALLBACK_MODEL}...")
                 try:
-                    response = _try_gemini_model(genai, _FALLBACK_MODEL, history, latest_text)
+                    response_text = _try_gemini_model(_FALLBACK_MODEL, api_key, history, latest_text)
                     used_model = _FALLBACK_MODEL
                 except Exception as fallback_exc:
                     traceback.print_exc()
@@ -298,22 +344,13 @@ class handler(BaseHTTPRequestHandler):
 
             result = {
                 "success": True,
-                "response": response.text,
+                "response": response_text,
                 "model": used_model,
             }
             if primary_error:
                 result["fallback_used"] = True
             self._send_json(200, result)
 
-        except ImportError:
-            self._send_json(500, {
-                "success": False,
-                "error": "google-generativeai package is not installed.",
-                "hint": (
-                    "Add 'google-generativeai' to requirements.txt and redeploy. "
-                    "This is a server configuration issue."
-                ),
-            })
         except Exception as e:
             traceback.print_exc()
             error_msg = str(e)
